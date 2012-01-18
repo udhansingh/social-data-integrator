@@ -1,0 +1,495 @@
+/*
+   Copyright 2011 Udayakumar Dhansingh (Udy)
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
+ */
+package org.onesun.smc.app.views;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.Set;
+
+import javax.swing.AbstractButton;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonModel;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SpringLayout;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import org.apache.log4j.Logger;
+import org.onesun.commons.swing.JTableUtils;
+import org.onesun.commons.swing.SpringLayoutUtils;
+import org.onesun.commons.swing.cursors.DefaultCusor;
+import org.onesun.commons.text.format.detectors.TextFormat;
+import org.onesun.smc.api.Connector;
+import org.onesun.smc.api.MetadataReader;
+import org.onesun.smc.api.ProviderFactory;
+import org.onesun.smc.api.Resource;
+import org.onesun.smc.api.ServiceProvider;
+import org.onesun.smc.app.AppIcons;
+import org.onesun.smc.app.AppMessages;
+import org.onesun.smc.app.AppCommons;
+import org.onesun.smc.app.AppCommonsUI;
+import org.onesun.smc.app.model.SchemaEntryModel;
+import org.onesun.smc.app.model.SchemaModel;
+import org.onesun.smc.core.metadata.FacetedMetadata;
+import org.onesun.smc.core.metadata.FilterMetadata;
+import org.onesun.smc.core.metadata.JSONMetadataReader;
+import org.onesun.smc.core.metadata.MasterMetadataMerger;
+import org.onesun.smc.core.metadata.Metadata;
+import org.onesun.smc.core.metadata.XMLMetadataReader;
+import org.onesun.smc.core.model.Authentication;
+import org.onesun.smc.core.model.RequestParamObject;
+import org.onesun.smc.core.providers.web.kapow.KapowObject;
+import org.onesun.smc.core.resources.WebResource;
+
+import com.kapowtech.robosuite.api.java.repository.construct.Attribute;
+import com.kapowtech.robosuite.api.java.repository.construct.Type;
+
+public class MetadataTableView extends JPanel {
+	/**
+	 * 
+	 */
+	private static Logger logger = Logger.getLogger(MetadataTableView.class);
+	private static final long serialVersionUID = -7796284674232922679L;
+
+	private MetadataTableView rootPanel = this;
+
+	private SchemaModel model = new SchemaModel();
+	private JTable schemaTable = new JTable(model);
+	private JScrollPane scrollPane = new JScrollPane(schemaTable);
+	private JTextField nodeNameTextField = new JTextField();
+	private JButton discoverSchemaButton = new JButton("Discover Schema");
+	private JButton mergeSchemaButton = new JButton("Merge To Master");
+
+	private JLabel facetedLabel = new JLabel("Pattern");
+	private JPanel primaryButtonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
+	private JPanel secondaryPanel = new JPanel(new BorderLayout(5, 5));
+
+	private JCheckBox isFaceted = new JCheckBox();
+	private JComboBox<String> schemaFacets = new JComboBox<String>();
+	private FacetedMetadata facetedMetadata = null;
+	private Metadata metadata = null;
+	private JButton copySchemaButton = new JButton("Copy to clipboard", AppIcons.getIcon("copy"));
+
+	public MetadataTableView(){
+		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+
+		createControls();
+
+		this.addComponentListener(new ComponentListener() {
+
+			@Override
+			public void componentShown(ComponentEvent e) {
+				if(AppCommons.AUTHENTICATION == Authentication.TWITTER_STREAMING){
+					schemaFacets.setEnabled(true);
+				}
+				else {
+					schemaFacets.setEnabled(false);
+				}
+
+				copySchemaButton.setEnabled(model.getRowCount() > 0);
+			}
+
+			@Override
+			public void componentResized(ComponentEvent e) {
+			}
+
+			@Override
+			public void componentMoved(ComponentEvent e) {
+			}
+
+			@Override
+			public void componentHidden(ComponentEvent e) {
+			}
+		});
+	}
+
+	private void createControls(){
+		Dimension viewPort = new Dimension(250, 900);
+
+		schemaTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		schemaTable.setAutoscrolls(true);
+		schemaTable.setRowSelectionAllowed(false);
+		schemaTable.setColumnSelectionAllowed(false);
+		schemaTable.setCellSelectionEnabled(true);
+		schemaTable.getTableHeader().setReorderingAllowed(false);
+
+		JPanel panel = null;
+		JLabel label = null;
+
+		panel = new JPanel(new BorderLayout(5, 5));
+		label = new JLabel("XPath to item (Optional)");
+		label.setPreferredSize(new Dimension(200, 24));
+		panel.add(label, BorderLayout.WEST);
+		nodeNameTextField.setPreferredSize(new Dimension(500, 24));
+		panel.add(nodeNameTextField, BorderLayout.CENTER);
+		this.add(panel);
+
+		panel = new JPanel(new BorderLayout(5, 5));
+		label = new JLabel("Is data assorted?");
+		label.setPreferredSize(new Dimension(200, 24));
+		panel.add(label, BorderLayout.WEST);
+		panel.add(isFaceted, BorderLayout.CENTER);
+		isFaceted.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				AbstractButton abstractButton = (AbstractButton)e.getSource();
+				ButtonModel buttonModel = abstractButton.getModel();
+				boolean pressed = buttonModel.isPressed();
+				boolean selected = buttonModel.isSelected();
+
+				if(pressed == true && selected == true){
+					primaryButtonsPanel.remove(mergeSchemaButton);
+					facetedLabel.setPreferredSize(new Dimension(200, 24));
+					secondaryPanel.add(facetedLabel, BorderLayout.WEST);
+					secondaryPanel.add(schemaFacets, BorderLayout.CENTER);
+					secondaryPanel.add(mergeSchemaButton, BorderLayout.EAST);
+				}
+				else if(pressed == true && selected == false){
+					facetedLabel.setPreferredSize(new Dimension(200, 24));
+					secondaryPanel.remove(facetedLabel);
+					secondaryPanel.remove(schemaFacets);
+					secondaryPanel.remove(mergeSchemaButton);
+					primaryButtonsPanel.add(mergeSchemaButton);
+				}
+
+				rootPanel.revalidate();
+				rootPanel.repaint();
+			}
+		});
+		primaryButtonsPanel.add(discoverSchemaButton);
+		primaryButtonsPanel.add(mergeSchemaButton);
+		panel.add(primaryButtonsPanel, BorderLayout.EAST);
+		this.add(panel);
+
+		// Optional Panel (programatically triggered)
+		this.add(secondaryPanel);
+
+		panel = new JPanel(new SpringLayout());
+		label = new JLabel("Schema (Flattened)", JLabel.LEADING);
+		label.setPreferredSize(new Dimension(150, 24));
+		scrollPane.setPreferredSize(viewPort);
+		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+		panel.add(label);
+		label.setLabelFor(scrollPane);
+		panel.add(scrollPane);
+		SpringLayoutUtils.makeCompactGrid(panel, 2, 1, 5, 5,	5, 5);
+		this.add(panel);
+
+		panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		panel.add(copySchemaButton);
+		this.add(panel);
+
+		schemaFacets.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				Object o = e.getItem();
+
+				if(o instanceof String){
+					String facet = (String)o;
+
+					if(facetedMetadata != null){
+						model.removeAll();
+
+						Metadata m = facetedMetadata.getMetadata(facet);
+
+						for(String key : m.keySet()){
+							SchemaEntryModel data = new SchemaEntryModel();
+
+							String value = m.get(key);
+
+							data.setXpath(key);
+							data.setName(value);
+
+							model.setValueAt(data, 0, 0);
+						}
+
+						model.fireTableDataChanged();
+
+						copySchemaButton.setEnabled(model.getRowCount() > 0);
+
+						JTableUtils.packAllColumns(schemaTable, 2);
+
+						schemaTable.invalidate();
+						scrollPane.invalidate();
+						scrollPane.repaint();
+
+						// Update the meta-model
+						AppCommons.BUSINESS_OBJECT.setMetadata(m);
+						AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.BUSINESS_OBJECT.toJSON());
+						AppCommonsUI.MODEL_TEXTAREA.invalidate();
+					}
+				}
+			}
+		});
+
+		copySchemaButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Metadata metadata = AppCommons.BUSINESS_OBJECT.getMetadata();
+				String data = metadata.toString();
+
+				StringSelection content = new StringSelection(data);
+				Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
+				cb.setContents(content, content);
+			}
+		});
+
+		mergeSchemaButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String providerName = AppCommons.BUSINESS_OBJECT.getConnection().getIdentity();
+				String resourceName = AppCommons.BUSINESS_OBJECT.getResource().getResourceName();
+
+				String folderName = null;
+				if(AppCommons.AUTHENTICATION == Authentication.TWITTER_STREAMING){
+					folderName = resourceName;
+					resourceName = (String)schemaFacets.getSelectedItem();
+
+					Metadata m = facetedMetadata.getMetadata(resourceName);
+					MasterMetadataMerger merger = new MasterMetadataMerger(providerName, folderName, resourceName, AppCommons.PATH_TO_MASTER_METADATA);
+					merger.merge(m);
+				}
+				else {
+					if(providerName == null){
+						providerName = "General";
+					}
+
+					MasterMetadataMerger merger = new MasterMetadataMerger(providerName, null, resourceName, AppCommons.PATH_TO_MASTER_METADATA);
+					merger.merge(metadata);
+				}
+			}
+		});
+
+
+		discoverSchemaButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Connector connection = AppCommons.BUSINESS_OBJECT.getConnection();
+
+				if(connection == null){
+					JOptionPane.showMessageDialog(rootPanel, AppMessages.INFORMATION_CHOOSE_A_CONNECTION);
+					return;
+				}
+
+				String providerName = connection.getIdentity();
+				ServiceProvider providerInstance = null;
+				if(providerName != null){
+					providerInstance = ProviderFactory.getProvider(providerName);
+				}
+
+				if(providerInstance != null && providerInstance.isResponseRequired() == true){
+					if(AppCommons.RESPONSE_OBJECT == null){
+						JOptionPane.showMessageDialog(rootPanel, AppMessages.ERROR_NO_DATA_TO_EXTRACT_METADATA);
+						return;
+					}
+				}
+
+				DefaultCusor.startWaitCursor(rootPanel);
+
+				model.removeAll();
+
+				MetadataReader metadataReader = null;
+				if(connection.getCategory().compareTo("KAPOW") == 0){
+					if(providerInstance != null && providerInstance.isResponseRequired() == false){
+						metadata = new Metadata();
+						metadata.setDiscovered(false);
+
+						WebResource resource = (WebResource)AppCommons.BUSINESS_OBJECT.getResource();
+						if(resource != null){
+							KapowObject object = null;
+
+							Object o = resource.getObject();
+							if(o instanceof KapowObject){
+								object = (KapowObject)o;
+							}
+							else {
+								logger.info(o);
+							}
+
+							if(object != null){
+								Type[] types = object.getReturnedTypes();
+								for(Type type : types){
+									Attribute[] attributes = type.getAttributes();
+
+									for(Attribute attribute : attributes){
+										String xpath = type.getTypeName() + "/" + attribute.getName() + "/" + attribute.getType().getName();
+										String name = attribute.getName();
+
+										metadata.put(xpath, name);
+									}
+								}
+							}
+						}
+					}
+				}
+				else if(connection.getCategory().compareTo("TWITTER_STREAMING") == 0) {
+					facetedMetadata = new FacetedMetadata();
+					facetedMetadata.setObject(AppCommons.RESPONSE_OBJECT.toString());
+					facetedMetadata.analyze();
+
+					Set<String> facets = facetedMetadata.getFacets();
+					String[] facetsArray = new String[facets.size()];
+					int index = 0;
+					for(String facet : facets){
+						facetsArray[index] = facet;
+						index++;
+
+						Metadata m = facetedMetadata.getMetadata(facet);
+						m.setUrl(AppCommons.BUSINESS_OBJECT.getResource().getUrl());
+						m.setVerb(AppCommons.BUSINESS_OBJECT.getResource().getVerb().name());
+					}
+
+					ComboBoxModel<String> model = new DefaultComboBoxModel<String>(facetsArray);
+					schemaFacets.setModel(model);
+				}
+				else {
+					Resource resource = AppCommons.BUSINESS_OBJECT.getResource();
+					TextFormat textFormat = TextFormat.UNKNOWN;
+
+					if(resource != null){
+						textFormat = resource.getTextFormat();
+					}
+
+					// Init metadata reader
+					if(textFormat == TextFormat.JSON){
+						metadataReader = new JSONMetadataReader(AppCommons.RESPONSE_OBJECT.toString());
+					}
+					else if (textFormat == TextFormat.XML){
+						metadataReader = new XMLMetadataReader(AppCommons.RESPONSE_OBJECT.toString());
+					}
+					else {
+						DefaultCusor.stopWaitCursor(rootPanel);
+
+						return;
+					}
+
+					// Fill other details
+					String nodeName = nodeNameTextField.getText();
+					if(nodeName != null && nodeName.trim().length() > 0){
+						metadataReader.beginProcessingAt(nodeName);
+					}
+
+					metadataReader.setLeafNodesOnly(false);
+					metadataReader.setDepth(3);
+
+					try{
+						metadataReader.initialize();
+						metadataReader.generateMetadata();
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}finally{
+					}
+
+					metadata = metadataReader.getMetadata();
+					metadata.setNodeName(nodeName);
+					metadata.setUrl(AppCommons.BUSINESS_OBJECT.getResource().getUrl());
+					metadata.setVerb(AppCommons.BUSINESS_OBJECT.getResource().getVerb().name());
+
+					metadata.compact();
+
+					// Fill FilterMetadata
+					FilterMetadata fm = AppCommons.BUSINESS_OBJECT.getFilterMetadata();
+					if(fm != null){
+						final String paramSuffix = "social/media/internal/request/param/";
+						for(RequestParamObject o : fm.paramValues()){
+							String xpath = paramSuffix + o.getExternalName() + "/$$" + o.getDefaultValue() + "$$/";
+							String name = o.getInternalName();
+
+							metadata.put(xpath, name);
+						}
+
+						final String headerSuffix = "social/media/internal/request/header/";
+						for(RequestParamObject o : fm.headerValues()){
+							String xpath = headerSuffix + o.getExternalName() + "/$$" + o.getDefaultValue() + "$$/";
+							String name = o.getInternalName();
+
+							metadata.put(xpath, name);
+						}
+
+
+						RequestParamObject payloadObject = fm.getPayload();
+						String payload = null;
+						if(payloadObject != null){
+							payload = payloadObject.getDefaultValue();
+						}
+
+						if(payload != null){
+							final String payloadSuffix = "social/media/internal/request/body/";
+
+							String xpath = payloadSuffix + payloadObject.getExternalName() + "/$$" + payload + "$$/";
+							String name = payloadObject.getInternalName();
+
+							metadata.put(xpath, name);
+						}
+					}
+				}
+
+				if(metadata != null){
+					for(String key : metadata.keySet()){
+						SchemaEntryModel data = new SchemaEntryModel();
+
+						String value = metadata.get(key);
+
+						data.setXpath(key);
+						data.setName(value);
+
+						model.setValueAt(data, 0, 0);
+					}
+				}
+
+				model.fireTableDataChanged();
+
+				copySchemaButton.setEnabled(model.getRowCount() > 0);
+
+				JTableUtils.packAllColumns(schemaTable, 2);
+
+				schemaTable.invalidate();
+				scrollPane.invalidate();
+				scrollPane.repaint();
+
+				// Update the meta-model
+				AppCommons.BUSINESS_OBJECT.setMetadata(metadata);
+				AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.BUSINESS_OBJECT.toJSON());
+				AppCommonsUI.MODEL_TEXTAREA.invalidate();
+
+				DefaultCusor.stopWaitCursor(rootPanel);
+			}
+		});
+	}
+}

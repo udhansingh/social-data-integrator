@@ -1,0 +1,291 @@
+/*
+   Copyright 2011 Udayakumar Dhansingh (Udy)
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   
+ */
+package org.onesun.smc.app.views.data;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
+import org.onesun.commons.swing.cursors.DefaultCusor;
+import org.onesun.commons.text.format.detectors.TextFormat;
+import org.onesun.smc.api.Connector;
+import org.onesun.smc.api.ProviderFactory;
+import org.onesun.smc.api.ServiceProvider;
+import org.onesun.smc.app.AppMessages;
+import org.onesun.smc.app.AppCommons;
+import org.onesun.smc.app.AppCommonsUI;
+import org.onesun.smc.app.handlers.RequestUpdateHandler;
+import org.onesun.smc.app.views.dialogs.SetterDialog;
+import org.onesun.smc.core.metadata.FilterMetadata;
+import org.onesun.smc.core.model.Authentication;
+import org.onesun.smc.core.model.RequestParamObject;
+import org.onesun.smc.core.resources.RESTResource;
+import org.onesun.smc.core.services.auth.Authenticator;
+import org.onesun.smc.core.services.rest.RestListener;
+import org.scribe.model.Verb;
+
+public class SocialMediaDataAccessView extends AbstractDataAccessView {
+	/**
+	 * 
+	 */
+	private static final long 			serialVersionUID	= 7628767091382680614L;
+	
+	private SetterDialog				setterDialog		= new SetterDialog(AppCommonsUI.MAIN_WINDOW);
+	private JComboBox<RESTResource>		urlComboBox			= new JComboBox<RESTResource>(AppCommonsUI.REST_RESOURCE_COMBOBOX_MODEL);
+	private JTextArea					dataTextArea		= new JTextArea();
+	private JScrollPane					scrollPane			= new JScrollPane(dataTextArea);
+	private JTextField					verbTextField		= new JTextField();
+	
+	public SocialMediaDataAccessView(){
+		super();
+	}
+
+	@Override
+	protected void preInit(){
+	}
+	
+	@Override
+	protected void init(){
+		// UI Object Initialization
+		this.addComponentListener(new ComponentListener() {
+
+			@Override
+			public void componentShown(ComponentEvent e) {
+				if(urlComboBox != null && urlComboBox.getModel().getSize() > 0){
+					int index = urlComboBox.getSelectedIndex();
+					
+					if(index < 0){
+						urlComboBox.setSelectedIndex(0);
+					}
+				}
+			}
+
+			@Override
+			public void componentResized(ComponentEvent e) {
+			}
+
+			@Override
+			public void componentMoved(ComponentEvent e) {
+			}
+
+			@Override
+			public void componentHidden(ComponentEvent e) {
+			}
+		});
+		
+		verbTextField.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
+		verbTextField.setPreferredSize(new Dimension(80, 24));
+		verbTextField.setEditable(false);
+		
+		dataTextArea.setEditable(false);
+		dataTextArea.setWrapStyleWord(true);
+		
+		JPanel panel = new JPanel(new BorderLayout(5, 5));
+		panel.add(verbTextField, BorderLayout.WEST);
+		panel.add(urlComboBox, BorderLayout.CENTER);
+
+		contentPanel.add(panel, BorderLayout.CENTER);
+		
+		JLabel label = new JLabel("Response Text");
+		responsePanel.add(label,  BorderLayout.NORTH);
+		responsePanel.add(scrollPane, BorderLayout.CENTER);
+		
+		// User Interactions
+		urlComboBox.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				Object o = e.getItem();
+				
+				if(o instanceof RESTResource && urlComboBox.getSelectedIndex() > 0){
+					// reset value
+					RESTResource resource = (RESTResource)o;
+					Verb v = resource.getVerb();
+					
+					String verbName = (v == null) ? "" : v.name();
+					verbTextField.setText(verbName);
+					
+					AppCommons.BUSINESS_OBJECT.setResource(resource);
+				}
+				else {
+					verbTextField.setText("");
+					AppCommons.BUSINESS_OBJECT.setResource(null);
+				}
+				
+				verbTextField.invalidate();
+				
+				AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.BUSINESS_OBJECT.toJSON());
+	    		AppCommonsUI.MODEL_TEXTAREA.invalidate();
+			}
+		});
+		
+		setterButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setterDialog.getView().initParamsModel();
+				setterDialog.setRequestUpdateHandler(new RequestUpdateHandler() {
+					@Override
+					public void update(final FilterMetadata fm) {
+						filterMetadata = fm;
+					}
+				});
+				setterDialog.setVisible(true);
+			}
+		});
+		
+		validateButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				RESTResource resource = (RESTResource)urlComboBox.getSelectedItem();
+				
+				if(resource == null) return;
+				RESTResource clone = (RESTResource) resource.clone();
+
+				Connector connection = AppCommons.BUSINESS_OBJECT.getConnection();
+
+				if(AppCommons.AUTHENTICATOR == null && clone.isAccessTokenRequired() == true){
+					if(connection == null){
+						JOptionPane.showMessageDialog(rootPanel, AppMessages.ERROR_TOKEN_MISSING);
+						return;
+					}
+				}
+				
+				String url = clone.getUrl();
+				if(url != null && url.trim().length() <= 0) return;
+				
+				DefaultCusor.startWaitCursor(rootPanel);
+				
+				// Set Query Params
+				String params = null;
+				Collection<RequestParamObject> requestParams = null;
+				if(filterMetadata != null) {
+					requestParams = filterMetadata.paramValues();
+				}
+				if(requestParams != null){
+					boolean start = true;
+					for(RequestParamObject param : requestParams){
+						String en = param.getExternalName();
+						if(en.startsWith("$")){
+							url = url.replace(en, param.getDefaultValue());
+						}
+						else {
+							if(start == true){
+								params = "?" + en + "=" + param.getDefaultValue();
+								start = false;
+							}
+							else {
+								params += "&" + en + "=" + param.getDefaultValue();
+							}
+						}
+					}
+				}
+				clone.setParameters(params);
+				
+				// Update URL
+				clone.setUrl(url);
+				
+				// Set Headers
+				Collection<RequestParamObject> requestHeaders = null;
+				if(filterMetadata != null){
+					requestHeaders = filterMetadata.headerValues();
+				}
+				if(requestHeaders != null){
+					Map<String, String> headers = new HashMap<String, String>();
+					for(RequestParamObject header : requestHeaders){
+						headers.put(header.getExternalName(), header.getDefaultValue());
+					}
+					clone.setHeaders(headers);
+				}
+				
+				// Set Payload
+				RequestParamObject payloadObject = null;
+				if(filterMetadata != null) {
+					payloadObject = filterMetadata.getPayload();
+				}
+				String payload = null;
+				if(payloadObject != null){
+					payload = payloadObject.getDefaultValue();
+				}
+				if(payload != null && payload.trim().length() > 0){
+					resource.setPayload(payload);
+				}
+				
+				ServiceProvider provider = ProviderFactory.getProvider(connection.getIdentity().toLowerCase(), "SOCIAL_MEDIA");
+				
+				RestListener executor = new RestListener(provider, clone, AppCommons.AUTHENTICATION, Authenticator.getCallbackurl());
+				
+				executor.setConnection(connection);
+				if(AppCommons.AUTHENTICATION == Authentication.OAUTH && AppCommons.AUTHENTICATOR != null){
+					executor.setOauthService(AppCommons.AUTHENTICATOR.getService());
+					executor.setAccessToken(AppCommons.AUTHENTICATOR.getAccessToken());
+				}
+				executor.execute();
+				
+				// reset this
+				clone.setParameters(null);
+				
+
+				try{
+					clone.setObject(executor.getResponseBody());
+					clone.checkFormat();
+					TextFormat textFormat = clone.getTextFormat();
+
+					String statusText =  "Status: " + executor.getResponseCode() + "; Data Format: " + textFormat.name();
+					setStatus(statusText);
+					
+					final String response = clone.getFormattedText();
+					
+					if(response != null){
+						dataTextArea.setText(response);
+						AppCommons.RESPONSE_OBJECT = response;
+					}
+				} finally{
+				}
+				
+				// Update the meta-model
+				AppCommons.BUSINESS_OBJECT.setResource(clone);
+	    		AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.BUSINESS_OBJECT.toJSON());
+	    		AppCommonsUI.MODEL_TEXTAREA.invalidate();
+				
+				dataTextArea.invalidate();
+				scrollPane.invalidate();
+				
+				DefaultCusor.stopWaitCursor(rootPanel);
+			}
+		});
+	}
+	
+	@Override
+	protected void postInit(){
+	}
+}
