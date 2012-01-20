@@ -40,25 +40,25 @@ public class AppCommons {
 	
 	public static BusinessObject 						BUSINESS_OBJECT					= new BusinessObject();
 
-	public static String 								APPLICATION_TITLE				= "Social Data Integrator (V1.0.0)";
+	public static String 								APPLICATION_TITLE				= "Social Data Integrator";
 	
 	public static Authentication 						AUTHENTICATION					= Authentication.NONE;
 
-	public static int 									HTTP_CONNECTION_TIMEOUT			= 1000 * 12;
+	public static int 									HTTP_CONNECTION_TIMEOUT			= 1000 * 25;
 	
 	public static Authenticator 						AUTHENTICATOR					= null;
 	
 	public static Object 								RESPONSE_OBJECT					= null;
 	
-	public static String								PATH_TO_SDI_HOME				= null;
+	public static String								PATH_TO_APP_HOME				= null;
 	
 	public static String 								PATH_TO_WORK					= null;
 	
-	public static String								PATH_TO_CONFIG					= null;
+	public static String								PATH_TO_APP_CONFIG				= null;
 	
 	public static String								PATH_TO_CORE					= null;
 	
-	public static String								PATH_TO_DATA_ACCESS					= null;
+	public static String								PATH_TO_DATA_ACCESS				= null;
 	
 	public static String								PATH_TO_MASTER_METADATA			= null;
 
@@ -86,9 +86,9 @@ public class AppCommons {
 		} catch (UnknownHostException e) {
 		}
 		
-		PATH_TO_SDI_HOME = System.getenv("SDI_HOME");
+		PATH_TO_APP_HOME = System.getenv("SDI_HOME");
 		
-		if(PATH_TO_SDI_HOME == null){
+		if(PATH_TO_APP_HOME == null){
 			String os = System.getProperty("os.name");
 			os = os.trim();
 			
@@ -96,29 +96,29 @@ public class AppCommons {
 			
 			if(os.toLowerCase().startsWith("windows")){
 				// Windows
-				PATH_TO_SDI_HOME = "/sdi/workspace";
+				PATH_TO_APP_HOME = "/sdi/workspace";
 			} else {
 				// *NIX
-				PATH_TO_SDI_HOME = "/home/sdi/workspace";
+				PATH_TO_APP_HOME = "/home/sdi/workspace";
 			}
 		}
 		
-		if(PATH_TO_SDI_HOME.endsWith("/") == false){
-			PATH_TO_SDI_HOME += "/";
+		if(PATH_TO_APP_HOME.endsWith("/") == false){
+			PATH_TO_APP_HOME += "/";
 		}
 		
-		logger.info("SDI_HOME=" + PATH_TO_SDI_HOME);
+		logger.info("SDI_HOME=" + PATH_TO_APP_HOME);
 		
 		// Initialize
-		PATH_TO_WORK				= PATH_TO_SDI_HOME	+ "work/";
-		PATH_TO_CONFIG				= PATH_TO_SDI_HOME	+ "etc/conf/";
-		PATH_TO_MASTER_METADATA		= PATH_TO_SDI_HOME	+ "etc/master-metadata/";
-		PATH_TO_DATA_ACCESS			= PATH_TO_CONFIG	+ "data-access/";
-		PATH_TO_CORE				= PATH_TO_CONFIG	+ "core/";
-		PATH_TO_CONNECTIONS			= PATH_TO_CONFIG	+ "connections/";
-		CONFIG_FILE_PATH			= PATH_TO_CONFIG	+ "sdi.properties";
+		PATH_TO_WORK				= PATH_TO_APP_HOME		+ "work/";
+		PATH_TO_APP_CONFIG			= PATH_TO_APP_HOME		+ "etc/conf/";
+		PATH_TO_MASTER_METADATA		= PATH_TO_APP_HOME		+ "etc/master-metadata/";
+		PATH_TO_DATA_ACCESS			= PATH_TO_APP_CONFIG	+ "data-access/";
+		PATH_TO_CORE				= PATH_TO_APP_CONFIG	+ "core/";
+		PATH_TO_CONNECTIONS			= PATH_TO_APP_CONFIG	+ "connections/";
+		CONFIG_FILE_PATH			= PATH_TO_APP_CONFIG	+ "core.properties";
 		
-		File dir = new File(PATH_TO_CONFIG);
+		File dir = new File(PATH_TO_APP_CONFIG);
 		if(dir.exists() == false){
 			dir.mkdirs();
 		}

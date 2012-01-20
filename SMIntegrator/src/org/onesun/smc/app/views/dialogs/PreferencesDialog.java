@@ -127,7 +127,7 @@ public class PreferencesDialog extends AbstractDialog {
 		label.setLabelFor(smcDirTextField);
 		panel.add(smcDirTextField);
 		smcDirTextField.setEditable(false);
-		smcDirTextField.setText(AppCommons.PATH_TO_SDI_HOME);
+		smcDirTextField.setText(AppCommons.PATH_TO_APP_HOME);
 		
 		
 		SpringLayoutUtils.makeCompactGrid(panel, 4, 1, 5, 5,	5, 5);
