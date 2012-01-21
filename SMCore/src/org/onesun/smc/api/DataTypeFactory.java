@@ -127,7 +127,7 @@ public class DataTypeFactory {
 						try{
 
 							DataType item = new DataType();
-							item.setName(XMLUtils.getValue(element, "identity"));
+							item.setName(XMLUtils.getValue(element, "name"));
 							
 							String className = XMLUtils.getValue(element, "class");
 							Class<?> clazz = Class.forName(className);
