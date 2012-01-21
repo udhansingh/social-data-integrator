@@ -29,6 +29,7 @@ import org.onesun.smc.api.ConfigurationHelper;
 import org.onesun.smc.api.ConnectionsFactory;
 import org.onesun.smc.api.ConnectorViewsFactory;
 import org.onesun.smc.api.DataServicesFactory;
+import org.onesun.smc.api.DataTypeFactory;
 import org.onesun.smc.api.FilterFactory;
 import org.onesun.smc.api.ProviderFactory;
 import org.onesun.smc.app.model.BusinessObject;
@@ -176,6 +177,8 @@ public class AppCommons {
 		setup();
 		
 		// Load Data
+		DataTypeFactory.load();
+		
 		ConnectionsFactory.load(PATH_TO_CORE + "connectors.xml");
 		ConnectionsFactory.loadConnections(PATH_TO_CONNECTIONS);
 		

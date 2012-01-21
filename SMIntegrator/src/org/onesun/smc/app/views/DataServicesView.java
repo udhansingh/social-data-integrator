@@ -127,7 +127,7 @@ public class DataServicesView extends JPanel {
 					dataTable.setModel(datasetModel);
 					rowCountLabel.setText("Rows: " + datasetModel.getRowCount() + ", Columns: " + datasetModel.getColumnCount());
 
-					JTableUtils.packAllColumns(dataTable, 2);
+					JTableUtils.packColumns(dataTable, 2);
 					rowCountLabel.invalidate();
 					dataTable.invalidate();
 					dataTable.validate();
@@ -241,7 +241,7 @@ public class DataServicesView extends JPanel {
 				datasetModel.fireTableDataChanged();
 				dataTable.setModel(datasetModel);
 
-				JTableUtils.packAllColumns(dataTable, 2);
+				JTableUtils.packColumns(dataTable, 2);
 
 				dataTable.invalidate();
 				dataTable.validate();

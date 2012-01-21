@@ -20,11 +20,17 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.commons.lang3.math.NumberUtils;
+import org.onesun.smc.core.model.MetaObject;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class Metadata {
 	private boolean discovered = true;
@@ -38,7 +44,7 @@ public class Metadata {
 	}
 
 	// key=Path, value=Name
-	private Map<String, String> map = Collections.synchronizedMap(new TreeMap<String, String>());
+	private Map<String, MetaObject> map = Collections.synchronizedMap(new TreeMap<String, MetaObject>());
 	private String nodeName = null;
 	private String url = null;
 	private String verb = null;
@@ -89,7 +95,7 @@ public class Metadata {
 		return map.containsKey(key);
 	}
 
-	public String get(String key) {
+	public MetaObject get(String key) {
 		return map.get(key);
 	}
 	
@@ -114,8 +120,9 @@ public class Metadata {
 		}
 	}
 
-	public void put(String key, String value) {
-		map.put(key, normalized(value));
+	public void put(String key, MetaObject value) {
+		value.setName(normalized(value.getPath()));
+		map.put(key, value);
 	}
 
 	public void setNodeName(String nodeName) {
@@ -134,25 +141,119 @@ public class Metadata {
 		return map.size();
 	}
 	
-	public Properties toProperties(){
-		Properties p = new Properties();
-		
-		p.put("social.media.internal.node.name", (nodeName == null) ? "" : nodeName);
-		p.put("social.media.internal.url", (url == null) ? "" : url);
-		p.put("social.media.internal.verb", (verb == null) ? "" : verb);
-		
-		for(String k : map.keySet()){
-			p.put(k, map.get(k));
+	public Document toDocument() {
+		try {
+			DocumentBuilderFactory documentBuilderFactory = 
+					DocumentBuilderFactory.newInstance();
+			DocumentBuilder documentBuilder = 
+					documentBuilderFactory.newDocumentBuilder();
+			Document document = documentBuilder.newDocument();
+			
+			Element root = document.createElement("root");
+
+			Element parent = null;
+			Element child = null;
+			MetaObject mo = null;
+			
+			// node name
+			mo = new MetaObject();
+			mo.setName(nodeName);
+			mo.setPath("social.media.internal.node.name");
+
+			parent = document.createElement("item");
+			
+			child = document.createElement("path");
+			child.setTextContent(mo.getPath());
+			parent.appendChild(child);
+			
+			child = document.createElement("name");
+			child.setTextContent(mo.getName());
+			parent.appendChild(child);
+			
+			child = document.createElement("type");
+			child.setTextContent(mo.getType());
+			parent.appendChild(child);
+			
+			root.appendChild(parent);
+			
+			// url
+			mo = new MetaObject();
+			mo.setName(url);
+			mo.setPath("social.media.internal.url");
+
+			parent = document.createElement("item");
+			
+			child = document.createElement("path");
+			child.setTextContent(mo.getPath());
+			parent.appendChild(child);
+			
+			child = document.createElement("name");
+			child.setTextContent(mo.getName());
+			parent.appendChild(child);
+
+			child = document.createElement("type");
+			child.setTextContent(mo.getType());
+			parent.appendChild(child);
+			
+			root.appendChild(parent);
+			
+			
+			// verb
+			mo = new MetaObject();
+			mo.setName(verb);
+			mo.setPath("social.media.internal.verb");
+
+			parent = document.createElement("item");
+			
+			child = document.createElement("path");
+			child.setTextContent(mo.getPath());
+			parent.appendChild(child);
+			
+			child = document.createElement("name");
+			child.setTextContent(mo.getName());
+			parent.appendChild(child);
+			
+			child = document.createElement("type");
+			child.setTextContent(mo.getType());
+			parent.appendChild(child);
+			
+			root.appendChild(parent);
+			
+			// rest of the items
+			for(String k : map.keySet()){
+				mo = map.get(k);
+				
+				parent = document.createElement("item");
+				
+				child = document.createElement("path");
+				child.setTextContent(mo.getPath());
+				parent.appendChild(child);
+				
+				child = document.createElement("name");
+				child.setTextContent(mo.getName());
+				parent.appendChild(child);
+
+				child = document.createElement("type");
+				child.setTextContent(mo.getType());
+				parent.appendChild(child);
+				
+				root.appendChild(parent);
+			}
+				
+			root.appendChild(parent);
+			document.appendChild(root);
+			
+			return document;
+			
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}finally{
 		}
 		
-		return p;
+		return null;
 	}
 
-	public String toString(){
-		return toProperties().toString();
-	}
-
-	public Collection<String> values() {
+	public Collection<MetaObject> values() {
 		return map.values();
 	}
 }

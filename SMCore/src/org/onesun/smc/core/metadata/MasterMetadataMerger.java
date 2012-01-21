@@ -17,15 +17,22 @@
 package org.onesun.smc.core.metadata;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.util.Properties;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.onesun.commons.xml.XMLUtils;
+import org.onesun.smc.core.model.MetaObject;
+import org.onesun.smc.core.tools.XMLImporter;
+import org.w3c.dom.Comment;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+import com.sun.org.apache.xml.internal.serialize.OutputFormat;
+import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 public class MasterMetadataMerger {
 	private static Logger logger = Logger.getLogger(MasterMetadataMerger.class);
@@ -51,82 +58,112 @@ public class MasterMetadataMerger {
 		}
 	}
 	
-	public void merge(Metadata m){
-		final String comment = providerName + " --> " + resourceName;
+	public void merge(Metadata metadata){
+		final String commentText = providerName + " --> " + resourceName;
 		
-		Properties p = m.toProperties();
+		Document document = metadata.toDocument();
+		Comment comment = document.createComment(commentText);
+		document.appendChild(comment);
+		
 		// Create to master metadata
 		File file = new File(fileName);
-		if(! file.exists() ){
-			try {
-				// Write master metadata
-				Writer writer = new FileWriter(file);
-				p.store(writer, comment);
-				
-				// Close writer
-				writer.close();
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
-			finally{
-			}
-		}
-		else {
+		if(file.exists()){
 			// Merge and write master metadata
 			try{
-				Reader reader = new FileReader(file);
-				Properties pt = new Properties();
-				pt.load(reader);
+				MetadataImporter mi = new MetadataImporter();
+				mi.load(fileName);
+				
+				List<MetaObject> items = mi.getItems();
 				
 				// merge master into cache
-				for(Object o : p.keySet()){
-					String ostr = (String)o;
-					String value = (String)p.get(ostr);
+				for(MetaObject item : items){
+					String key = item.getPath();
 					
-					if(! pt.containsKey(ostr) ){
-						pt.put(ostr, value);
+					if(! metadata.containsKey(key) ){
+						metadata.put(key, item);
 					}
 					else {
-						String oldValue = pt.getProperty(ostr);
-						
-						if(oldValue.compareTo(value) != 0){
-							pt.put(ostr, value);
+						// Assume in-memory version is latest;
+					}
+				}
+				
+			}finally {
+			}
+		}
+		
+		// compact cached model
+		metadata.compact();
+		
+		try {
+			// Write master metadata
+			OutputFormat format = new OutputFormat(document);
+			format.setIndenting(true);
+
+			XMLSerializer serializer = new XMLSerializer(new FileOutputStream(file), format);
+			logger.info("Serializing completed for: " + file.getAbsolutePath());
+			serializer.serialize(document);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+		finally{
+		}
+	}
+	
+	private static class MetadataImporter extends XMLImporter {
+		public MetadataImporter() {
+			super();
+		}
+
+		private List<MetaObject> items = new ArrayList<MetaObject>();
+
+		public List<MetaObject> getItems(){
+			return items;
+		}
+		
+		@Override
+		public void process() {
+		}
+
+		@Override
+		public void parse(Object object) {
+			if(object != null && object instanceof Document){
+				Document document = (Document)object;
+
+				Element root = document.getDocumentElement();
+
+				NodeList nodes = root.getElementsByTagName("item");
+				if(nodes != null && nodes.getLength() > 0){
+					for(int index = 0; index < nodes.getLength(); index++){
+						Element element = (Element)nodes.item(index);
+
+						try{
+							MetaObject item = new MetaObject();
+							item.setName(XMLUtils.getValue(element, "name"));
+							item.setPath(XMLUtils.getValue(element, "path"));
+							item.setType(XMLUtils.getValue(element, "type"));
+
+							items.add(item);
+						}catch(Exception e){
+							logger.error("Exception while extracting subscriptions : " + e.getMessage());
 						}
 					}
 				}
-				
-				// Update cached Model
-				for(Object o : pt.keySet()){
-					String ostr = (String)o;
-					
-					if(! ostr.contains("social.media.internal.")){
-						m.put(ostr, ostr);
-					}
-				}
-				
-				// compact cached model
-				m.compact();
-				// make properties from compacted metadata
-				pt = m.toProperties();
-				
-				// Close Reader
-				reader.close();
-				
-				// don't write if they are same
-				logger.info("Master metadata changed for " + fileName);
-
-				// Write master metadata
-				Writer writer = new FileWriter(file);
-				pt.store(writer, comment);
-
-				// Close writer
-				writer.close();
-			} catch (FileNotFoundException ex) {
-				ex.printStackTrace();
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			} finally {
 			}
+		}
+
+		@Override
+		public boolean load(String pathToImports) {
+			File file = new File(pathToImports);
+			setResource(file);
+
+			init();
+			process();
+
+			if(items != null && items.size() > 0){
+				return true;
+			}
+
+			return false;
 		}
 	}
 }

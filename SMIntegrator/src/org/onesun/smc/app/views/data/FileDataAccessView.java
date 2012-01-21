@@ -128,14 +128,15 @@ public class FileDataAccessView extends AbstractDataAccessView {
 				DefaultCusor.startWaitCursor(rootPanel);
 				
 				Resource resource = new FileResource(fileName);
-				String[] tokens = fileName.split(File.separator);
-				
-				if(tokens != null && tokens.length > 0){
-					resource.setResourceName(tokens[tokens.length - 1]); 
-				}
+				File file = new File(fileName);
+//				String[] tokens = fileName.split(File.separator);
+				resource.setResourceName(file.getName());
+//				if(tokens != null && tokens.length > 0){
+//					tokens[tokens.length - 1]); 
+//				}
 				
 				try{
-					resource.setObject(StreamUtils.streamToString(new File(fileName)));
+					resource.setObject(StreamUtils.streamToString(file));
 					resource.checkFormat();
 					TextFormat textFormat = resource.getTextFormat();
 					String statusText = "Data Format: " + textFormat.name();

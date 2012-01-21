@@ -25,6 +25,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
 import org.onesun.smc.core.metadata.Metadata;
+import org.onesun.smc.core.model.MetaObject;
 
 
 public class DatasetModel extends AbstractTableModel {
@@ -54,7 +55,8 @@ public class DatasetModel extends AbstractTableModel {
 			
 			// Value contains SQL Compatible column name
 			if(key != null){
-				return metadata.get(key);
+				MetaObject o = metadata.get(key); 
+				return o.getName();
 			}
 		}
 		
@@ -154,7 +156,7 @@ public class DatasetModel extends AbstractTableModel {
 		fireTableDataChanged();
 	}
 
-	public void addMetadata(String key, String value) {
+	public void addMetadata(String key, MetaObject value) {
 		metadata.put(key, value);
 	}
 

@@ -21,6 +21,7 @@ import java.util.Iterator;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.onesun.smc.core.model.MetaObject;
 
 public class JSONMetadataReader extends AbstractMetadataReader {
 	protected String jsonData = null;
@@ -119,7 +120,10 @@ public class JSONMetadataReader extends AbstractMetadataReader {
 		Metadata metadata = new Metadata();
 
 		for (String path : paths) {
-			metadata.put(path, path);
+			MetaObject mo = new MetaObject();
+			mo.setPath(path);
+			
+			metadata.put(path, mo);
 		}
 
 		return metadata;

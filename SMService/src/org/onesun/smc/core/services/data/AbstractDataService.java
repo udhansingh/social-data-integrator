@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 import org.onesun.commons.text.classification.TextClassificaionHelper;
 import org.onesun.smc.api.DataService;
 import org.onesun.smc.core.metadata.Metadata;
+import org.onesun.smc.core.model.MetaObject;
 
 public abstract class AbstractDataService implements DataService {
 	private static Logger logger = Logger.getLogger(AbstractDataService.class);
@@ -62,7 +63,10 @@ public abstract class AbstractDataService implements DataService {
 		boolean columnExists = metadata.containsKey(columnName);
 
 		if(columnExists == false){
-			metadata.put(columnName, columnName);
+			MetaObject mo = new MetaObject();
+			mo.setPath(columnName);
+			
+			metadata.put(columnName, mo);
 		}
 	}
 	

@@ -17,23 +17,23 @@
 package org.onesun.smc.app.views;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.AbstractButton;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonModel;
 import javax.swing.ComboBoxModel;
+import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -48,6 +48,8 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SpringLayout;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 import org.apache.log4j.Logger;
 import org.onesun.commons.swing.JTableUtils;
@@ -55,16 +57,16 @@ import org.onesun.commons.swing.SpringLayoutUtils;
 import org.onesun.commons.swing.cursors.DefaultCusor;
 import org.onesun.commons.text.format.detectors.TextFormat;
 import org.onesun.smc.api.Connector;
+import org.onesun.smc.api.DataPreviewer;
+import org.onesun.smc.api.DataTypeFactory;
 import org.onesun.smc.api.MetadataReader;
 import org.onesun.smc.api.ProviderFactory;
 import org.onesun.smc.api.Resource;
 import org.onesun.smc.api.ServiceProvider;
-import org.onesun.smc.app.AppIcons;
-import org.onesun.smc.app.AppMessages;
 import org.onesun.smc.app.AppCommons;
 import org.onesun.smc.app.AppCommonsUI;
-import org.onesun.smc.app.model.SchemaEntryModel;
-import org.onesun.smc.app.model.SchemaModel;
+import org.onesun.smc.app.AppMessages;
+import org.onesun.smc.app.model.MetadataTableModel;
 import org.onesun.smc.core.metadata.FacetedMetadata;
 import org.onesun.smc.core.metadata.FilterMetadata;
 import org.onesun.smc.core.metadata.JSONMetadataReader;
@@ -72,6 +74,8 @@ import org.onesun.smc.core.metadata.MasterMetadataMerger;
 import org.onesun.smc.core.metadata.Metadata;
 import org.onesun.smc.core.metadata.XMLMetadataReader;
 import org.onesun.smc.core.model.Authentication;
+import org.onesun.smc.core.model.DataType;
+import org.onesun.smc.core.model.MetaObject;
 import org.onesun.smc.core.model.RequestParamObject;
 import org.onesun.smc.core.providers.web.kapow.KapowObject;
 import org.onesun.smc.core.resources.WebResource;
@@ -88,9 +92,9 @@ public class MetadataTableView extends JPanel {
 
 	private MetadataTableView rootPanel = this;
 
-	private SchemaModel model = new SchemaModel();
-	private JTable schemaTable = new JTable(model);
-	private JScrollPane scrollPane = new JScrollPane(schemaTable);
+	private MetadataTableModel model = new MetadataTableModel();
+	private JTable table = new JTable(model);
+	private JScrollPane scrollPane = new JScrollPane(table);
 	private JTextField nodeNameTextField = new JTextField();
 	private JButton discoverSchemaButton = new JButton("Discover Schema");
 	private JButton mergeSchemaButton = new JButton("Merge To Master");
@@ -103,7 +107,9 @@ public class MetadataTableView extends JPanel {
 	private JComboBox<String> schemaFacets = new JComboBox<String>();
 	private FacetedMetadata facetedMetadata = null;
 	private Metadata metadata = null;
-	private JButton copySchemaButton = new JButton("Copy to clipboard", AppIcons.getIcon("copy"));
+	//	private JButton copySchemaButton = new JButton("Copy to clipboard", AppIcons.getIcon("copy"));
+
+	private DataPreviewer dataPreviewer = null;
 
 	public MetadataTableView(){
 		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -120,8 +126,6 @@ public class MetadataTableView extends JPanel {
 				else {
 					schemaFacets.setEnabled(false);
 				}
-
-				copySchemaButton.setEnabled(model.getRowCount() > 0);
 			}
 
 			@Override
@@ -136,17 +140,31 @@ public class MetadataTableView extends JPanel {
 			public void componentHidden(ComponentEvent e) {
 			}
 		});
+
+		int vColIndex = 2;
+		TableColumn col = table.getColumnModel().getColumn(vColIndex);
+
+		Map<String, DataType> types = DataTypeFactory.getDataTypes();
+		String[] typeArray = new String[types.size()];
+
+		int index = 0;
+		for(String type : types.keySet()){
+			typeArray[index++] = type; 
+		}
+
+		col.setCellEditor(new ComboBoxEditor(typeArray));
+		col.setCellRenderer(new ComboBoxRenderer(typeArray));
 	}
 
 	private void createControls(){
 		Dimension viewPort = new Dimension(250, 900);
 
-		schemaTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		schemaTable.setAutoscrolls(true);
-		schemaTable.setRowSelectionAllowed(false);
-		schemaTable.setColumnSelectionAllowed(false);
-		schemaTable.setCellSelectionEnabled(true);
-		schemaTable.getTableHeader().setReorderingAllowed(false);
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		table.setAutoscrolls(true);
+		table.setRowSelectionAllowed(false);
+		table.setColumnSelectionAllowed(false);
+		table.setCellSelectionEnabled(true);
+		table.getTableHeader().setReorderingAllowed(false);
 
 		JPanel panel = null;
 		JLabel label = null;
@@ -211,10 +229,6 @@ public class MetadataTableView extends JPanel {
 		SpringLayoutUtils.makeCompactGrid(panel, 2, 1, 5, 5,	5, 5);
 		this.add(panel);
 
-		panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		panel.add(copySchemaButton);
-		this.add(panel);
-
 		schemaFacets.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -224,28 +238,15 @@ public class MetadataTableView extends JPanel {
 					String facet = (String)o;
 
 					if(facetedMetadata != null){
-						model.removeAll();
-
 						Metadata m = facetedMetadata.getMetadata(facet);
-
-						for(String key : m.keySet()){
-							SchemaEntryModel data = new SchemaEntryModel();
-
-							String value = m.get(key);
-
-							data.setXpath(key);
-							data.setName(value);
-
-							model.setValueAt(data, 0, 0);
-						}
-
+						
+						model.setMetadata(m);
 						model.fireTableDataChanged();
 
-						copySchemaButton.setEnabled(model.getRowCount() > 0);
+						JTableUtils.packColumns(table, 2);
+						JTableUtils.packRows(table, 2);
 
-						JTableUtils.packAllColumns(schemaTable, 2);
-
-						schemaTable.invalidate();
+						table.invalidate();
 						scrollPane.invalidate();
 						scrollPane.repaint();
 
@@ -255,18 +256,6 @@ public class MetadataTableView extends JPanel {
 						AppCommonsUI.MODEL_TEXTAREA.invalidate();
 					}
 				}
-			}
-		});
-
-		copySchemaButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Metadata metadata = AppCommons.BUSINESS_OBJECT.getMetadata();
-				String data = metadata.toString();
-
-				StringSelection content = new StringSelection(data);
-				Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
-				cb.setContents(content, content);
 			}
 		});
 
@@ -322,8 +311,6 @@ public class MetadataTableView extends JPanel {
 
 				DefaultCusor.startWaitCursor(rootPanel);
 
-				model.removeAll();
-
 				MetadataReader metadataReader = null;
 				if(connection.getCategory().compareTo("KAPOW") == 0){
 					if(providerInstance != null && providerInstance.isResponseRequired() == false){
@@ -351,7 +338,11 @@ public class MetadataTableView extends JPanel {
 										String xpath = type.getTypeName() + "/" + attribute.getName() + "/" + attribute.getType().getName();
 										String name = attribute.getName();
 
-										metadata.put(xpath, name);
+										MetaObject mo  = new MetaObject();
+										mo.setPath(xpath);
+										mo.setName(name);
+
+										metadata.put(xpath, mo);
 									}
 								}
 							}
@@ -431,7 +422,11 @@ public class MetadataTableView extends JPanel {
 							String xpath = paramSuffix + o.getExternalName() + "/$$" + o.getDefaultValue() + "$$/";
 							String name = o.getInternalName();
 
-							metadata.put(xpath, name);
+							MetaObject mo  = new MetaObject();
+							mo.setPath(xpath);
+							mo.setName(name);
+
+							metadata.put(xpath, mo);
 						}
 
 						final String headerSuffix = "social/media/internal/request/header/";
@@ -439,7 +434,11 @@ public class MetadataTableView extends JPanel {
 							String xpath = headerSuffix + o.getExternalName() + "/$$" + o.getDefaultValue() + "$$/";
 							String name = o.getInternalName();
 
-							metadata.put(xpath, name);
+							MetaObject mo  = new MetaObject();
+							mo.setPath(xpath);
+							mo.setName(name);
+
+							metadata.put(xpath, mo);
 						}
 
 
@@ -455,31 +454,25 @@ public class MetadataTableView extends JPanel {
 							String xpath = payloadSuffix + payloadObject.getExternalName() + "/$$" + payload + "$$/";
 							String name = payloadObject.getInternalName();
 
-							metadata.put(xpath, name);
+							MetaObject mo = new MetaObject();
+							mo.setPath(xpath);
+							mo.setName(name);
+
+							metadata.put(xpath, mo);
 						}
 					}
 				}
 
-				if(metadata != null){
-					for(String key : metadata.keySet()){
-						SchemaEntryModel data = new SchemaEntryModel();
-
-						String value = metadata.get(key);
-
-						data.setXpath(key);
-						data.setName(value);
-
-						model.setValueAt(data, 0, 0);
-					}
-				}
-
+				model.setMetadata(metadata);
 				model.fireTableDataChanged();
 
-				copySchemaButton.setEnabled(model.getRowCount() > 0);
+				boolean status = model.getRowCount() > 0;
+				//				copySchemaButton.setEnabled(status);
 
-				JTableUtils.packAllColumns(schemaTable, 2);
+				JTableUtils.packColumns(table, 2);
+				JTableUtils.packRows(table, 2);
 
-				schemaTable.invalidate();
+				table.invalidate();
 				scrollPane.invalidate();
 				scrollPane.repaint();
 
@@ -488,8 +481,57 @@ public class MetadataTableView extends JPanel {
 				AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.BUSINESS_OBJECT.toJSON());
 				AppCommonsUI.MODEL_TEXTAREA.invalidate();
 
+				if(status == true && dataPreviewer != null){
+					dataPreviewer.generate();
+				}
+
 				DefaultCusor.stopWaitCursor(rootPanel);
 			}
 		});
+	}
+
+	public DataPreviewer getDataPreviewer() {
+		return dataPreviewer;
+	}
+
+	public void setDataPreviewer(DataPreviewer dataPreviewer) {
+		this.dataPreviewer = dataPreviewer;
+	}
+
+	private static class ComboBoxRenderer extends JComboBox<String> implements TableCellRenderer {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 8017092061769520797L;
+
+		public ComboBoxRenderer(String[] items) {
+			super(items);
+		}
+
+		public Component getTableCellRendererComponent(JTable table, Object value,
+				boolean isSelected, boolean hasFocus, int row, int column) {
+			if (isSelected) {
+				setForeground(table.getSelectionForeground());
+				super.setBackground(table.getSelectionBackground());
+			} else {
+				setForeground(table.getForeground());
+				setBackground(table.getBackground());
+			}
+
+			// Select the current value
+			setSelectedItem(value);
+			return this;
+		}
+	}
+
+	private static class ComboBoxEditor extends DefaultCellEditor {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 5104344847656280260L;
+
+		public ComboBoxEditor(String[] items) {
+			super(new JComboBox<String>(items));
+		}
 	}
 }

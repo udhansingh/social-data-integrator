@@ -25,7 +25,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import org.onesun.commons.swing.MainWindow;
-import org.onesun.smc.app.views.SMCMainView;
+import org.onesun.smc.app.views.AppMainView;
 
 
 public class App {
@@ -54,7 +54,7 @@ public class App {
 		mainWindow.setIconImage(applicationIcon.getImage());
 		
 		// mw.setResizable(false);
-		mainWindow.add(new SMCMainView(), BorderLayout.CENTER);
+		mainWindow.add(new AppMainView(), BorderLayout.CENTER);
 		
 		Dimension d = new Dimension(1000, 735);
 		mainWindow.setPreferredSize(d);

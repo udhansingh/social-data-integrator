@@ -190,7 +190,7 @@ public class ColoredTableView extends JFrame implements MouseListener{
 			this.dispose();
 			return;
 		}
-		JTableUtils.packAllColumns(dataTable, 2);
+		JTableUtils.packColumns(dataTable, 2);
 		
 		JScrollPane scrollPane = new JScrollPane(dataTable);
 		this.add(scrollPane, BorderLayout.CENTER);

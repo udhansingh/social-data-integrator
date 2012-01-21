@@ -32,6 +32,7 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.onesun.smc.core.exceptions.InvalidDataException;
+import org.onesun.smc.core.model.MetaObject;
 import org.xml.sax.InputSource;
 
 public class XMLMetadataReader extends AbstractMetadataReader {
@@ -167,7 +168,9 @@ public class XMLMetadataReader extends AbstractMetadataReader {
 	public void generateMetadata() throws Exception {
 		pathtree.generate();
 		for (String path : pathtree.xpaths) {
-			metadata.put(path, path);
+			MetaObject mo = new MetaObject();
+			mo.setPath(path);
+			metadata.put(path, mo);
 		}
 
 	}
