@@ -177,7 +177,7 @@ public class AppCommons {
 		setup();
 		
 		// Load Data
-		DataTypeFactory.load();
+		DataTypeFactory.load(PATH_TO_CORE + "core-data-types.xml");
 		
 		ConnectionsFactory.load(PATH_TO_CORE + "connectors.xml");
 		ConnectionsFactory.loadConnections(PATH_TO_CONNECTIONS);
