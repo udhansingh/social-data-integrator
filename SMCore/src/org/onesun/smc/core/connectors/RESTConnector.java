@@ -77,15 +77,15 @@ public class RESTConnector extends AbstractConnector {
 		FileOutputStream fos = new FileOutputStream(file);
 		
 		Properties properties = new Properties();
-		properties.put("authentication", getAuthentication().name());
-		properties.put("connectionName", getName());
+		properties.put("authentication", getAuthentication().name().trim());
+		properties.put("connectionName", getName().trim());
 		
 		String providerName = getIdentity();
 		providerName = (providerName == null) ? "General" : providerName;
 		
-		properties.put("identity", providerName);
+		properties.put("identity", providerName.trim());
 		
-		properties.put("username", getUsername());
+		properties.put("username", getUsername().trim());
 		properties.put("password", getPassword());
 		
 		properties.store(fos, "BasicHttp Connection Properties");

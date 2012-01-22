@@ -87,15 +87,15 @@ public class FileSystemConnector extends AbstractConnector {
 		FileOutputStream fos = new FileOutputStream(file);
 		
 		Properties properties = new Properties();
-		properties.put("authentication", getAuthentication().name());
-		properties.put("connectionName", getName());
+		properties.put("authentication", getAuthentication().name().trim());
+		properties.put("connectionName", getName().trim());
 		
 		String providerName = getIdentity();
 		providerName = (providerName == null || (providerName != null && providerName.isEmpty())) ? "File System" : providerName;
 		
-		properties.put("identity", providerName);
+		properties.put("identity", providerName.trim());
 		
-		properties.put("path", getPath());
+		properties.put("path", getPath().trim());
 		properties.put("filter", getFilter().toString().replace("[", "").replace("]", ""));
 		
 		properties.store(fos, "File Connection Properties");

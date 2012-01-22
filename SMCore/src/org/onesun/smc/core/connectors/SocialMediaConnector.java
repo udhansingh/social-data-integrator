@@ -146,11 +146,11 @@ public class SocialMediaConnector extends AbstractConnector {
 		FileOutputStream fos = new FileOutputStream(file);
 		
 		Properties properties = new Properties();
-		properties.put("authentication", getAuthentication().name());
-		properties.put("connectionName", getName());
-		properties.put("identity", getIdentity());
-		properties.put("apiKey", getApiKey());
-		properties.put("apiSecret", getApiSecret());
+		properties.put("authentication", getAuthentication().name().trim());
+		properties.put("connectionName", getName().trim());
+		properties.put("identity", getIdentity().trim());
+		properties.put("apiKey", getApiKey().trim());
+		properties.put("apiSecret", getApiSecret().trim());
 		
 		String scope = scopeCSV();
 		if(scope == null) {
@@ -162,13 +162,13 @@ public class SocialMediaConnector extends AbstractConnector {
 		if(accessToken == null){
 			accessToken = "";
 		}
-		properties.put("accessToken", accessToken);
+		properties.put("accessToken", accessToken.trim());
 		
 		String accessSecret = getAccessSecret();
 		if(accessSecret == null){
 			accessSecret = "";
 		}
-		properties.put("accessSecret", accessSecret);
+		properties.put("accessSecret", accessSecret.trim());
 		
 		properties.store(fos, StringUtils.capitalize(getIdentity()) + " Connection Properties");
 		

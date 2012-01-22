@@ -1,5 +1,6 @@
 package org.onesun.smc.core.data;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -27,7 +28,15 @@ public class SimpleDataProfiler implements DataProfiler {
 		this.metadata = metadata;
 	}
 
-	private Class<?> checkClass(String value){
+	private Class<?> checkClassByHeader(String value){
+		if(value.toLowerCase().contains("date")){
+			return Date.class;
+		}
+		
+		return String.class;
+	}
+	
+	private Class<?> checkClassByValue(String value){
 		if(value == null){
 			return String.class;
 		}
@@ -103,7 +112,7 @@ public class SimpleDataProfiler implements DataProfiler {
 			int size = 0;
 			
 			Map<String, Integer> statistics = new TreeMap<String, Integer>();
-			
+			Class<?> classByHeader = checkClassByHeader(key);
 			
 			for(Map<String, String> datum : data){
 				String value = datum.get(key);
@@ -112,8 +121,14 @@ public class SimpleDataProfiler implements DataProfiler {
 					size = value.trim().length();
 				}
 				
-				Class<?> clazz = checkClass(value);
-				String name = clazz.getSimpleName();
+				Class<?> classByValue = checkClassByValue(value);
+				if(classByValue.getCanonicalName().compareTo(classByHeader.getCanonicalName()) != 0){
+					if(!classByHeader.getCanonicalName().contains("String")){
+						classByValue = classByHeader;
+					}
+				}
+				
+				String name = classByValue.getSimpleName();
 				
 				Integer count = statistics.get(name);
 				if(count == null){

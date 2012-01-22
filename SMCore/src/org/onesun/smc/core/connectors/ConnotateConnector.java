@@ -51,12 +51,12 @@ public class ConnotateConnector extends WebConnector {
 		FileOutputStream fos = new FileOutputStream(file);
 		
 		Properties properties = new Properties();
-		properties.put("authentication", getAuthentication().name());
-		properties.put("connectionName", getName());
-		properties.put("identity", getIdentity());
+		properties.put("authentication", getAuthentication().name().trim());
+		properties.put("connectionName", getName().trim());
+		properties.put("identity", getIdentity().trim());
 		
-		properties.put("url", getUrl());
-		properties.put("username", getUsername());
+		properties.put("url", getUrl().trim());
+		properties.put("username", getUsername().trim());
 		properties.put("password", getPassword());
 		
 		properties.store(fos, "Connotate Connection Properties");

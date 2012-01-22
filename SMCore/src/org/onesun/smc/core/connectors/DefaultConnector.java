@@ -48,9 +48,9 @@ public class DefaultConnector extends AbstractConnector {
 		FileOutputStream fos = new FileOutputStream(file);
 		
 		Properties properties = new Properties();
-		properties.put("authentication", getAuthentication().name());
-		properties.put("connectionName", getName());
-		properties.put("identity", getIdentity());
+		properties.put("authentication", getAuthentication().name().trim());
+		properties.put("connectionName", getName().trim());
+		properties.put("identity", getIdentity().trim());
 		
 		properties.store(fos, "Default Connection Properties");
 		

@@ -50,11 +50,11 @@ public class TwitterStreamingConnector extends RESTConnector {
 		FileOutputStream fos = new FileOutputStream(file);
 		
 		Properties properties = new Properties();
-		properties.put("authentication", getAuthentication().name());
-		properties.put("connectionName", getName());
-		properties.put("identity", getIdentity());
+		properties.put("authentication", getAuthentication().name().trim());
+		properties.put("connectionName", getName().trim());
+		properties.put("identity", getIdentity().trim());
 		
-		properties.put("username", getUsername());
+		properties.put("username", getUsername().trim());
 		properties.put("password", getPassword());
 		
 		properties.store(fos, "Twitter Streaming Connection properties");
