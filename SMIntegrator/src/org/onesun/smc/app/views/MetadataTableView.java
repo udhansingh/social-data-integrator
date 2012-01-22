@@ -26,7 +26,6 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.Map;
 import java.util.Set;
 
 import javax.swing.AbstractButton;
@@ -92,7 +91,7 @@ public class MetadataTableView extends JPanel {
 
 	private MetadataTableView rootPanel = this;
 
-	private MetadataTableModel model = new MetadataTableModel();
+	private MetadataTableModel model = null;
 	private JTable table = new JTable(model);
 	private JScrollPane scrollPane = new JScrollPane(table);
 	private JTextField nodeNameTextField = new JTextField();
@@ -112,6 +111,8 @@ public class MetadataTableView extends JPanel {
 	private DataPreviewer dataPreviewer = null;
 
 	public MetadataTableView(){
+		this.setPreferredSize(new Dimension(250, 400));
+		
 		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
 		createControls();
@@ -141,19 +142,6 @@ public class MetadataTableView extends JPanel {
 			}
 		});
 
-		int vColIndex = 2;
-		TableColumn col = table.getColumnModel().getColumn(vColIndex);
-
-		Map<String, DataType> types = DataTypeFactory.getDataTypes();
-		String[] typeArray = new String[types.size()];
-
-		int index = 0;
-		for(String type : types.keySet()){
-			typeArray[index++] = type; 
-		}
-
-		col.setCellEditor(new ComboBoxEditor(typeArray));
-		col.setCellRenderer(new ComboBoxRenderer(typeArray));
 	}
 
 	private void createControls(){
@@ -238,11 +226,8 @@ public class MetadataTableView extends JPanel {
 					String facet = (String)o;
 
 					if(facetedMetadata != null){
-						Metadata m = facetedMetadata.getMetadata(facet);
+						metadata = facetedMetadata.getMetadata(facet);
 						
-						model.setMetadata(m);
-						model.fireTableDataChanged();
-
 						JTableUtils.packColumns(table, 2);
 						JTableUtils.packRows(table, 2);
 
@@ -251,7 +236,7 @@ public class MetadataTableView extends JPanel {
 						scrollPane.repaint();
 
 						// Update the meta-model
-						AppCommons.BUSINESS_OBJECT.setMetadata(m);
+						AppCommons.BUSINESS_OBJECT.setMetadata(metadata);
 						AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.BUSINESS_OBJECT.toJSON());
 						AppCommonsUI.MODEL_TEXTAREA.invalidate();
 					}
@@ -289,6 +274,9 @@ public class MetadataTableView extends JPanel {
 		discoverSchemaButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				AppCommons.BUSINESS_OBJECT.setMetadata(null);
+				AppCommons.BUSINESS_OBJECT.setFilterMetadata(null);
+				
 				Connector connection = AppCommons.BUSINESS_OBJECT.getConnection();
 
 				if(connection == null){
@@ -463,33 +451,58 @@ public class MetadataTableView extends JPanel {
 					}
 				}
 
-				model.setMetadata(metadata);
-				model.fireTableDataChanged();
-
+				updateView();
+				
 				boolean status = model.getRowCount() > 0;
-				//				copySchemaButton.setEnabled(status);
-
-				JTableUtils.packColumns(table, 2);
-				JTableUtils.packRows(table, 2);
-
-				table.invalidate();
-				scrollPane.invalidate();
-				scrollPane.repaint();
-
-				// Update the meta-model
-				AppCommons.BUSINESS_OBJECT.setMetadata(metadata);
-				AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.BUSINESS_OBJECT.toJSON());
-				AppCommonsUI.MODEL_TEXTAREA.invalidate();
-
 				if(status == true && dataPreviewer != null){
 					dataPreviewer.generate();
 				}
-
+				
 				DefaultCusor.stopWaitCursor(rootPanel);
 			}
 		});
 	}
 
+	public void updateView(){
+		model = new MetadataTableModel();
+		model.setMetadata(metadata);
+		table.setModel(model);
+
+		// Update Renderer
+/*		
+		int vColIndex = 2;
+		TableColumn col = table.getColumnModel().getColumn(vColIndex);
+
+		DataType[] dataTypes = DataTypeFactory.getDataTypesArray();
+		
+		col.setCellEditor(new ComboBoxEditor<DataType>(dataTypes));
+		col.setCellRenderer(new ComboBoxRenderer<DataType>(dataTypes));
+		
+		// Ignore while processing
+		vColIndex = 4;
+		col = table.getColumnModel().getColumn(vColIndex);
+
+		Boolean[] booleanArray = {true, false};
+
+		col.setCellEditor(new ComboBoxEditor<Boolean>(booleanArray));
+		col.setCellRenderer(new ComboBoxRenderer<Boolean>(booleanArray));
+		*/
+		
+		//				copySchemaButton.setEnabled(status);
+
+		// Update the meta-model
+		AppCommons.BUSINESS_OBJECT.setMetadata(metadata);
+		AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.BUSINESS_OBJECT.toJSON());
+		AppCommonsUI.MODEL_TEXTAREA.invalidate();
+
+		JTableUtils.packColumns(table, 2);
+		JTableUtils.packRows(table, 2);
+
+		table.invalidate();
+		scrollPane.invalidate();
+		scrollPane.repaint();
+	}
+	
 	public DataPreviewer getDataPreviewer() {
 		return dataPreviewer;
 	}
@@ -498,13 +511,11 @@ public class MetadataTableView extends JPanel {
 		this.dataPreviewer = dataPreviewer;
 	}
 
-	private static class ComboBoxRenderer extends JComboBox<String> implements TableCellRenderer {
-		/**
-		 * 
-		 */
+//*	
+	private static class ComboBoxRenderer<T> extends JComboBox<T> implements TableCellRenderer {
 		private static final long serialVersionUID = 8017092061769520797L;
 
-		public ComboBoxRenderer(String[] items) {
+		public ComboBoxRenderer(T[] items) {
 			super(items);
 		}
 
@@ -520,18 +531,21 @@ public class MetadataTableView extends JPanel {
 
 			// Select the current value
 			setSelectedItem(value);
+			
 			return this;
 		}
 	}
 
-	private static class ComboBoxEditor extends DefaultCellEditor {
-		/**
-		 * 
-		 */
+	private static class ComboBoxEditor<T> extends DefaultCellEditor {
 		private static final long serialVersionUID = 5104344847656280260L;
 
-		public ComboBoxEditor(String[] items) {
-			super(new JComboBox<String>(items));
+		public ComboBoxEditor(T[] items) {
+			super(new JComboBox<T>(items));
 		}
 	}
+// */
+	public void setMetadata(Metadata metadata) {
+		this.metadata = metadata;
+	}
+	
 }

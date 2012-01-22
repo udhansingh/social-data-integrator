@@ -17,12 +17,13 @@
 package org.onesun.smc.app.model;
 
 import javax.swing.event.TableModelListener;
-import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
 
 import org.onesun.smc.core.metadata.Metadata;
+import org.onesun.smc.core.model.DataType;
 import org.onesun.smc.core.model.MetaObject;
 
-public class MetadataTableModel extends AbstractTableModel {
+public class MetadataTableModel extends DefaultTableModel {
 	/**
 	 * 
 	 */
@@ -30,7 +31,7 @@ public class MetadataTableModel extends AbstractTableModel {
 
 	private Metadata metadata = null;
 	
-	private String[] headers = {"Path", "Name", "Type"};
+	private String[] headers = {"Path", "Name", "Type", "Size", "Ignore"};
 	
 	@Override
 	public int getRowCount() {
@@ -50,13 +51,24 @@ public class MetadataTableModel extends AbstractTableModel {
 
 	@Override
 	public Class<?> getColumnClass(int columnIndex) {
-		return (getValueAt(0, columnIndex).getClass());
+		if(getRowCount() > 0){
+			Object x = getValueAt(0, columnIndex);
+			
+			if(x != null){
+				return (x.getClass());
+			}
+		}
+		
+		return String.class;
 	}
 
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		switch(columnIndex){
-		case 2: return true;
+		case 4:
+		case 3:
+		case 2: 
+			return true;
 		}
 		
 		return false;
@@ -72,6 +84,8 @@ public class MetadataTableModel extends AbstractTableModel {
 		MetaObject meta = metadata.get(key);
 		
 		switch(columnIndex){
+		case 4: return meta.isIgnore();
+		case 3: return meta.getSize();
 		case 2: return meta.getType();
 		case 1: return meta.getName();
 		case 0: return meta.getPath();
@@ -84,20 +98,32 @@ public class MetadataTableModel extends AbstractTableModel {
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		if(metadata == null) return;
 		
+		Object[] items = metadata.keySet().toArray();
+		String key = (String)items[rowIndex];
+		MetaObject object = metadata.get(key);
+		
 		switch(columnIndex){
+		case 4:
+			if(aValue instanceof Boolean){
+				object.setIgnore((Boolean)aValue);
+				metadata.put(key, object);
+			}
+			break;
+		case 3:
+			if(aValue instanceof Integer){
+				object.setSize((Integer)aValue);
+				metadata.put(key, object);
+			}
+			break;
 		case 2:
-			if(aValue instanceof String){
-				Object[] items = metadata.keySet().toArray();
-				String key = (String)items[rowIndex];
-				
-				MetaObject object = metadata.get(key);
-				object.setType((String)aValue);
-				
+			if(aValue instanceof DataType){
+				object.setType((DataType)aValue);
 				metadata.put(key, object);
 			}
 			break;
 			
 		default:
+			metadata.put(key, object);
 			break;
 		}
 		
@@ -114,12 +140,19 @@ public class MetadataTableModel extends AbstractTableModel {
 		// TODO Auto-generated method stub
 	}
 	
-//	public void removeAll(){
-//		metadata = null;
-//	}
-
 	public void setMetadata(Metadata m) {
 		this.metadata = m;
+		fireTableStructureChanged();
 		fireTableDataChanged();
+	}
+
+/*	public void clear() {
+		metadata = null;
+		fireTableStructureChanged();
+		fireTableDataChanged();
+	}*/
+
+	public Metadata getMetadata() {
+		return metadata;
 	}
 }

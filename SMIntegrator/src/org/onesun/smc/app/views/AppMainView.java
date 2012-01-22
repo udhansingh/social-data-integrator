@@ -94,11 +94,8 @@ public class AppMainView extends JPanel{
 		tab.add("Connectivity", AppCommonsUI.CONNECTION_MANAGER_TREE_VIEW);
 		tab.add("Data Access", null);
 
-		tab.add("Data Profilier", new DataProfilerView());
+		tab.add("Discoverer", new DiscovererView());
 		
-//		tab.add("Metadata", new MetadataTableView());
-//		tab.add("Data Preview", new DataPreviewTableView());
-
 		tab.add("Data Services", new DataServicesView());
 
 		tab.add("Scheduler", new SchedulerView());

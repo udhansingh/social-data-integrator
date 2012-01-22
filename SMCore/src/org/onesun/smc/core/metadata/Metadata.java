@@ -32,8 +32,17 @@ import org.onesun.smc.core.model.MetaObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class Metadata {
+public class Metadata implements Cloneable {
 	private boolean discovered = true;
+	
+	@Override
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch(CloneNotSupportedException e) {
+			return this;
+		}
+	}
 	
 	public boolean isDiscovered() {
 		return discovered;
@@ -132,6 +141,10 @@ public class Metadata {
 	public void setUrl(String url) {
 		this.url = url;
 	}
+	
+	public String getUrl() {
+		return url;
+	}
 
 	public void setVerb(String verb) {
 		this.verb = verb;
@@ -171,7 +184,7 @@ public class Metadata {
 			parent.appendChild(child);
 			
 			child = document.createElement("type");
-			child.setTextContent(mo.getType());
+			child.setTextContent(mo.getType().getName());
 			parent.appendChild(child);
 			
 			root.appendChild(parent);
@@ -192,7 +205,7 @@ public class Metadata {
 			parent.appendChild(child);
 
 			child = document.createElement("type");
-			child.setTextContent(mo.getType());
+			child.setTextContent(mo.getType().getName());
 			parent.appendChild(child);
 			
 			root.appendChild(parent);
@@ -214,7 +227,7 @@ public class Metadata {
 			parent.appendChild(child);
 			
 			child = document.createElement("type");
-			child.setTextContent(mo.getType());
+			child.setTextContent(mo.getType().getName());
 			parent.appendChild(child);
 			
 			root.appendChild(parent);
@@ -234,8 +247,19 @@ public class Metadata {
 				parent.appendChild(child);
 
 				child = document.createElement("type");
-				child.setTextContent(mo.getType());
+				child.setTextContent(mo.getType().getName());
 				parent.appendChild(child);
+				
+				child = document.createElement("size");
+				child.setTextContent(Integer.toString(mo.getSize()));
+				parent.appendChild(child);
+				
+				Boolean flag = mo.isIgnore();
+				if(flag == true){
+					child = document.createElement("ignore");
+					child.setTextContent(Boolean.toString(flag));
+					parent.appendChild(child);
+				}
 				
 				root.appendChild(parent);
 			}

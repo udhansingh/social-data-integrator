@@ -1,6 +1,6 @@
 package org.onesun.smc.core.model;
 
-public class DataType {
+public class DataType implements Cloneable {
 	private String name;
 	private Class<?> clazz;
 	
@@ -15,5 +15,18 @@ public class DataType {
 	}
 	public void setClazz(Class<?> clazz) {
 		this.clazz = clazz;
+	}
+	
+	public String toString(){
+		return name;
+	}
+	
+	@Override
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch(CloneNotSupportedException e) {
+			return this;
+		}
 	}
 }

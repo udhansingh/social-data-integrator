@@ -57,7 +57,7 @@ public class FacebookProvider extends AbstractSocialMediaProvider {
 		RESTResource[] resourceArray = {
 			// Unauthenticated
 			new RESTResource("Search-Post",		false,	"https://graph.facebook.com/search?type=POST"),
-			new RESTResource("Search-User",		false,	"https://graph.facebook.com/search?type=USER"),
+			new RESTResource("Search-User",		true,	"https://graph.facebook.com/search?type=USER"),
 			new RESTResource("Search-Page",		false,	"https://graph.facebook.com/search?type=PAGE"),
 			new RESTResource("Search-Event",	false,	"https://graph.facebook.com/search?type=EVENT"),
 			new RESTResource("Search-Group",	false,	"https://graph.facebook.com/search?type=GROUP"),

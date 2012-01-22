@@ -19,7 +19,7 @@ package org.onesun.smc.core.providers.web.kapow;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.onesun.smc.core.data.reader.AbstractDataReader;
+import org.onesun.smc.core.data.AbstractDataReader;
 
 import com.kapowtech.robosuite.api.java.repository.construct.Attribute;
 import com.kapowtech.robosuite.api.java.repository.construct.Type;

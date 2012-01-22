@@ -32,35 +32,42 @@ public class DataTypeFactory {
 	private static List<DataType> initConnectors() {
 		List<DataType> items = new ArrayList<DataType>();
 		DataType item = null;
-
+		Class<?> clazz = null;
+		
 		item = new DataType();
-		item.setName("String");
-		item.setClazz(java.lang.String.class);
+		clazz = java.lang.String.class;
+		item.setName(clazz.getSimpleName());
+		item.setClazz(clazz);
 		items.add(item);
 		
 		item = new DataType();
-		item.setName("Integer");
-		item.setClazz(java.lang.Integer.class);
+		clazz = java.lang.Integer.class;
+		item.setName(clazz.getSimpleName());
+		item.setClazz(clazz);
 		items.add(item);
 
 		item = new DataType();
-		item.setName("Double");
-		item.setClazz(java.lang.Double.class);
+		clazz = java.lang.Double.class;
+		item.setName(clazz.getSimpleName());
+		item.setClazz(clazz);
 		items.add(item);
 		
 		item = new DataType();
-		item.setName("Boolean");
-		item.setClazz(java.lang.Boolean.class);
+		clazz = java.lang.Long.class;
+		item.setName(clazz.getSimpleName());
+		item.setClazz(clazz);
 		items.add(item);
 		
 		item = new DataType();
-		item.setName("Long");
-		item.setClazz(java.lang.Long.class);
+		clazz = java.lang.Boolean.class;
+		item.setName(clazz.getSimpleName());
+		item.setClazz(clazz);
 		items.add(item);
 
 		item = new DataType();
-		item.setName("Date");
-		item.setClazz(java.util.Date.class);
+		clazz = java.util.Date.class;
+		item.setName(clazz.getSimpleName());
+		item.setClazz(clazz);
 		items.add(item);
 		
 		return items;
@@ -91,6 +98,27 @@ public class DataTypeFactory {
 	
 	public static Map<String, DataType> getDataTypes(){
 		return dataTypes;
+	}
+	
+	public static List<DataType> getDataTypesList(){
+		List<DataType> list = new ArrayList<DataType>();
+		
+		for(DataType t : dataTypes.values()){
+			list.add(t);
+		}
+		
+		return list;
+	}
+	
+	public static DataType[] getDataTypesArray(){
+		DataType[] list = new DataType[dataTypes.size()];
+		
+		int index = 0;
+		for(DataType t : dataTypes.values()){
+			list[index++] = t;
+		}
+		
+		return list;
 	}
 	
 	private static class DataTypeImporterExporter extends XMLImporter implements Exporter {
@@ -207,5 +235,15 @@ public class DataTypeFactory {
 			}
 			return false;
 		}
+	}
+
+	public static DataType getDataType(String name) {
+		DataType t = dataTypes.get(name);
+		
+		return (DataType)t.clone();
+	}
+	
+	public static Class<?> getDataTypeClass(String name) {
+		return dataTypes.get(name).getClazz();
 	}
 }

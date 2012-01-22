@@ -6,8 +6,10 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
 import org.onesun.smc.api.DataPreviewer;
+import org.onesun.smc.app.handlers.UITask;
+import org.onesun.smc.core.metadata.Metadata;
 
-public class DataProfilerView extends JPanel {
+public class DiscovererView extends JPanel {
 	/**
 	 * 
 	 */
@@ -18,7 +20,7 @@ public class DataProfilerView extends JPanel {
 	private MetadataTableView metaView = new MetadataTableView();
 	private DataPreviewTableView preView = new DataPreviewTableView();
 	
-	public DataProfilerView(){
+	public DiscovererView(){
 		this.setLayout(new BorderLayout(5, 5));
 
 		initControls();
@@ -31,7 +33,22 @@ public class DataProfilerView extends JPanel {
 		metaView.setDataPreviewer(new DataPreviewer() {
 			@Override
 			public void generate() {
-				preView.generateDataPreview();
+				preView.generateDataPreview(true);
+			}
+		});
+		
+		preView.setMetadataRefeshCompleted(new UITask() {
+			@Override
+			public void execute(Object object) {
+				if(object instanceof Metadata){
+					Metadata metadata = (Metadata)object;
+					
+					metaView.setMetadata(metadata);
+					metaView.updateView();
+					
+					metaView.invalidate();
+					metaView.repaint();
+				}
 			}
 		});
 		

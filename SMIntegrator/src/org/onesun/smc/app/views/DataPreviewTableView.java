@@ -38,6 +38,7 @@ import org.onesun.commons.swing.SpringLayoutUtils;
 import org.onesun.commons.swing.cursors.DefaultCusor;
 import org.onesun.commons.text.format.detectors.TextFormat;
 import org.onesun.smc.api.Connector;
+import org.onesun.smc.api.DataProfiler;
 import org.onesun.smc.api.DataReader;
 import org.onesun.smc.api.ProviderFactory;
 import org.onesun.smc.api.Resource;
@@ -45,9 +46,11 @@ import org.onesun.smc.api.ServiceProvider;
 import org.onesun.smc.app.AppCommons;
 import org.onesun.smc.app.AppCommonsUI;
 import org.onesun.smc.app.AppMessages;
+import org.onesun.smc.app.handlers.UITask;
 import org.onesun.smc.app.model.DatasetModel;
-import org.onesun.smc.core.data.reader.JSONDataReader;
-import org.onesun.smc.core.data.reader.XMLDataReader;
+import org.onesun.smc.core.data.JSONDataReader;
+import org.onesun.smc.core.data.SimpleDataProfiler;
+import org.onesun.smc.core.data.XMLDataReader;
 import org.onesun.smc.core.metadata.Metadata;
 import org.onesun.smc.core.providers.web.kapow.KapowDataReader;
 import org.onesun.smc.core.providers.web.kapow.KapowObject;
@@ -66,6 +69,11 @@ public class DataPreviewTableView extends JPanel {
 	private ColoredTable dataTable = new ColoredTable();
 	private JScrollPane scrollPane = new JScrollPane(dataTable);
 	private JLabel rowCountLabel = new JLabel("Rows: 0, Columns: 0");
+	private UITask metadataRefeshCompleted = null;
+	
+	public void setMetadataRefeshCompleted(UITask metadataRefeshCompleted) {
+		this.metadataRefeshCompleted = metadataRefeshCompleted;
+	}
 
 	public DataPreviewTableView(){
 		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -90,9 +98,12 @@ public class DataPreviewTableView extends JPanel {
 			public void componentHidden(ComponentEvent e) {
 			}
 		});
+		
+		
+		this.setPreferredSize(new Dimension(250, 400));
 	}
 
-	public void generateDataPreview() {
+	public void generateDataPreview(Boolean profiling) {
 		Connector connection = AppCommons.BUSINESS_OBJECT.getConnection();
 
 		if(connection == null){
@@ -164,9 +175,20 @@ public class DataPreviewTableView extends JPanel {
 
 		List<Map<String, String>> data = dataReader.getData();
 
+		if(profiling == true){
+			DataProfiler profiler = new SimpleDataProfiler();
+			profiler.setData(data);
+			profiler.setMetadata(metadata);
+			profiler.execute();
+		}
+		
 		AppCommonsUI.PREVIEW_DATASET_MODEL = new DatasetModel();
 		AppCommonsUI.PREVIEW_DATASET_MODEL.setMetadata(metadata);
 		AppCommonsUI.PREVIEW_DATASET_MODEL.setData(data);
+		
+		if(metadataRefeshCompleted != null){
+			metadataRefeshCompleted.execute(metadata);
+		}
 
 		dataTable.setModel(AppCommonsUI.PREVIEW_DATASET_MODEL);
 
@@ -194,7 +216,6 @@ public class DataPreviewTableView extends JPanel {
 		panel = new JPanel(new SpringLayout());
 		label = new JLabel("Data Preview", JLabel.LEADING);
 		label.setPreferredSize(new Dimension(150, 24));
-		scrollPane.setPreferredSize(new Dimension(250, 900));
 
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);

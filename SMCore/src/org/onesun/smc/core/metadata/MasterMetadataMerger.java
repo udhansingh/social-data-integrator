@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.onesun.commons.xml.XMLUtils;
+import org.onesun.smc.api.DataTypeFactory;
 import org.onesun.smc.core.model.MetaObject;
 import org.onesun.smc.core.tools.XMLImporter;
 import org.w3c.dom.Comment;
@@ -140,7 +141,11 @@ public class MasterMetadataMerger {
 							MetaObject item = new MetaObject();
 							item.setName(XMLUtils.getValue(element, "name"));
 							item.setPath(XMLUtils.getValue(element, "path"));
-							item.setType(XMLUtils.getValue(element, "type"));
+							item.setType(
+								DataTypeFactory.getDataType(
+										XMLUtils.getValue(element, "type")
+								)
+							);
 
 							items.add(item);
 						}catch(Exception e){

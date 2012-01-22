@@ -1,10 +1,13 @@
 package org.onesun.smc.core.model;
 
-public class MetaObject {
+import org.onesun.smc.api.DataTypeFactory;
+
+public class MetaObject implements Cloneable {
 	private String name;
 	private String path;
-	private String type = "String";
-	private int size;
+	private DataType type = DataTypeFactory.getDataType("String");
+	private Boolean ignore = false;
+	private Integer size = 0;
 	
 	public String getName() {
 		return name;
@@ -18,16 +21,31 @@ public class MetaObject {
 	public void setPath(String path) {
 		this.path = path;
 	}
-	public String getType() {
+	public DataType getType() {
 		return type;
 	}
-	public void setType(String type) {
+	public void setType(DataType type) {
 		this.type = type;
 	}
-	public int getSize() {
+	public Integer getSize() {
 		return size;
 	}
-	public void setSize(int size) {
+	public void setSize(Integer size) {
 		this.size = size;
+	}
+	public Boolean isIgnore() {
+		return ignore;
+	}
+	public void setIgnore(Boolean ignore) {
+		this.ignore = ignore;
+	}
+	
+	@Override
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch(CloneNotSupportedException e) {
+			return this;
+		}
 	}
 }
