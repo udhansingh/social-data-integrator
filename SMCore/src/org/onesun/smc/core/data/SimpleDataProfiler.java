@@ -29,7 +29,7 @@ public class SimpleDataProfiler implements DataProfiler {
 	}
 
 	private Class<?> checkClassByHeader(String value){
-		if(value.toLowerCase().contains("date")){
+		if(value.toLowerCase().contains("date") || value.toLowerCase().contains("time")){
 			return Date.class;
 		}
 		

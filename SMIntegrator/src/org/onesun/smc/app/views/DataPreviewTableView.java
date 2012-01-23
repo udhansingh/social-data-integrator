@@ -48,6 +48,7 @@ import org.onesun.smc.app.AppCommonsUI;
 import org.onesun.smc.app.AppMessages;
 import org.onesun.smc.app.handlers.UITask;
 import org.onesun.smc.app.model.DatasetModel;
+import org.onesun.smc.app.views.shared.ColoredTable;
 import org.onesun.smc.core.data.JSONDataReader;
 import org.onesun.smc.core.data.SimpleDataProfiler;
 import org.onesun.smc.core.data.XMLDataReader;
@@ -156,11 +157,11 @@ public class DataPreviewTableView extends JPanel {
 
 			try{
 				if(textFormat == TextFormat.JSON){
-					dataTable.dataType = TextFormat.JSON;
+					dataTable.setDataType(TextFormat.JSON);
 					dataReader = new JSONDataReader((String)AppCommons.RESPONSE_OBJECT);
 				}
 				else if(textFormat == TextFormat.XML) {
-					dataTable.dataType = TextFormat.XML;
+					dataTable.setDataType(TextFormat.XML);
 					dataReader = new XMLDataReader((String)AppCommons.RESPONSE_OBJECT);
 				}
 			} catch (JSONException ex) {

@@ -43,6 +43,7 @@ import org.onesun.commons.swing.JTableUtils;
 import org.onesun.commons.text.format.detectors.TextFormat;
 import org.onesun.smc.api.DataReader;
 import org.onesun.smc.api.MetadataReader;
+import org.onesun.smc.app.views.shared.ColoredTable;
 import org.onesun.smc.core.data.JSONDataReader;
 import org.onesun.smc.core.data.XMLDataReader;
 import org.onesun.smc.core.metadata.JSONMetadataReader;
