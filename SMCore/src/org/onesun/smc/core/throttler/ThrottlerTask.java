@@ -14,31 +14,14 @@
    limitations under the License.
    
  */
-package org.onesun.smc.api;
+package org.onesun.smc.core.throttler;
 
-import javax.xml.parsers.ParserConfigurationException;
+import java.util.concurrent.Delayed;
+import java.util.concurrent.TimeUnit;
 
-import org.onesun.commons.text.format.detectors.TextFormat;
-import org.scribe.model.Verb;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-public interface Resource {
-	void checkFormat();
-
-	TextFormat getTextFormat();
-
-	String getFormattedText();
-
-	void setObject(Object object);
-	Object getObject();
-
-	String getUrl();
-	
-	String getResourceName();
-	void setResourceName(String resourceName);
-
-	Verb getVerb();
-	
-	Element toElement(Document document) throws ParserConfigurationException;
+public interface ThrottlerTask extends Delayed {
+	long getDelayInMillis();
+	void execute();
+	void setDelay(long delay);
+	TimeUnit getTimeUnit();
 }

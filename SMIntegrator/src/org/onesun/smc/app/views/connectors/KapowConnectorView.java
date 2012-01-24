@@ -80,7 +80,7 @@ public class KapowConnectorView extends ConnectorPanel {
 		connectionNameTextField.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				AppCommons.BUSINESS_OBJECT.getConnection().setConnectionName(connectionNameTextField.getText().trim());
+				AppCommons.TASKLET.getConnection().setName(connectionNameTextField.getText().trim());
 			}
 		});
 
@@ -101,7 +101,7 @@ public class KapowConnectorView extends ConnectorPanel {
 						}
 						else {
 							KapowConnector connection = new KapowConnector();
-							connection.setConnectionName(connectionName);
+							connection.setName(connectionName);
 							connection.setUrl(url);
 							connection.setRqlPort(Integer.parseInt(rqlPort));
 							connection.setUsername(username);

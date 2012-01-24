@@ -23,10 +23,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.commons.lang3.math.NumberUtils;
 import org.onesun.smc.core.model.MetaObject;
 import org.w3c.dom.Document;
@@ -154,52 +150,87 @@ public class Metadata implements Cloneable {
 		return map.size();
 	}
 	
-	public Document toDocument() {
-		try {
-			DocumentBuilderFactory documentBuilderFactory = 
-					DocumentBuilderFactory.newInstance();
-			DocumentBuilder documentBuilder = 
-					documentBuilderFactory.newDocumentBuilder();
-			Document document = documentBuilder.newDocument();
-			
-			Element root = document.createElement("root");
+	public Element toElement(Document document) {
+		Element root = document.createElement("metadata");
 
-			Element parent = null;
-			Element child = null;
-			MetaObject mo = null;
-			
-			// node name
-			mo = new MetaObject();
-			mo.setName(nodeName);
-			mo.setPath("social.media.internal.node.name");
+		Element parent = null;
+		Element child = null;
+		MetaObject mo = null;
+
+		// node name
+		mo = new MetaObject();
+		mo.setName(nodeName);
+		mo.setPath("social.media.internal.node.name");
+
+		parent = document.createElement("item");
+
+		child = document.createElement("path");
+		child.setTextContent(mo.getPath());
+		parent.appendChild(child);
+
+		child = document.createElement("name");
+		child.setTextContent(mo.getName());
+		parent.appendChild(child);
+
+		child = document.createElement("type");
+		child.setTextContent(mo.getType().getName());
+		parent.appendChild(child);
+
+		root.appendChild(parent);
+
+		// url
+		mo = new MetaObject();
+		mo.setName(url);
+		mo.setPath("social.media.internal.url");
+
+		parent = document.createElement("item");
+
+		child = document.createElement("path");
+		child.setTextContent(mo.getPath());
+		parent.appendChild(child);
+
+		child = document.createElement("name");
+		child.setTextContent(mo.getName());
+		parent.appendChild(child);
+
+		child = document.createElement("type");
+		child.setTextContent(mo.getType().getName());
+		parent.appendChild(child);
+
+		root.appendChild(parent);
+
+
+		// verb
+		mo = new MetaObject();
+		mo.setName(verb);
+		mo.setPath("social.media.internal.verb");
+
+		parent = document.createElement("item");
+
+		child = document.createElement("path");
+		child.setTextContent(mo.getPath());
+		parent.appendChild(child);
+
+		child = document.createElement("name");
+		child.setTextContent(mo.getName());
+		parent.appendChild(child);
+
+		child = document.createElement("type");
+		child.setTextContent(mo.getType().getName());
+		parent.appendChild(child);
+
+		root.appendChild(parent);
+
+		// rest of the items
+		for(String k : map.keySet()){
+			mo = map.get(k);
 
 			parent = document.createElement("item");
-			
+
 			child = document.createElement("path");
 			child.setTextContent(mo.getPath());
 			parent.appendChild(child);
-			
-			child = document.createElement("name");
-			child.setTextContent(mo.getName());
-			parent.appendChild(child);
-			
-			child = document.createElement("type");
-			child.setTextContent(mo.getType().getName());
-			parent.appendChild(child);
-			
-			root.appendChild(parent);
-			
-			// url
-			mo = new MetaObject();
-			mo.setName(url);
-			mo.setPath("social.media.internal.url");
 
-			parent = document.createElement("item");
-			
-			child = document.createElement("path");
-			child.setTextContent(mo.getPath());
-			parent.appendChild(child);
-			
 			child = document.createElement("name");
 			child.setTextContent(mo.getName());
 			parent.appendChild(child);
@@ -207,74 +238,25 @@ public class Metadata implements Cloneable {
 			child = document.createElement("type");
 			child.setTextContent(mo.getType().getName());
 			parent.appendChild(child);
-			
-			root.appendChild(parent);
-			
-			
-			// verb
-			mo = new MetaObject();
-			mo.setName(verb);
-			mo.setPath("social.media.internal.verb");
 
-			parent = document.createElement("item");
-			
-			child = document.createElement("path");
-			child.setTextContent(mo.getPath());
+			child = document.createElement("size");
+			child.setTextContent(Integer.toString(mo.getSize()));
 			parent.appendChild(child);
-			
-			child = document.createElement("name");
-			child.setTextContent(mo.getName());
-			parent.appendChild(child);
-			
-			child = document.createElement("type");
-			child.setTextContent(mo.getType().getName());
-			parent.appendChild(child);
-			
-			root.appendChild(parent);
-			
-			// rest of the items
-			for(String k : map.keySet()){
-				mo = map.get(k);
-				
-				parent = document.createElement("item");
-				
-				child = document.createElement("path");
-				child.setTextContent(mo.getPath());
-				parent.appendChild(child);
-				
-				child = document.createElement("name");
-				child.setTextContent(mo.getName());
-				parent.appendChild(child);
 
-				child = document.createElement("type");
-				child.setTextContent(mo.getType().getName());
+			Boolean flag = mo.isIgnore();
+			if(flag == true){
+				child = document.createElement("ignore");
+				child.setTextContent(Boolean.toString(flag));
 				parent.appendChild(child);
-				
-				child = document.createElement("size");
-				child.setTextContent(Integer.toString(mo.getSize()));
-				parent.appendChild(child);
-				
-				Boolean flag = mo.isIgnore();
-				if(flag == true){
-					child = document.createElement("ignore");
-					child.setTextContent(Boolean.toString(flag));
-					parent.appendChild(child);
-				}
-				
-				root.appendChild(parent);
 			}
-				
+
 			root.appendChild(parent);
-			document.appendChild(root);
-			
-			return document;
-			
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		}finally{
 		}
-		
-		return null;
+
+		root.appendChild(parent);
+		document.appendChild(root);
+
+		return root;
 	}
 
 	public Collection<MetaObject> values() {

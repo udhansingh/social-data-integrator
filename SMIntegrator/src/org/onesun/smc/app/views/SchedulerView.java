@@ -197,8 +197,8 @@ public class SchedulerView  extends JPanel {
 				task.setYear(yearTextField.getText());
 				
 				// Update the meta-model
-				AppCommons.BUSINESS_OBJECT.setSchedule(task);
-	    		AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.BUSINESS_OBJECT.toJSON());
+				AppCommons.TASKLET.setSchedule(task);
+	    		AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.TASKLET.toXML());
 			}
 		});
 	}

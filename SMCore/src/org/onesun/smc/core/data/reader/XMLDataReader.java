@@ -15,7 +15,7 @@
    limitations under the License.
 
  */
-package org.onesun.smc.core.data;
+package org.onesun.smc.core.data.reader;
 
 import java.io.File;
 import java.io.IOException;
@@ -178,7 +178,7 @@ public class XMLDataReader extends AbstractDataReader {
 	}
 
 	@Override
-	public void loadData() {
+	public void load() {
 		List<String> xPaths = new ArrayList<String>();
 		for (String value : metadata.keySet()) {
 			xPaths.add(value);

@@ -14,7 +14,7 @@
    limitations under the License.
    
  */
-package org.onesun.smc.core.data;
+package org.onesun.smc.core.data.reader;
 
 import java.util.ArrayList;
 import java.util.Collections;

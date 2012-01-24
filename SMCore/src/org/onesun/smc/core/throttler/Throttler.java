@@ -14,7 +14,7 @@
    limitations under the License.
    
  */
-package org.onesun.smc.throttler;
+package org.onesun.smc.core.throttler;
 
 
 public interface Throttler {

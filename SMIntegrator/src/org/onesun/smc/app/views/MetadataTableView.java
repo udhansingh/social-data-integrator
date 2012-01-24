@@ -106,13 +106,9 @@ public class MetadataTableView extends JPanel {
 	private JComboBox<String> schemaFacets = new JComboBox<String>();
 	private FacetedMetadata facetedMetadata = null;
 	private Metadata metadata = null;
-	//	private JButton copySchemaButton = new JButton("Copy to clipboard", AppIcons.getIcon("copy"));
-
 	private DataPreviewer dataPreviewer = null;
 
 	public MetadataTableView(){
-		this.setPreferredSize(new Dimension(250, 400));
-		
 		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
 		createControls();
@@ -141,7 +137,6 @@ public class MetadataTableView extends JPanel {
 			public void componentHidden(ComponentEvent e) {
 			}
 		});
-
 	}
 
 	private void createControls(){
@@ -226,8 +221,14 @@ public class MetadataTableView extends JPanel {
 					String facet = (String)o;
 
 					if(facetedMetadata != null){
+						model = new MetadataTableModel();
 						metadata = facetedMetadata.getMetadata(facet);
 						
+						model.setMetadata(metadata);
+						model.fireTableDataChanged();
+
+						table.setModel(model);
+
 						JTableUtils.packColumns(table, 2);
 						JTableUtils.packRows(table, 2);
 
@@ -236,8 +237,8 @@ public class MetadataTableView extends JPanel {
 						scrollPane.repaint();
 
 						// Update the meta-model
-						AppCommons.BUSINESS_OBJECT.setMetadata(metadata);
-						AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.BUSINESS_OBJECT.toJSON());
+						AppCommons.TASKLET.setMetadata(metadata);
+						AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.TASKLET.toXML());
 						AppCommonsUI.MODEL_TEXTAREA.invalidate();
 					}
 				}
@@ -247,8 +248,8 @@ public class MetadataTableView extends JPanel {
 		mergeSchemaButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String providerName = AppCommons.BUSINESS_OBJECT.getConnection().getIdentity();
-				String resourceName = AppCommons.BUSINESS_OBJECT.getResource().getResourceName();
+				String providerName = AppCommons.TASKLET.getConnection().getIdentity();
+				String resourceName = AppCommons.TASKLET.getResource().getResourceName();
 
 				String folderName = null;
 				if(AppCommons.AUTHENTICATION == Authentication.TWITTER_STREAMING){
@@ -274,10 +275,10 @@ public class MetadataTableView extends JPanel {
 		discoverSchemaButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				AppCommons.BUSINESS_OBJECT.setMetadata(null);
-				AppCommons.BUSINESS_OBJECT.setFilterMetadata(null);
+				AppCommons.TASKLET.setMetadata(null);
+				AppCommons.TASKLET.setFilterMetadata(null);
 				
-				Connector connection = AppCommons.BUSINESS_OBJECT.getConnection();
+				Connector connection = AppCommons.TASKLET.getConnection();
 
 				if(connection == null){
 					JOptionPane.showMessageDialog(rootPanel, AppMessages.INFORMATION_CHOOSE_A_CONNECTION);
@@ -299,13 +300,15 @@ public class MetadataTableView extends JPanel {
 
 				DefaultCusor.startWaitCursor(rootPanel);
 
+				model = new MetadataTableModel();
+
 				MetadataReader metadataReader = null;
 				if(connection.getCategory().compareTo("KAPOW") == 0){
 					if(providerInstance != null && providerInstance.isResponseRequired() == false){
 						metadata = new Metadata();
 						metadata.setDiscovered(false);
 
-						WebResource resource = (WebResource)AppCommons.BUSINESS_OBJECT.getResource();
+						WebResource resource = (WebResource)AppCommons.TASKLET.getResource();
 						if(resource != null){
 							KapowObject object = null;
 
@@ -350,15 +353,15 @@ public class MetadataTableView extends JPanel {
 						index++;
 
 						Metadata m = facetedMetadata.getMetadata(facet);
-						m.setUrl(AppCommons.BUSINESS_OBJECT.getResource().getUrl());
-						m.setVerb(AppCommons.BUSINESS_OBJECT.getResource().getVerb().name());
+						m.setUrl(AppCommons.TASKLET.getResource().getUrl());
+						m.setVerb(AppCommons.TASKLET.getResource().getVerb().name());
 					}
 
 					ComboBoxModel<String> model = new DefaultComboBoxModel<String>(facetsArray);
 					schemaFacets.setModel(model);
 				}
 				else {
-					Resource resource = AppCommons.BUSINESS_OBJECT.getResource();
+					Resource resource = AppCommons.TASKLET.getResource();
 					TextFormat textFormat = TextFormat.UNKNOWN;
 
 					if(resource != null){
@@ -397,13 +400,13 @@ public class MetadataTableView extends JPanel {
 
 					metadata = metadataReader.getMetadata();
 					metadata.setNodeName(nodeName);
-					metadata.setUrl(AppCommons.BUSINESS_OBJECT.getResource().getUrl());
-					metadata.setVerb(AppCommons.BUSINESS_OBJECT.getResource().getVerb().name());
+					metadata.setUrl(AppCommons.TASKLET.getResource().getUrl());
+					metadata.setVerb(AppCommons.TASKLET.getResource().getVerb().name());
 
 					metadata.compact();
 
 					// Fill FilterMetadata
-					FilterMetadata fm = AppCommons.BUSINESS_OBJECT.getFilterMetadata();
+					FilterMetadata fm = AppCommons.TASKLET.getFilterMetadata();
 					if(fm != null){
 						final String paramSuffix = "social/media/internal/request/param/";
 						for(RequestParamObject o : fm.paramValues()){
@@ -491,8 +494,8 @@ public class MetadataTableView extends JPanel {
 		//				copySchemaButton.setEnabled(status);
 
 		// Update the meta-model
-		AppCommons.BUSINESS_OBJECT.setMetadata(metadata);
-		AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.BUSINESS_OBJECT.toJSON());
+		AppCommons.TASKLET.setMetadata(metadata);
+		AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.TASKLET.toXML());
 		AppCommonsUI.MODEL_TEXTAREA.invalidate();
 
 		JTableUtils.packColumns(table, 2);

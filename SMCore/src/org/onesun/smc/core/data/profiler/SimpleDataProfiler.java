@@ -1,4 +1,4 @@
-package org.onesun.smc.core.data;
+package org.onesun.smc.core.data.profiler;
 
 import java.util.Date;
 import java.util.List;

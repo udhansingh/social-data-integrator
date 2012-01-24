@@ -18,16 +18,23 @@ package org.onesun.smc.core.connectors;
 
 import java.util.Properties;
 
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.onesun.commons.xml.XMLUtils;
 import org.onesun.smc.api.Connector;
 import org.onesun.smc.core.model.Authentication;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public abstract class AbstractConnector implements Connector {
-	protected final String FILE_EXTENSION = ".cnx";
 	protected String category = null;
-	protected String connectionName = null;
+	protected String name = null;
 	protected Authentication authentication = null;
 	protected String identity = null;
 
+	// Internal use only; for processing
+	protected final String FILE_EXTENSION = ".cnx";
+	
 	public AbstractConnector(String category, Authentication authentication){
 		this.category = category;
 		this.authentication = authentication;
@@ -43,10 +50,10 @@ public abstract class AbstractConnector implements Connector {
 		this.identity = identity;
 	}
 	public String getName() {
-		return connectionName;
+		return name;
 	}
-	public void setConnectionName(String connectionName) {
-		this.connectionName = connectionName;
+	public void setName(String name) {
+		this.name = name;
 	}
 	public Authentication getAuthentication() {
 		return authentication;
@@ -57,4 +64,31 @@ public abstract class AbstractConnector implements Connector {
 	
 	@Override 
 	public abstract void read(Properties properties);
+	
+	@Override
+	public Element toElement(Document document) throws ParserConfigurationException{
+		if(document == null){
+			document = XMLUtils.newDocument();
+		}
+
+		Element parent = document.createElement("connection");
+		Element child = document.createElement("identity");
+		child.setTextContent((identity != null) ? identity : "");
+		parent.appendChild(child);
+
+		child = document.createElement("category");
+		child.setTextContent((category != null) ? category : "");
+		parent.appendChild(child);
+
+		child = document.createElement("name");
+		child.setTextContent((name != null) ? name : "");
+		parent.appendChild(child);
+
+		child = document.createElement("authentication");
+		child.setTextContent((authentication != null) ? authentication.name() : "");
+		
+		parent.appendChild(child);
+
+		return parent;
+	}
 }

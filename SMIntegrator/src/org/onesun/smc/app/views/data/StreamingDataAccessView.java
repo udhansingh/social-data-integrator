@@ -107,10 +107,10 @@ public class StreamingDataAccessView extends AbstractDataAccessView {
 				if(o instanceof StreamingResource){
 					resource = (StreamingResource)o;
 					
-					AppCommons.BUSINESS_OBJECT.setResource(resource);
+					AppCommons.TASKLET.setResource(resource);
 					
-					AppCommons.BUSINESS_OBJECT.setResource(resource);
-		    		AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.BUSINESS_OBJECT.toJSON());
+					AppCommons.TASKLET.setResource(resource);
+		    		AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.TASKLET.toXML());
 		    		AppCommonsUI.MODEL_TEXTAREA.invalidate();
 				}
 			}
@@ -198,8 +198,11 @@ public class StreamingDataAccessView extends AbstractDataAccessView {
 				}
 				
 				// Set Payload
-				RequestParamObject payloadObject = filterMetadata.getPayload();
+				RequestParamObject payloadObject = null;
 				String payload = null;
+				if(filterMetadata != null){
+					payloadObject = filterMetadata.getPayload();
+				}
 				if(payloadObject != null){
 					payload = payloadObject.getDefaultValue();
 				}
@@ -212,7 +215,7 @@ public class StreamingDataAccessView extends AbstractDataAccessView {
 					
 					DefaultCusor.startWaitCursor(rootPanel);
 					
-					executor.setConnection((TwitterStreamingConnector) AppCommons.BUSINESS_OBJECT.getConnection());
+					executor.setConnection((TwitterStreamingConnector) AppCommons.TASKLET.getConnection());
 					executor.setResource(r);
 					
 					setStatus("");
@@ -230,8 +233,8 @@ public class StreamingDataAccessView extends AbstractDataAccessView {
 					AppCommons.RESPONSE_OBJECT = response;
 					
 					// Update the meta-model
-					AppCommons.BUSINESS_OBJECT.setResource(r);
-		    		AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.BUSINESS_OBJECT.toJSON());
+					AppCommons.TASKLET.setResource(r);
+		    		AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.TASKLET.toXML());
 		    		AppCommonsUI.MODEL_TEXTAREA.invalidate();
 				}
 			}

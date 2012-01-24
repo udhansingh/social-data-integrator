@@ -22,8 +22,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.log4j.Logger;
 import org.onesun.smc.core.model.Authentication;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class TwitterStreamingConnector extends RESTConnector {
 	private static Logger logger = Logger.getLogger(TwitterStreamingConnector.class);
@@ -35,7 +39,7 @@ public class TwitterStreamingConnector extends RESTConnector {
 	@Override
 	public void read(Properties properties){
 		setAuthentication(Authentication.TWITTER_STREAMING);
-		setConnectionName(properties.getProperty("connectionName"));
+		setName(properties.getProperty("connectionName"));
 		setIdentity(properties.getProperty("identity"));
 		setUsername(properties.getProperty("username"));
 		setPassword(properties.getProperty("password"));
@@ -62,5 +66,12 @@ public class TwitterStreamingConnector extends RESTConnector {
 		fos.close();
 		
 		logger.info("File Saved: " + connectionFileName);
+	}
+	
+	@Override
+	public Element toElement(Document document) throws ParserConfigurationException {
+		Element parent = super.toElement(document);
+		
+		return parent;
 	}
 }

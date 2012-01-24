@@ -24,8 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.log4j.Logger;
 import org.onesun.smc.core.model.Authentication;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.sun.xml.internal.ws.util.StringUtils;
 
@@ -59,7 +63,7 @@ public class SocialMediaConnector extends AbstractConnector {
 	public String toString(){
 		String scope = scopeCSV();
 		
-		return connectionName + "\t" + identity + "\t" + apiKey + "\t" + apiSecret + "\t" + ((scope != null) ? scope : "null")  + "\t" + accessToken + "\t" + accessSecret;
+		return name + "\t" + identity + "\t" + apiKey + "\t" + apiSecret + "\t" + ((scope != null) ? scope : "null")  + "\t" + accessToken + "\t" + accessSecret;
 	}
 
 	public void scopeCSV(String csvText) {
@@ -75,14 +79,6 @@ public class SocialMediaConnector extends AbstractConnector {
 				apiScopeList.add(value);
 			}
 		}
-	}
-
-	public String getName() {
-		return connectionName;
-	}
-
-	public void setConnectionName(String connectionName) {
-		this.connectionName = connectionName;
 	}
 
 	public String getApiKey() {
@@ -128,7 +124,7 @@ public class SocialMediaConnector extends AbstractConnector {
 	@Override
 	public void read(Properties properties) {
 		setAuthentication(Authentication.OAUTH);
-		setConnectionName(properties.getProperty("connectionName"));
+		setName(properties.getProperty("connectionName"));
 		setIdentity(properties.getProperty("identity"));
 		setApiKey(properties.getProperty("apiKey"));
 		setApiSecret(properties.getProperty("apiSecret"));
@@ -175,5 +171,32 @@ public class SocialMediaConnector extends AbstractConnector {
 		fos.close();
 		
 		logger.info("File Saved: " + connectionFileName);
+	}
+	
+	@Override
+	public Element toElement(Document document) throws ParserConfigurationException {
+		Element parent = super.toElement(document);
+		
+		Element child = document.createElement("apiKey");
+		child.setTextContent((apiKey != null) ? apiKey : "");
+		parent.appendChild(child);
+		
+		child = document.createElement("apiSecret");
+		child.setTextContent((apiSecret != null) ? apiSecret : "");
+		parent.appendChild(child);
+		
+		child = document.createElement("accessToken");
+		child.setTextContent((accessToken != null) ? accessToken : "");
+		parent.appendChild(child);
+		
+		child = document.createElement("accessSecret");
+		child.setTextContent((accessSecret != null) ? accessSecret : "");
+		parent.appendChild(child);
+
+		child = document.createElement("apiScope");
+		child.setTextContent((apiScopeList != null) ? scopeCSV() : "");
+		parent.appendChild(child);
+		
+		return parent;
 	}
 }

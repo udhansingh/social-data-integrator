@@ -18,10 +18,10 @@ package org.onesun.smc.tests;
 
 import java.util.concurrent.TimeUnit;
 
-import org.onesun.smc.throttler.AbstractDelayQueueThrottler;
-import org.onesun.smc.throttler.SampleThrottlerTask;
-import org.onesun.smc.throttler.Throttler;
-import org.onesun.smc.throttler.ThrottlerTask;
+import org.onesun.smc.core.throttler.AbstractDelayQueueThrottler;
+import org.onesun.smc.core.throttler.SampleThrottlerTask;
+import org.onesun.smc.core.throttler.Throttler;
+import org.onesun.smc.core.throttler.ThrottlerTask;
 
 public class TestDelayQueueThrottler {
 	public static void main(String[] args){

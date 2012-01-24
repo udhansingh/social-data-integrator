@@ -22,8 +22,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.log4j.Logger;
 import org.onesun.smc.core.model.Authentication;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class ConnotateConnector extends WebConnector {
 	private static Logger logger = Logger.getLogger(ConnotateConnector.class);
@@ -35,7 +39,7 @@ public class ConnotateConnector extends WebConnector {
 	@Override
 	public void read(Properties properties) {
 		setAuthentication(Authentication.CONNOTATE);
-		setConnectionName(properties.getProperty("connectionName"));
+		setName(properties.getProperty("connectionName"));
 		setIdentity(properties.getProperty("identity"));
 		setUrl(properties.getProperty("url"));
 		setUsername(properties.getProperty("username"));
@@ -64,5 +68,12 @@ public class ConnotateConnector extends WebConnector {
 		fos.close();
 		
 		logger.info("File Saved: " + connectionFileName);
+	}
+
+	@Override
+	public Element toElement(Document document) throws ParserConfigurationException {
+		Element parent = super.toElement(document);
+		
+		return parent;
 	}
 }

@@ -73,7 +73,7 @@ public class FacebookStreamingConnectorView extends ConnectorPanel {
 		connectionNameTextField.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				AppCommons.BUSINESS_OBJECT.getConnection().setConnectionName(connectionNameTextField.getText().trim());
+				AppCommons.TASKLET.getConnection().setName(connectionNameTextField.getText().trim());
 			}
 		});
 
@@ -92,7 +92,7 @@ public class FacebookStreamingConnectorView extends ConnectorPanel {
 						}
 						else {
 							FacebookStreamingConnector connection = new FacebookStreamingConnector();
-							connection.setConnectionName(connectionName);
+							connection.setName(connectionName);
 							connection.setUsername(username);
 							connection.setPassword(password);
 							connection.setIdentity("Facebook Streaming");

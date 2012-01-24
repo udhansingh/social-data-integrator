@@ -188,7 +188,7 @@ public class RESTDataAccessView extends AbstractDataAccessView {
 					resource.setPayload(payload);
 				}
 				
-				Connector connection = AppCommons.BUSINESS_OBJECT.getConnection();
+				Connector connection = AppCommons.TASKLET.getConnection();
 				ServiceProvider provider = ProviderFactory.getProvider(connection.getIdentity().toLowerCase(), "SOCIAL_MEDIA");
 				
 				RestListener executor = new RestListener(provider, resource, AppCommons.AUTHENTICATION, Authenticator.getCallbackurl());
@@ -225,8 +225,8 @@ public class RESTDataAccessView extends AbstractDataAccessView {
 				scrollPane.invalidate();
 				
 				// Update the meta-model
-				AppCommons.BUSINESS_OBJECT.setResource(resource);
-	    		AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.BUSINESS_OBJECT.toJSON());
+				AppCommons.TASKLET.setResource(resource);
+	    		AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.TASKLET.toXML());
 				
 				DefaultCusor.stopWaitCursor(rootPanel);
 			}

@@ -23,10 +23,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JToolBar;
 
-import org.onesun.smc.app.AppIcons;
 import org.onesun.smc.app.AppCommonsUI;
+import org.onesun.smc.app.AppIcons;
 import org.onesun.smc.app.views.dialogs.AboutDialog;
-import org.onesun.smc.app.views.dialogs.ConsoleDialog;
 import org.onesun.smc.app.views.dialogs.HelpDialog;
 import org.onesun.smc.app.views.dialogs.PreferencesDialog;
 
@@ -38,7 +37,6 @@ public class AppToolBar extends JToolBar {
 	private static final PreferencesDialog preferencesDialog = new PreferencesDialog(AppCommonsUI.MAIN_WINDOW);
 	private static final AboutDialog aboutDialog = new AboutDialog(AppCommonsUI.MAIN_WINDOW);
 	private static final HelpDialog helpDialog = new HelpDialog(AppCommonsUI.MAIN_WINDOW);
-	private static final ConsoleDialog consoleDialog = new ConsoleDialog(AppCommonsUI.MAIN_WINDOW);
 	
 	public AppToolBar(){
 		super(JToolBar.VERTICAL);
@@ -59,19 +57,6 @@ public class AppToolBar extends JToolBar {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				preferencesDialog.setVisible(true);
-			}
-		});
-		
-		this.add(button);
-		
-		// -------------
-		icon = AppIcons.getIcon("console");
-		button = new JButton(icon); 
-		
-		button.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				consoleDialog.setVisible(true);
 			}
 		});
 		

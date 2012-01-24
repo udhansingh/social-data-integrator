@@ -231,10 +231,10 @@ public class ConnectionsView extends JPanel {
 		}
 
 		private void renderConnectionDetailView(String connectionName){
-			AppCommons.BUSINESS_OBJECT.reset();
+			AppCommons.TASKLET.reset();
 
 			Connector connection = ConnectionsFactory.getConnectionByName(connectionName);
-			AppCommons.BUSINESS_OBJECT.setConnection(connection);
+			AppCommons.TASKLET.setConnection(connection);
 			AppCommons.AUTHENTICATION = null;
 
 			if(connection == null){
@@ -264,8 +264,8 @@ public class ConnectionsView extends JPanel {
 			}
 
 			// Update the meta-model
-			AppCommons.BUSINESS_OBJECT.setConnection(connection);
-			AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.BUSINESS_OBJECT.toJSON());
+			AppCommons.TASKLET.setConnection(connection);
+			AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.TASKLET.toXML());
 		}
 	}
 
@@ -408,7 +408,7 @@ public class ConnectionsView extends JPanel {
 						
 						container.removeAll();
 						if(view != null){
-							Connector connector = AppCommons.BUSINESS_OBJECT.getConnection();
+							Connector connector = AppCommons.TASKLET.getConnection();
 							if(connector != null){
 								view.updateFields(connector);
 							}

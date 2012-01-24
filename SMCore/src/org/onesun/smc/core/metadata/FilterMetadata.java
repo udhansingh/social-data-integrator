@@ -22,7 +22,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.onesun.smc.core.model.RequestParamObject;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class FilterMetadata {
 	// Key: Internal Name
@@ -102,5 +106,94 @@ public class FilterMetadata {
 
 	public void setPayload(RequestParamObject payload) {
 		this.payload = payload;
+	}
+	
+	public Element toElement(Document document) throws ParserConfigurationException{
+		Element filter = document.createElement("filter");
+		
+		String text = null;
+
+		// Pay load
+		RequestParamObject object = getPayload();
+		if(object != null){
+			Element node = document.createElement("payload");
+
+			Element e = document.createElement("externalName");
+			text = object.getExternalName();
+			text = (text == null) ? "" : text;
+			e.setTextContent(text);
+			node.appendChild(e);
+
+			e = document.createElement("internalName");
+			text = object.getInternalName();
+			text = (text == null) ? "" : text;
+			e.setTextContent(text);
+			node.appendChild(e);
+
+			e = document.createElement("defaultValue");
+			text = object.getDefaultValue();
+			text = (text == null) ? "" : text;
+			e.setTextContent(text);
+			node.appendChild(e);
+
+			filter.appendChild(node);
+		}
+
+		// Params
+		Element parent = document.createElement("params");
+		for(RequestParamObject r : paramValues()){
+			Element node = document.createElement("param");
+
+			Element e = document.createElement("externalName");
+			text = r.getExternalName();
+			text = (text == null) ? "" : text;
+			e.setTextContent(text);
+			node.appendChild(e);
+
+			e = document.createElement("internalName");
+			text = r.getInternalName();
+			text = (text == null) ? "" : text;
+			e.setTextContent(text);
+			node.appendChild(e);
+
+			e = document.createElement("defaultValue");
+			text = r.getDefaultValue();
+			text = (text == null) ? "" : text;
+			e.setTextContent(text);
+			node.appendChild(e);
+
+			parent.appendChild(node);
+		}
+		filter.appendChild(parent);
+
+
+		// Headers
+		parent = document.createElement("headers");
+		for(RequestParamObject r : headerValues()){
+			Element node = document.createElement("header");
+
+			Element e = document.createElement("externalName");
+			text = r.getExternalName();
+			text = (text == null) ? "" : text;
+			e.setTextContent(text);
+			node.appendChild(e);
+
+			e = document.createElement("internalName");
+			text = r.getInternalName();
+			text = (text == null) ? "" : text;
+			e.setTextContent(text);
+			node.appendChild(e);
+
+			e = document.createElement("defaultValue");
+			text = r.getDefaultValue();
+			text = (text == null) ? "" : text;
+			e.setTextContent(text);
+			node.appendChild(e);
+
+			parent.appendChild(node);
+		}
+		filter.appendChild(parent);
+
+		return filter;
 	}
 }

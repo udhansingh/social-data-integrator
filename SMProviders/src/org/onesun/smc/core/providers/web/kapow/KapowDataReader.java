@@ -19,7 +19,7 @@ package org.onesun.smc.core.providers.web.kapow;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.onesun.smc.core.data.AbstractDataReader;
+import org.onesun.smc.core.data.reader.AbstractDataReader;
 
 import com.kapowtech.robosuite.api.java.repository.construct.Attribute;
 import com.kapowtech.robosuite.api.java.repository.construct.Type;
@@ -37,7 +37,7 @@ public class KapowDataReader extends AbstractDataReader {
 	}
 	
 	@Override
-	public void loadData() {
+	public void load() {
 		if(object != null && result != null){
 			Type[] types = object.getReturnedTypes();
 

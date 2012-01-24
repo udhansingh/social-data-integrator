@@ -26,8 +26,8 @@ import javax.swing.event.ChangeListener;
 import org.onesun.smc.api.Connector;
 import org.onesun.smc.app.AppCommons;
 import org.onesun.smc.app.AppCommonsUI;
-import org.onesun.smc.app.model.BusinessObject;
 import org.onesun.smc.app.views.data.DataAccessViews;
+import org.onesun.smc.core.model.Tasklet;
 
 public class AppMainView extends JPanel{
 	/**
@@ -51,7 +51,7 @@ public class AppMainView extends JPanel{
 
 				// Update Data Access View when tab changes
 				if(title != null && title.compareTo("Data Access") == 0){
-					BusinessObject bobj = AppCommons.BUSINESS_OBJECT;
+					Tasklet bobj = AppCommons.TASKLET;
 					boolean displayed = false;
 					
 					if(bobj != null){
@@ -92,11 +92,16 @@ public class AppMainView extends JPanel{
 
 		AppCommonsUI.CONNECTION_MANAGER_TREE_VIEW = new ConnectionsView();
 		tab.add("Connectivity", AppCommonsUI.CONNECTION_MANAGER_TREE_VIEW);
+		
 		tab.add("Data Access", null);
 
 		tab.add("Discoverer", new DiscovererView());
+
+		tab.add("Tasklets", new TaskletsView());
+
+		// tab.add("Workflow", new WorkFlowView());
 		
-		tab.add("Data Services", new DataServicesView());
+		// tab.add("Services", new DataServicesView());
 
 		tab.add("Scheduler", new SchedulerView());
 

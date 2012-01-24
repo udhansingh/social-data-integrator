@@ -14,18 +14,27 @@
    limitations under the License.
    
  */
-package org.onesun.smc.throttler;
+package org.onesun.smc.core.throttler;
 
-import java.util.Stack;
+import java.util.NoSuchElementException;
+import java.util.concurrent.DelayQueue;
+import java.util.concurrent.TimeUnit;
 
-public class AbstractStackThrottler implements Throttler {
+public class AbstractDelayQueueThrottler implements Throttler {
 	protected volatile Integer count = 1;
-	protected volatile Stack<ThrottlerTask> tasks = new Stack<ThrottlerTask>();
+	protected volatile DelayQueue<ThrottlerTask> tasks = new DelayQueue<ThrottlerTask>();
 	protected volatile boolean running = true;
 	
 	@Override
 	public void add(ThrottlerTask throttlerTask) {
-		tasks.push(throttlerTask);
+		TimeUnit unit = throttlerTask.getTimeUnit();
+		long delay = throttlerTask.getDelay(unit);
+		if(unit == TimeUnit.NANOSECONDS){
+			delay = System.nanoTime() + (delay);
+		}
+		throttlerTask.setDelay(delay);
+		
+		tasks.put(throttlerTask);
 	
 		synchronized(count){
 			// Adjust to the actual task count
@@ -59,20 +68,35 @@ public class AbstractStackThrottler implements Throttler {
 			@Override
 			public void run(){
 				while(running == true){
-					if(tasks.empty() == false){
-						ThrottlerTask task = tasks.pop();
-						task.execute();
-						
-						synchronized(count){
-							count--;
+					try{
+						if(tasks.isEmpty() == false){
+							ThrottlerTask task = tasks.take();
+							
+							if(task != null){
+								task.execute();
+
+								synchronized(count){
+									count--;
+								}
+							}
+
+//							try {
+//								long duration = task.getDelayInMillis();
+//								Thread.sleep(duration);
+//							} catch (InterruptedException e) {
+//								e.printStackTrace();
+//							}
 						}
+					}
+					catch(NoSuchElementException e){
+						e.printStackTrace();
 						
-						try {
-							long duration = task.getDelayInMillis();
-							Thread.sleep(duration);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+
+					}
+					finally{
+
 					}
 				}
 			}
@@ -81,3 +105,4 @@ public class AbstractStackThrottler implements Throttler {
 		thread.start();
 	}
 }
+

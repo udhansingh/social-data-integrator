@@ -15,7 +15,7 @@
    limitations under the License.
    
  */
-package org.onesun.smc.core.data;
+package org.onesun.smc.core.data.reader;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -83,7 +83,7 @@ public class JSONDataReader extends AbstractDataReader {
 	}
 
 	@Override
-	public void loadData() {
+	public void load() {
 		List<String> xPaths = new ArrayList<String>();
 		for (String value : metadata.keySet()) {
 			xPaths.add(value);

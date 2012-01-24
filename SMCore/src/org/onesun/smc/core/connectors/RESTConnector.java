@@ -22,8 +22,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.log4j.Logger;
 import org.onesun.smc.core.model.Authentication;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class RESTConnector extends AbstractConnector {
 	private static Logger logger = Logger.getLogger(RESTConnector.class);
@@ -40,7 +44,7 @@ public class RESTConnector extends AbstractConnector {
 	}
 
 	public String toString(){
-		return "[" + connectionName + "," + username + "," + password + "]";
+		return "[" + name + "," + username + "," + password + "]";
 	}
 
 	public String getUsername() {
@@ -62,7 +66,7 @@ public class RESTConnector extends AbstractConnector {
 	@Override
 	public void read(Properties properties) {
 		setAuthentication(Authentication.REST);
-		setConnectionName(properties.getProperty("connectionName"));
+		setName(properties.getProperty("connectionName"));
 		setIdentity(properties.getProperty("identity"));
 		setUsername(properties.getProperty("username"));
 		setPassword(properties.getProperty("password"));
@@ -93,5 +97,20 @@ public class RESTConnector extends AbstractConnector {
 		fos.close();
 		
 		logger.info("File Saved: " + connectionFileName);
+	}
+	
+	@Override
+	public Element toElement(Document document) throws ParserConfigurationException {
+		Element parent = super.toElement(document);
+		
+		Element child = document.createElement("username");
+		child.setTextContent((username != null) ? username : "");
+		parent.appendChild(child);
+		
+		child = document.createElement("password");
+		child.setTextContent((password != null) ? password : "");
+		parent.appendChild(child);
+		
+		return parent;
 	}
 }

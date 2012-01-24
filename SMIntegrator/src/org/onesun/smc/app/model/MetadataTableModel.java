@@ -146,12 +146,6 @@ public class MetadataTableModel extends DefaultTableModel {
 		fireTableDataChanged();
 	}
 
-/*	public void clear() {
-		metadata = null;
-		fireTableStructureChanged();
-		fireTableDataChanged();
-	}*/
-
 	public Metadata getMetadata() {
 		return metadata;
 	}

@@ -22,7 +22,7 @@ import java.util.Map;
 import org.onesun.smc.core.metadata.Metadata;
 
 public interface DataReader {
-	void loadData();
+	void load();
 	void setMetadata(Metadata metadata);
 	Metadata getMetadata();
 	List<Map<String, String>> getData();

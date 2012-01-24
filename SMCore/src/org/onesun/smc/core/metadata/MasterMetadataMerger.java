@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.log4j.Logger;
 import org.onesun.commons.xml.XMLUtils;
 import org.onesun.smc.api.DataTypeFactory;
@@ -62,7 +64,17 @@ public class MasterMetadataMerger {
 	public void merge(Metadata metadata){
 		final String commentText = providerName + " --> " + resourceName;
 		
-		Document document = metadata.toDocument();
+		Document document = null;
+		try {
+			document = XMLUtils.newDocument();
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}
+		finally {
+		}
+		
+		if(document == null) return;
+		
 		Comment comment = document.createComment(commentText);
 		document.appendChild(comment);
 		

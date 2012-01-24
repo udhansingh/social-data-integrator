@@ -32,14 +32,14 @@ import org.onesun.smc.api.DataServicesFactory;
 import org.onesun.smc.api.DataTypeFactory;
 import org.onesun.smc.api.FilterFactory;
 import org.onesun.smc.api.ProviderFactory;
-import org.onesun.smc.app.model.BusinessObject;
 import org.onesun.smc.core.model.Authentication;
+import org.onesun.smc.core.model.Tasklet;
 import org.onesun.smc.core.services.auth.Authenticator;
 
 public class AppCommons {
 	private static Logger logger = Logger.getLogger(IconUtils.class);
 	
-	public static BusinessObject 						BUSINESS_OBJECT					= new BusinessObject();
+	public static Tasklet 								TASKLET							= new Tasklet();
 
 	public static String 								APPLICATION_TITLE				= "Social Data Integrator";
 	
@@ -60,6 +60,8 @@ public class AppCommons {
 	public static String								PATH_TO_CORE					= null;
 	
 	public static String								PATH_TO_DATA_ACCESS				= null;
+	
+	public static String								PATH_TO_TASKLETS				= null;
 	
 	public static String								PATH_TO_MASTER_METADATA			= null;
 
@@ -117,6 +119,7 @@ public class AppCommons {
 		PATH_TO_DATA_ACCESS			= PATH_TO_APP_CONFIG	+ "data-access/";
 		PATH_TO_CORE				= PATH_TO_APP_CONFIG	+ "core/";
 		PATH_TO_CONNECTIONS			= PATH_TO_APP_CONFIG	+ "connections/";
+		PATH_TO_TASKLETS			= PATH_TO_APP_CONFIG	+ "tasklets/";
 		CONFIG_FILE_PATH			= PATH_TO_APP_CONFIG	+ "core.properties";
 		
 		File dir = new File(PATH_TO_APP_CONFIG);
@@ -136,6 +139,10 @@ public class AppCommons {
 			dir.mkdirs();
 		}
 		dir = new File(PATH_TO_MASTER_METADATA);
+		if(dir.exists() == false){
+			dir.mkdirs();
+		}
+		dir = new File(PATH_TO_TASKLETS);
 		if(dir.exists() == false){
 			dir.mkdirs();
 		}

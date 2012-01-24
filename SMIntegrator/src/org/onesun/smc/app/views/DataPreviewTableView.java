@@ -49,9 +49,9 @@ import org.onesun.smc.app.AppMessages;
 import org.onesun.smc.app.handlers.UITask;
 import org.onesun.smc.app.model.DatasetModel;
 import org.onesun.smc.app.views.shared.ColoredTable;
-import org.onesun.smc.core.data.JSONDataReader;
-import org.onesun.smc.core.data.SimpleDataProfiler;
-import org.onesun.smc.core.data.XMLDataReader;
+import org.onesun.smc.core.data.profiler.SimpleDataProfiler;
+import org.onesun.smc.core.data.reader.JSONDataReader;
+import org.onesun.smc.core.data.reader.XMLDataReader;
 import org.onesun.smc.core.metadata.Metadata;
 import org.onesun.smc.core.providers.web.kapow.KapowDataReader;
 import org.onesun.smc.core.providers.web.kapow.KapowObject;
@@ -99,13 +99,10 @@ public class DataPreviewTableView extends JPanel {
 			public void componentHidden(ComponentEvent e) {
 			}
 		});
-		
-		
-		this.setPreferredSize(new Dimension(250, 400));
 	}
 
 	public void generateDataPreview(Boolean profiling) {
-		Connector connection = AppCommons.BUSINESS_OBJECT.getConnection();
+		Connector connection = AppCommons.TASKLET.getConnection();
 
 		if(connection == null){
 			JOptionPane.showMessageDialog(rootPanel, AppMessages.INFORMATION_CHOOSE_A_CONNECTION);
@@ -129,10 +126,10 @@ public class DataPreviewTableView extends JPanel {
 		DefaultCusor.startWaitCursor(rootPanel);
 		DataReader dataReader = null;
 
-		Resource resource = AppCommons.BUSINESS_OBJECT.getResource();
-		Metadata metadata = AppCommons.BUSINESS_OBJECT.getMetadata();
+		Resource resource = AppCommons.TASKLET.getResource();
+		Metadata metadata = AppCommons.TASKLET.getMetadata();
 
-		if(metadata.isDiscovered() == false){
+		if((metadata == null) || (metadata != null && metadata.isDiscovered() == false)){
 			if(providerInstance.getCategory().compareToIgnoreCase("KAPOW") == 0){
 				WebResource webResource = (WebResource)resource;
 				WebResource clone = (WebResource)webResource.clone();
@@ -151,7 +148,7 @@ public class DataPreviewTableView extends JPanel {
 				}
 			}
 		}
-		else {
+		else if((metadata != null && metadata.isDiscovered() == true)){
 			// Apply XPath Rules
 			TextFormat textFormat = resource.getTextFormat();
 
@@ -172,7 +169,7 @@ public class DataPreviewTableView extends JPanel {
 
 		dataReader.setMetadata(metadata);
 		dataReader.initialize();
-		dataReader.loadData();
+				dataReader.load();
 
 		List<Map<String, String>> data = dataReader.getData();
 

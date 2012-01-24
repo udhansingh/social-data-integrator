@@ -16,6 +16,8 @@
  */
 package org.onesun.smc.core.resources;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,6 +25,8 @@ import org.onesun.commons.text.format.detectors.TextFormat;
 import org.onesun.commons.text.format.detectors.TextFormatDetector;
 import org.onesun.smc.api.Resource;
 import org.scribe.model.Verb;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public abstract class AbstractResource implements Resource, Cloneable {
 	protected String resourceName = null;
@@ -133,5 +137,20 @@ public abstract class AbstractResource implements Resource, Cloneable {
 	
 	public void setTextFormat(TextFormat textFormat) {
 		this.textFormat = textFormat;
+	}
+	
+	@Override
+	public Element toElement(Document document) throws ParserConfigurationException{
+		Element parent = document.createElement("resource");
+		
+		Element child =  document.createElement("verb");
+		child.setTextContent((verb != null) ? verb.name() : "");
+		parent.appendChild(child);
+
+		child = document.createElement("resourceName");
+		child.setTextContent((resourceName != null) ? resourceName : "");
+		parent.appendChild(child);
+
+		return parent;
 	}
 }

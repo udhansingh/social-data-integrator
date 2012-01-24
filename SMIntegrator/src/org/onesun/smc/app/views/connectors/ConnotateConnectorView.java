@@ -77,7 +77,7 @@ public class ConnotateConnectorView extends ConnectorPanel {
 		connectionNameTextField.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				AppCommons.BUSINESS_OBJECT.getConnection().setConnectionName(connectionNameTextField.getText().trim());
+				AppCommons.TASKLET.getConnection().setName(connectionNameTextField.getText().trim());
 			}
 		});
 
@@ -97,7 +97,7 @@ public class ConnotateConnectorView extends ConnectorPanel {
 						}
 						else {
 							ConnotateConnector connection = new ConnotateConnector();
-							connection.setConnectionName(connectionName);
+							connection.setName(connectionName);
 							connection.setUrl(url);
 							connection.setUsername(username);
 							connection.setPassword(password);

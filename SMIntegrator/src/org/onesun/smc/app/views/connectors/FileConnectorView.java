@@ -120,7 +120,7 @@ public class FileConnectorView extends ConnectorPanel {
 		connectionNameTextField.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				AppCommons.BUSINESS_OBJECT.getConnection().setConnectionName(connectionNameTextField.getText().trim());
+				AppCommons.TASKLET.getConnection().setName(connectionNameTextField.getText().trim());
 			}
 		});
 
@@ -149,7 +149,7 @@ public class FileConnectorView extends ConnectorPanel {
 						}
 						else {
 							FileSystemConnector connection = new FileSystemConnector();
-							connection.setConnectionName(connectionName);
+							connection.setName(connectionName);
 							connection.setPath(path);
 							connection.setFilter(filter);
 							connection.setIdentity("File System");

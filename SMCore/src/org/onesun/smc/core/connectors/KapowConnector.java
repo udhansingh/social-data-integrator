@@ -22,8 +22,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.log4j.Logger;
 import org.onesun.smc.core.model.Authentication;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class KapowConnector extends WebConnector {
 	private static Logger logger = Logger.getLogger(KapowConnector.class);
@@ -45,7 +49,7 @@ public class KapowConnector extends WebConnector {
 	@Override
 	public void read(Properties properties) {
 		setAuthentication(Authentication.KAPOW);
-		setConnectionName(properties.getProperty("connectionName"));
+		setName(properties.getProperty("connectionName"));
 		setIdentity(properties.getProperty("identity"));
 		setUrl(properties.getProperty("url"));
 		String port = properties.getProperty("rqlPort");
@@ -77,5 +81,16 @@ public class KapowConnector extends WebConnector {
 		fos.close();
 		
 		logger.info("File Saved: " + connectionFileName);
+	}
+	
+	@Override
+	public Element toElement(Document document) throws ParserConfigurationException {
+		Element parent = super.toElement(document);
+		
+		Element child = document.createElement("rqlPort");
+		child.setTextContent(Integer.toString(getRqlPort()));
+		parent.appendChild(child);
+
+		return parent;
 	}
 }

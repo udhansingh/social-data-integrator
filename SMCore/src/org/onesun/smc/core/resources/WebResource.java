@@ -16,6 +16,11 @@
  */
 package org.onesun.smc.core.resources;
 
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 public class WebResource extends AbstractResource {
 	private String name;
 	
@@ -42,5 +47,16 @@ public class WebResource extends AbstractResource {
 	@Override
 	public String getUrl() {
 		return null;
+	}
+	
+	@Override
+	public Element toElement(Document document) throws ParserConfigurationException{
+		Element parent = super.toElement(document);
+		
+		Element child =  document.createElement("name");
+		child.setTextContent((name != null) ? name : "");
+		parent.appendChild(child);
+
+		return parent;
 	}
 }

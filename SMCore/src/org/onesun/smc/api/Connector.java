@@ -20,7 +20,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.onesun.smc.core.model.Authentication;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public interface Connector {
 	String getCategory();
@@ -31,7 +35,7 @@ public interface Connector {
 	
 	String getName();
 	
-	void setConnectionName(String connectionName);
+	void setName(String connectionName);
 	
 	Authentication getAuthentication();
 	
@@ -40,4 +44,6 @@ public interface Connector {
 	void read(Properties properties);
 	
 	void save(String path) throws FileNotFoundException, IOException;
+	
+	Element toElement(Document document) throws ParserConfigurationException;
 }

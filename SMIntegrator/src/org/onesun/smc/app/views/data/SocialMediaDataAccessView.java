@@ -135,16 +135,16 @@ public class SocialMediaDataAccessView extends AbstractDataAccessView {
 					String verbName = (v == null) ? "" : v.name();
 					verbTextField.setText(verbName);
 					
-					AppCommons.BUSINESS_OBJECT.setResource(resource);
+					AppCommons.TASKLET.setResource(resource);
 				}
 				else {
 					verbTextField.setText("");
-					AppCommons.BUSINESS_OBJECT.setResource(null);
+					AppCommons.TASKLET.setResource(null);
 				}
 				
 				verbTextField.invalidate();
 				
-				AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.BUSINESS_OBJECT.toJSON());
+				AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.TASKLET.toXML());
 	    		AppCommonsUI.MODEL_TEXTAREA.invalidate();
 			}
 		});
@@ -171,7 +171,7 @@ public class SocialMediaDataAccessView extends AbstractDataAccessView {
 				if(resource == null) return;
 				RESTResource clone = (RESTResource) resource.clone();
 
-				Connector connection = AppCommons.BUSINESS_OBJECT.getConnection();
+				Connector connection = AppCommons.TASKLET.getConnection();
 
 				if(AppCommons.AUTHENTICATOR == null && clone.isAccessTokenRequired() == true){
 					if(connection == null){
@@ -273,8 +273,8 @@ public class SocialMediaDataAccessView extends AbstractDataAccessView {
 				}
 				
 				// Update the meta-model
-				AppCommons.BUSINESS_OBJECT.setResource(clone);
-	    		AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.BUSINESS_OBJECT.toJSON());
+				AppCommons.TASKLET.setResource(clone);
+	    		AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.TASKLET.toXML());
 	    		AppCommonsUI.MODEL_TEXTAREA.invalidate();
 				
 				dataTextArea.invalidate();

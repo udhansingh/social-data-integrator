@@ -18,7 +18,11 @@ package org.onesun.smc.core.resources;
 
 import java.util.Map;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.scribe.model.Verb;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class StreamingResource extends AbstractResource {
 	private String url = null;
@@ -88,5 +92,45 @@ public class StreamingResource extends AbstractResource {
 
 	public void setHeaders(Map<String, String> headers) {
 		this.headers = headers;
+	}
+	
+	@Override
+	public Element toElement(Document document) throws ParserConfigurationException{
+		Element parent = super.toElement(document);
+		
+		Element child = document.createElement("url");
+		child.setTextContent((url != null) ? url : "");
+		parent.appendChild(child);
+
+		child =  document.createElement("parameters");
+		child.setTextContent((parameters != null) ? parameters : "");
+		parent.appendChild(child);
+		
+		child =  document.createElement("payload");
+		child.setTextContent((payload != null) ? payload : "");
+		parent.appendChild(child);
+		
+		if(headers != null && headers.size() > 0){
+			child = document.createElement("headers");
+			
+			for(String key : headers.keySet()){
+				Element header =  document.createElement("header");
+
+				Element element = document.createElement("name");
+				element.setTextContent(key);
+				header.appendChild(element);
+
+				element = document.createElement("value");
+				String value = headers.get(key);
+				element.setTextContent((value != null) ? value : "");
+				header.appendChild(element);
+				
+				child.appendChild(header);
+			}
+			
+			parent.appendChild(child);
+		}
+		
+		return parent;
 	}
 }

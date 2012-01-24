@@ -79,7 +79,7 @@ public class FileDataAccessView extends AbstractDataAccessView {
 		setterButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Connector connection = AppCommons.BUSINESS_OBJECT.getConnection();
+				Connector connection = AppCommons.TASKLET.getConnection();
 				
 				if(connection != null){
 					FileSystemConnector c = (FileSystemConnector)connection;
@@ -157,8 +157,8 @@ public class FileDataAccessView extends AbstractDataAccessView {
 				}
 				
 				// Update the meta-model
-				AppCommons.BUSINESS_OBJECT.setResource(resource);
-	    		AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.BUSINESS_OBJECT.toJSON());
+				AppCommons.TASKLET.setResource(resource);
+	    		AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.TASKLET.toXML());
 	    		AppCommonsUI.MODEL_TEXTAREA.invalidate();
 				
 	    		rootPanel.invalidate();

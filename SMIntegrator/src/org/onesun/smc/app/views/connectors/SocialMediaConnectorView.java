@@ -112,7 +112,7 @@ public class SocialMediaConnectorView extends ConnectorPanel {
 		connectionNameTextField.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				AppCommons.BUSINESS_OBJECT.getConnection().setConnectionName(connectionNameTextField.getText().trim());
+				AppCommons.TASKLET.getConnection().setName(connectionNameTextField.getText().trim());
 			}
 		});
 
@@ -317,7 +317,7 @@ public class SocialMediaConnectorView extends ConnectorPanel {
 						failed++;
 					}
 					else {
-						connection.setConnectionName( newData );
+						connection.setName( newData );
 					}
 
 					data = (String)identityComboBox.getSelectedItem();

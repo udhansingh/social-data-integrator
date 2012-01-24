@@ -16,6 +16,11 @@
  */
 package org.onesun.smc.core.resources;
 
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 public class FileResource extends AbstractResource {
 	private String fileName = null;
 
@@ -32,4 +37,14 @@ public class FileResource extends AbstractResource {
 		return fileName;
 	}
 	
+	@Override
+	public Element toElement(Document document) throws ParserConfigurationException{
+		Element parent = super.toElement(document);
+		
+		Element child =  document.createElement("fileName");
+		child.setTextContent((fileName != null) ? fileName : "");
+		parent.appendChild(child);
+
+		return parent;
+	}
 }

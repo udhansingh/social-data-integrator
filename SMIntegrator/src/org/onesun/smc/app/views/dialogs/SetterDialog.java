@@ -31,10 +31,10 @@ import org.onesun.smc.app.AppCommonsUI;
 import org.onesun.smc.app.handlers.RequestUpdateHandler;
 import org.onesun.smc.app.handlers.UserAction;
 import org.onesun.smc.app.handlers.UserActionListener;
-import org.onesun.smc.app.model.BusinessObject;
 import org.onesun.smc.app.views.data.SetterView;
 import org.onesun.smc.core.metadata.FilterMetadata;
 import org.onesun.smc.core.model.RequestParamObject;
+import org.onesun.smc.core.model.Tasklet;
 
 public class SetterDialog extends AbstractDialog {
 	private static final long serialVersionUID = 8615404465470079746L;
@@ -84,7 +84,7 @@ public class SetterDialog extends AbstractDialog {
 			List<RequestParamObject> headers = view.getHeaders();
 			String requestBody = view.getRequestBody();
 			
-			BusinessObject bobj = AppCommons.BUSINESS_OBJECT;
+			Tasklet bobj = AppCommons.TASKLET;
 			FilterMetadata fm = bobj.getFilterMetadata();
 			
 			if(fm == null){
@@ -119,7 +119,7 @@ public class SetterDialog extends AbstractDialog {
 			handler.update(fm);
 			
 			// Update log
-			AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.BUSINESS_OBJECT.toJSON());
+			AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.TASKLET.toXML());
     		AppCommonsUI.MODEL_TEXTAREA.invalidate();
 		}
 	}

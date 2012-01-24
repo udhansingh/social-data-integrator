@@ -16,7 +16,11 @@
  */
 package org.onesun.smc.core.connectors;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.onesun.smc.core.model.Authentication;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public abstract class WebConnector extends AbstractConnector {
 	protected String url = "http://localhost:50080";
@@ -28,7 +32,7 @@ public abstract class WebConnector extends AbstractConnector {
 	}
 
 	public String toString(){
-		return "[" + connectionName + "," + url + "," + username + "," + password + "]";
+		return "[" + name + "," + url + "," + username + "," + password + "]";
 	}
 
 	public String getUsername() {
@@ -53,5 +57,24 @@ public abstract class WebConnector extends AbstractConnector {
 	
 	public void setUrl(String url) {
 		this.url = url;
+	}
+	
+	@Override
+	public Element toElement(Document document) throws ParserConfigurationException {
+		Element parent = super.toElement(document);
+		
+		Element child = document.createElement("url");
+		child.setTextContent((url != null) ? url : "");
+		parent.appendChild(child);
+		
+		child = document.createElement("username");
+		child.setTextContent((username != null) ? username : "");
+		parent.appendChild(child);
+		
+		child = document.createElement("password");
+		child.setTextContent((password != null) ? password : "");
+		parent.appendChild(child);
+		
+		return parent;
 	}
 }

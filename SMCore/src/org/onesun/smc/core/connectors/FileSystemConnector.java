@@ -24,8 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.log4j.Logger;
 import org.onesun.smc.core.model.Authentication;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class FileSystemConnector extends AbstractConnector {
 	private static Logger logger = Logger.getLogger(FileSystemConnector.class);
@@ -43,7 +47,7 @@ public class FileSystemConnector extends AbstractConnector {
 	}
 	
 	public String toString(){
-		return "[" + connectionName + "," + path + "," + filter + "]";
+		return "[" + name + "," + path + "," + filter + "]";
 	}
 
 	public String getPath() {
@@ -72,7 +76,7 @@ public class FileSystemConnector extends AbstractConnector {
 	@Override
 	public void read(Properties properties) {
 		setAuthentication(Authentication.FILE_SYSTEM);
-		setConnectionName(properties.getProperty("connectionName"));
+		setName(properties.getProperty("connectionName"));
 		setIdentity(properties.getProperty("identity"));
 		setPath(properties.getProperty("path"));
 		setFilter(properties.getProperty("filter"));
@@ -103,5 +107,20 @@ public class FileSystemConnector extends AbstractConnector {
 		fos.close();
 		
 		logger.info("File Saved: " + connectionFileName);
+	}
+	
+	@Override
+	public Element toElement(Document document) throws ParserConfigurationException {
+		Element parent = super.toElement(document);
+		
+		Element child = document.createElement("filter");
+		child.setTextContent((filter != null) ? filter.toString().replace("[", "").replace("]", "") : "");
+		parent.appendChild(child);
+		
+		child = document.createElement("path");
+		child.setTextContent((path != null) ? path : "");
+		parent.appendChild(child);
+		
+		return parent;
 	}
 }

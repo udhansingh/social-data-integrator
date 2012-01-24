@@ -44,8 +44,8 @@ import org.onesun.commons.text.format.detectors.TextFormat;
 import org.onesun.smc.api.DataReader;
 import org.onesun.smc.api.MetadataReader;
 import org.onesun.smc.app.views.shared.ColoredTable;
-import org.onesun.smc.core.data.JSONDataReader;
-import org.onesun.smc.core.data.XMLDataReader;
+import org.onesun.smc.core.data.reader.JSONDataReader;
+import org.onesun.smc.core.data.reader.XMLDataReader;
 import org.onesun.smc.core.metadata.JSONMetadataReader;
 import org.onesun.smc.core.metadata.Metadata;
 import org.onesun.smc.core.metadata.XMLMetadataReader;
@@ -174,7 +174,7 @@ public class ColoredTableView extends JFrame implements MouseListener{
 			
 			dataReader.setMetadata(metadata);
 			dataReader.initialize();
-			dataReader.loadData();
+			dataReader.load();
 			List<Map<String,String>> data = dataReader.getData();
 			for(Map<String,String> row : data){
 				tableModel.addRow(row.values().toArray());

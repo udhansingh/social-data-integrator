@@ -35,10 +35,10 @@ import org.onesun.smc.api.FilterFactory;
 import org.onesun.smc.api.Resource;
 import org.onesun.smc.app.AppIcons;
 import org.onesun.smc.app.AppCommons;
-import org.onesun.smc.app.model.BusinessObject;
 import org.onesun.smc.app.model.RequestParamModel;
 import org.onesun.smc.core.metadata.FilterMetadata;
 import org.onesun.smc.core.model.RequestParamObject;
+import org.onesun.smc.core.model.Tasklet;
 
 public class SetterView  extends JPanel {
 
@@ -80,7 +80,7 @@ public class SetterView  extends JPanel {
 	}
 
 	public void initParamsModel(){
-		BusinessObject bobj = AppCommons.BUSINESS_OBJECT;
+		Tasklet bobj = AppCommons.TASKLET;
 		Resource r = null;
 		paramsModel.removeAll();
 

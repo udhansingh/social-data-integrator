@@ -93,7 +93,7 @@ public class WebDataAccessView extends AbstractDataAccessView {
 		refreshButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				WebConnector c = (WebConnector)AppCommons.BUSINESS_OBJECT.getConnection();
+				WebConnector c = (WebConnector)AppCommons.TASKLET.getConnection();
 
 				WebProvider provider = (WebProvider)ProviderFactory.getProvider(c.getIdentity(), "KAPOW");
 
@@ -129,8 +129,8 @@ public class WebDataAccessView extends AbstractDataAccessView {
 				if(resourceComboBox.getSelectedIndex() > 0){
 					WebResource resource = (WebResource)resourceComboBox.getSelectedItem();
 
-					AppCommons.BUSINESS_OBJECT.setResource(resource);
-					AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.BUSINESS_OBJECT.toJSON());
+					AppCommons.TASKLET.setResource(resource);
+					AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.TASKLET.toXML());
 					AppCommonsUI.MODEL_TEXTAREA.invalidate();
 				}
 			}
@@ -161,7 +161,7 @@ public class WebDataAccessView extends AbstractDataAccessView {
 				WebResource resource = (WebResource)r.clone();
 				if(resource == null) return;
 
-				WebConnector c = (WebConnector)AppCommons.BUSINESS_OBJECT.getConnection();
+				WebConnector c = (WebConnector)AppCommons.TASKLET.getConnection();
 				WebProvider provider = (WebProvider)ProviderFactory.getProvider(c.getIdentity(), "KAPOW");
 
 				// TODO Set Headers, Parameters, ...
@@ -269,8 +269,8 @@ public class WebDataAccessView extends AbstractDataAccessView {
 				dataTextArea.setWrapStyleWord(true);
 
 				// Update the meta-model
-				AppCommons.BUSINESS_OBJECT.setResource(r);
-				AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.BUSINESS_OBJECT.toJSON());
+				AppCommons.TASKLET.setResource(r);
+				AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.TASKLET.toXML());
 				AppCommonsUI.MODEL_TEXTAREA.invalidate();
 
 				dataTextArea.invalidate();

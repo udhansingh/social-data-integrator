@@ -199,7 +199,7 @@ public class DataServicesView extends JPanel {
 		executeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				if(AppCommons.BUSINESS_OBJECT.getConnection() == null){
+				if(AppCommons.TASKLET.getConnection() == null){
 					JOptionPane.showMessageDialog(rootPanel, AppMessages.INFORMATION_CHOOSE_A_CONNECTION);
 					return;
 				}
