@@ -109,6 +109,8 @@ public class MetadataTableView extends JPanel {
 	private DataPreviewer dataPreviewer = null;
 
 	public MetadataTableView(){
+		super();
+		
 		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
 		createControls();

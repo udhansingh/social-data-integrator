@@ -75,9 +75,11 @@ public class MasterMetadataMerger {
 		
 		if(document == null) return;
 		
+		
+		
 		Comment comment = document.createComment(commentText);
 		document.appendChild(comment);
-		
+
 		// Create to master metadata
 		File file = new File(fileName);
 		if(file.exists()){
@@ -106,6 +108,13 @@ public class MasterMetadataMerger {
 		
 		// compact cached model
 		metadata.compact();
+		
+		try {
+			Element element = metadata.toElement(document);
+			document.appendChild(element);
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}
 		
 		try {
 			// Write master metadata

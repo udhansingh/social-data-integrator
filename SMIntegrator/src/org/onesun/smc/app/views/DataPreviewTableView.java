@@ -77,6 +77,8 @@ public class DataPreviewTableView extends JPanel {
 	}
 
 	public DataPreviewTableView(){
+		super();
+		
 		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
 		createControls();

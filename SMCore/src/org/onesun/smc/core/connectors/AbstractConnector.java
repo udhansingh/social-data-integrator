@@ -32,9 +32,6 @@ public abstract class AbstractConnector implements Connector {
 	protected Authentication authentication = null;
 	protected String identity = null;
 
-	// Internal use only; for processing
-	protected final String FILE_EXTENSION = ".cnx";
-	
 	public AbstractConnector(String category, Authentication authentication){
 		this.category = category;
 		this.authentication = authentication;

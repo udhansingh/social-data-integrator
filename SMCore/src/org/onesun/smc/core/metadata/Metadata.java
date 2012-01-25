@@ -23,6 +23,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.commons.lang3.math.NumberUtils;
 import org.onesun.smc.core.model.MetaObject;
 import org.w3c.dom.Document;
@@ -150,113 +152,58 @@ public class Metadata implements Cloneable {
 		return map.size();
 	}
 	
-	public Element toElement(Document document) {
-		Element root = document.createElement("metadata");
-
-		Element parent = null;
-		Element child = null;
-		MetaObject mo = null;
-
-		// node name
-		mo = new MetaObject();
-		mo.setName(nodeName);
-		mo.setPath("social.media.internal.node.name");
-
-		parent = document.createElement("item");
-
-		child = document.createElement("path");
-		child.setTextContent(mo.getPath());
+	public Element toElement(Document document) throws ParserConfigurationException {
+		Element parent = document.createElement("metadata");
+		Element child = document.createElement("verb");
+		child.setTextContent((verb != null) ? verb : "");
 		parent.appendChild(child);
 
-		child = document.createElement("name");
-		child.setTextContent(mo.getName());
+		child = document.createElement("url");
+		child.setTextContent((url != null) ? url : "");
 		parent.appendChild(child);
 
-		child = document.createElement("type");
-		child.setTextContent(mo.getType().getName());
+		child = document.createElement("discovered");
+		child.setTextContent(Boolean.toString(discovered));
 		parent.appendChild(child);
 
-		root.appendChild(parent);
-
-		// url
-		mo = new MetaObject();
-		mo.setName(url);
-		mo.setPath("social.media.internal.url");
-
-		parent = document.createElement("item");
-
-		child = document.createElement("path");
-		child.setTextContent(mo.getPath());
+		child = document.createElement("nodeName");
+		child.setTextContent((nodeName != null) ? nodeName : "");
 		parent.appendChild(child);
 
-		child = document.createElement("name");
-		child.setTextContent(mo.getName());
-		parent.appendChild(child);
-
-		child = document.createElement("type");
-		child.setTextContent(mo.getType().getName());
-		parent.appendChild(child);
-
-		root.appendChild(parent);
-
-
-		// verb
-		mo = new MetaObject();
-		mo.setName(verb);
-		mo.setPath("social.media.internal.verb");
-
-		parent = document.createElement("item");
-
-		child = document.createElement("path");
-		child.setTextContent(mo.getPath());
-		parent.appendChild(child);
-
-		child = document.createElement("name");
-		child.setTextContent(mo.getName());
-		parent.appendChild(child);
-
-		child = document.createElement("type");
-		child.setTextContent(mo.getType().getName());
-		parent.appendChild(child);
-
-		root.appendChild(parent);
-
-		// rest of the items
+		child = document.createElement("items");
 		for(String k : map.keySet()){
-			mo = map.get(k);
+			MetaObject mo = map.get(k);
 
-			parent = document.createElement("item");
+			Element grandChild = document.createElement("item");
 
-			child = document.createElement("path");
-			child.setTextContent(mo.getPath());
-			parent.appendChild(child);
+			Element element = document.createElement("path");
+			element.setTextContent(mo.getPath());
+			grandChild.appendChild(element);
 
-			child = document.createElement("name");
-			child.setTextContent(mo.getName());
-			parent.appendChild(child);
+			element = document.createElement("name");
+			element.setTextContent(mo.getName());
+			grandChild.appendChild(element);
 
-			child = document.createElement("type");
-			child.setTextContent(mo.getType().getName());
-			parent.appendChild(child);
+			element = document.createElement("type");
+			element.setTextContent(mo.getType().getName());
+			grandChild.appendChild(element);
 
-			child = document.createElement("size");
-			child.setTextContent(Integer.toString(mo.getSize()));
-			parent.appendChild(child);
+			element = document.createElement("size");
+			element.setTextContent(Integer.toString(mo.getSize()));
+			grandChild.appendChild(element);
 
 			Boolean flag = mo.isIgnore();
 			if(flag == true){
-				child = document.createElement("ignore");
-				child.setTextContent(Boolean.toString(flag));
-				parent.appendChild(child);
+				element = document.createElement("ignore");
+				element.setTextContent(Boolean.toString(flag));
+				grandChild.appendChild(element);
 			}
 
-			root.appendChild(parent);
+			child.appendChild(grandChild);
 		}
+		parent.appendChild(child);
 
-		root.appendChild(parent);
-		document.appendChild(root);
-
-		return root;
+		return parent;
 	}
 
 	public Collection<MetaObject> values() {

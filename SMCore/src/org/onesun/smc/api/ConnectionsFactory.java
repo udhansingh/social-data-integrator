@@ -62,7 +62,7 @@ public class ConnectionsFactory {
 		final String fileName = file.getName();
 		
 		// Process .cnx files
-		if(fileName.toLowerCase().endsWith(".cnx")){
+		if(fileName.toLowerCase().endsWith(Connector.FILE_EXTENSION)){
 			Properties properties = new Properties();
 
 			Reader reader = new FileReader(file);
@@ -192,14 +192,14 @@ public class ConnectionsFactory {
 	}
 	
 	public static void loadConnections(String pathToConnections){
-		File connectionsDirectory = new File(pathToConnections);
+		File directory = new File(pathToConnections);
 		
-		if(connectionsDirectory.exists() == true){
-			File[] files = connectionsDirectory.listFiles();
+		if(directory.exists() == true){
+			File[] files = directory.listFiles();
 			
 			for(File file : files){
 				logger.info("Processing connection: " + file.getAbsolutePath());
-				if(file.getName().endsWith(".cnx")){
+				if(file.getName().endsWith(Connector.FILE_EXTENSION)){
 					try {
 						Connector connector = toConnection(file);
 						connections.put(connector.getName(), connector);

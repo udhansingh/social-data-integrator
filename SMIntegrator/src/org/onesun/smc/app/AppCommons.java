@@ -32,6 +32,7 @@ import org.onesun.smc.api.DataServicesFactory;
 import org.onesun.smc.api.DataTypeFactory;
 import org.onesun.smc.api.FilterFactory;
 import org.onesun.smc.api.ProviderFactory;
+import org.onesun.smc.api.TaskletsFactory;
 import org.onesun.smc.core.model.Authentication;
 import org.onesun.smc.core.model.Tasklet;
 import org.onesun.smc.core.services.auth.Authenticator;
@@ -194,6 +195,11 @@ public class AppCommons {
 		DataServicesFactory.load(PATH_TO_CORE + "data-services.xml");
 		ProviderFactory.load(PATH_TO_CORE + "data-providers.xml", PATH_TO_DATA_ACCESS);
 		FilterFactory.load(PATH_TO_CORE + "data-filters.xml", PATH_TO_DATA_ACCESS);
+		
+		TaskletsFactory.load(PATH_TO_TASKLETS);
+		for(Tasklet tasklet : TaskletsFactory.getTasklets()){
+			AppCommonsUI.TASKLETS_MODEL.addElement(tasklet);
+		}
 	}
 	
 	public static void saveConfiguration(){

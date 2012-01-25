@@ -15,43 +15,49 @@ public class DiscovererView extends JPanel {
 	 */
 	private static final long serialVersionUID = 1581982691500247615L;
 	
-	private JSplitPane mainPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 	
-	private MetadataTableView metaView = new MetadataTableView();
-	private DataPreviewTableView preView = new DataPreviewTableView();
+	private MetadataTableView metadataTableView = new MetadataTableView();
+	private DataPreviewTableView dataPreviewTableView = new DataPreviewTableView();
+	
+	private JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, metadataTableView, dataPreviewTableView);
 	
 	public DiscovererView(){
+		super();
+
 		this.setLayout(new BorderLayout(5, 5));
 
 		initControls();
 	}
 
 	private void initControls(){
-		mainPane.add(metaView);
-		mainPane.add(preView);
-		
-		metaView.setDataPreviewer(new DataPreviewer() {
+		metadataTableView.setDataPreviewer(new DataPreviewer() {
 			@Override
 			public void generate() {
-				preView.generateDataPreview(true);
+				dataPreviewTableView.generateDataPreview(true);
 			}
 		});
 		
-		preView.setMetadataRefeshCompleted(new UITask() {
+		dataPreviewTableView.setMetadataRefeshCompleted(new UITask() {
 			@Override
 			public void execute(Object object) {
 				if(object instanceof Metadata){
 					Metadata metadata = (Metadata)object;
 					
-					metaView.setMetadata(metadata);
-					metaView.updateView();
+					metadataTableView.setMetadata(metadata);
+					metadataTableView.updateView();
 					
-					metaView.invalidate();
-					metaView.repaint();
+					metadataTableView.invalidate();
+					metadataTableView.repaint();
 				}
 			}
 		});
 		
-		this.add(mainPane, BorderLayout.CENTER);
+		splitPane.setDividerSize(5);
+		
+		double weight = splitPane.getResizeWeight(); // 0.0 by default
+	    weight = .5D;
+	    splitPane.setResizeWeight(weight);
+	    
+		this.add(splitPane);
 	}
 }

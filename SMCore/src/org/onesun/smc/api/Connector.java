@@ -27,6 +27,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public interface Connector {
+	final static String FILE_EXTENSION = ".cnx";
+	
 	String getCategory();
 	
 	String getIdentity();

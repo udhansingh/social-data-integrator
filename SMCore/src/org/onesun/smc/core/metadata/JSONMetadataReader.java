@@ -121,6 +121,7 @@ public class JSONMetadataReader extends AbstractMetadataReader {
 
 		for (String path : paths) {
 			MetaObject mo = new MetaObject();
+			mo.setName(path);
 			mo.setPath(path);
 			
 			metadata.put(path, mo);

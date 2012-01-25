@@ -4,12 +4,12 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 
 import org.onesun.smc.app.AppCommons;
@@ -18,9 +18,8 @@ import org.onesun.smc.core.model.Tasklet;
 
 public class TaskletsView extends JPanel {
 	private static final long serialVersionUID = 3550296359531493880L;
-	private DefaultListModel<Tasklet> model = new DefaultListModel<Tasklet>();
 	private JTextField taskNameTextField = new JTextField();
-	private JList<Tasklet> taskletsList = new JList<Tasklet>(model);
+	private JList<Tasklet> taskletsList = new JList<Tasklet>(AppCommonsUI.TASKLETS_MODEL);
 	public TaskletsView(){
 		super();
 		
@@ -30,6 +29,8 @@ public class TaskletsView extends JPanel {
 	}
 	
 	private void initControls(){
+		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		
 		JPanel mainPanel = new JPanel(new BorderLayout(5, 5));
 		
 		JPanel subPanel = new JPanel(new BorderLayout(5, 5));
@@ -49,13 +50,23 @@ public class TaskletsView extends JPanel {
 		
 		mainPanel.add(subPanel, BorderLayout.CENTER);
 	
-		this.add(mainPanel, BorderLayout.CENTER);
+		splitPane.add(mainPanel);
 		
 		subPanel = new JPanel(new BorderLayout(5, 5));
 		subPanel.add(new JLabel("Saved Tasklets"), BorderLayout.NORTH);
 		subPanel.add(new JScrollPane(taskletsList), BorderLayout.CENTER);
 		
-		this.add(subPanel, BorderLayout.EAST);
+		splitPane.add(subPanel);
+		
+		splitPane.setDividerSize(5);
+		
+		double weight = splitPane.getResizeWeight(); // 0.0 by default
+	    weight = .20D;
+	    splitPane.setResizeWeight(weight);
+	    weight = .80D;
+	    splitPane.setResizeWeight(weight);
+	    
+		this.add(splitPane, BorderLayout.CENTER);
 	}
 	
 	private class SaveActionListener implements ActionListener{
@@ -70,7 +81,7 @@ public class TaskletsView extends JPanel {
 				AppCommonsUI.MODEL_TEXTAREA.invalidate();
 				
 				Tasklet tasklet = (Tasklet)AppCommons.TASKLET.clone();
-				model.addElement(tasklet);
+				AppCommonsUI.TASKLETS_MODEL.addElement(tasklet);
 				
 				tasklet.save(AppCommons.PATH_TO_TASKLETS + name + ".task");
 			}
