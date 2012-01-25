@@ -135,6 +135,10 @@ public class XMLMetadataReader extends AbstractMetadataReader {
 			initialize(element, null);
 		}
 	}
+	
+	private String getnodeNSname(){
+		return null;
+	}
 
 	private void initialize(Element node, String path) {
 		if (node == null)
@@ -205,7 +209,6 @@ public class XMLMetadataReader extends AbstractMetadataReader {
 				if (loc > -1) {
 					childname = path.substring(0, loc);
 					path = path.substring(loc + 1);
-					/* Not used normally. Only for safety from jumps in xpaths */
 					if (!children.containsKey(childname)) {
 						Node node = new Node();
 						node.setParent(this);
@@ -292,7 +295,6 @@ public class XMLMetadataReader extends AbstractMetadataReader {
 		 */
 		public List<String> generate() throws InvalidDataException {
 			processingDepth = Integer.MAX_VALUE;
-			// TODO Auto-generated method stub
 			if (depth < 0) {
 				throw new InvalidDataException("How depth can ne negative!");
 			}
