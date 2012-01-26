@@ -36,14 +36,6 @@ import org.jdom.output.XMLOutputter;
 import org.onesun.smc.core.exceptions.InvalidDataException;
 import org.xml.sax.InputSource;
 
-/**
- * Reads data from xml file as per the {@code xPaths} provided. Use '*' at the
- * end of {@code xPaths} to dump xml node at that xPath. <br />
- * <br />
- * <b>Defaults: </b> {@code xmlDump:true;}
- * 
- * @author vijha
- */
 public class XMLDataReader extends AbstractDataReader {
 	private static Logger logger = Logger.getLogger(XMLDataReader.class);
 	
@@ -52,13 +44,11 @@ public class XMLDataReader extends AbstractDataReader {
 	private boolean isOutput = false;
 	private boolean isBlob = true;
 	private boolean putWrapper = true;
-	private Document document = null;
 	boolean multivalued = false;
 
-	public XMLDataReader(File file) {
+	/*public XMLDataReader(File file) {
 		try {
-			document = new SAXBuilder().build(file);
-			rootnode = document.getRootElement();
+			rootnode = new SAXBuilder().build(file).getRootElement();
 		} catch (JDOMException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -66,13 +56,12 @@ public class XMLDataReader extends AbstractDataReader {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+	}*/
 
 	public XMLDataReader(String xmlString) {
 		try {
 			if(xmlString != null){
-				document = new SAXBuilder().build(new InputSource(new StringReader(xmlString)));
-				rootnode = document.getRootElement();
+				rootnode = new SAXBuilder().build(new InputSource(new StringReader(xmlString))).getRootElement();
 			}
 		} catch (JDOMException e) {
 			e.printStackTrace();
@@ -81,18 +70,6 @@ public class XMLDataReader extends AbstractDataReader {
 		}
 	}
 
-	/**
-	 * Reads data from xml file corresponding to {@code xPaths}. Use '*' for
-	 * dumping the nodes.
-	 * 
-	 * @param xPaths
-	 *            : List of xPaths to be processed.
-	 * @return
-	 * @return {@code List<List<String>> Dataset} containing data corresponding
-	 *         to {@code xPaths}
-	 * @throws InvalidDataFileExceptoin
-	 * @throws InvalidDataException
-	 */
 	private void addToMap(final Map<String, String> rowMap, final String key,
 			final String value) {
 		if (!rowMap.containsKey(key))
@@ -101,13 +78,14 @@ public class XMLDataReader extends AbstractDataReader {
 
 	private String getBlob(Element node) {
 		String nodeName = node.getName();
-		List<?> nodes = node.getParentElement().getChildren(nodeName);
+		Element parent = node.getParentElement();
+		List<?> nodes = parent.getChildren(nodeName);
 		String text = "";
 		if (isBlob) {
 			if (/*nodes.size() > 1 &&*/ putWrapper) {
-				text = "<" + node.getName() + "_list>"
+				text = "<" + parent.getName() + ">"
 						+ new XMLOutputter().outputString(nodes) + "</"
-						+ node.getName() + "_list>";
+						+ parent.getName() + ">";
 			} else {
 				text = new XMLOutputter().outputString(nodes);
 			}
@@ -115,6 +93,17 @@ public class XMLDataReader extends AbstractDataReader {
 		} else
 			text = node.getValue();
 		return text;
+	}
+	
+	private Element getNSChild(Element node, String nsName){
+		int index = nsName.indexOf(":");
+		if(index > -1){
+			return node.getChild(nsName.substring(index+1), node.getNamespace(nsName.substring(0, index)));
+		}
+		else{
+			return node.getChild(nsName);
+		}
+			
 	}
 
 	@Override
@@ -126,7 +115,7 @@ public class XMLDataReader extends AbstractDataReader {
 			String[] dataPath = nodeName.split("/");
 			if(dataPath.length > 1){
 				for (int i = 1; i < dataPath.length-1; i++) {
-					node = node.getChild(dataPath[i]);
+					node = getNSChild(node,dataPath[i]);
 				}
 				nodeList = new ArrayList<Element>();
 				for(Object object : node.getChildren(dataPath[dataPath.length - 1], node.getNamespace())){
@@ -145,7 +134,6 @@ public class XMLDataReader extends AbstractDataReader {
 				else	
 					nodeList.add(node);
 			}
-
 		}
 		else{
 			nodeList = new ArrayList<Element>();
@@ -268,16 +256,14 @@ public class XMLDataReader extends AbstractDataReader {
 			else
 				pathchildname = path;
 			if (pathchildname.charAt(0) == '@') {
-				Attribute attribute = node.getAttribute(path.substring(1),
-						node.getNamespace());
+				Attribute attribute = node.getAttribute(path.substring(1));
 				if (attribute != null) {
 					addToMap(rowMap, fullpath, attribute.getValue());
 					if (isOutput)
 						logger.info("\t " + attribute.getValue());
 				}
 			} else {
-				Element child = node.getChild(pathchildname.replace("*", ""),
-						node.getNamespace());
+				Element child = getNSChild(node, pathchildname.replace("*", ""));
 				if (child == null) {
 					addToMap(rowMap, fullpath, "");
 					if (isOutput)
@@ -286,7 +272,8 @@ public class XMLDataReader extends AbstractDataReader {
 					processData(path, (Element) child, depth + 1, rowMap, fullpath);
 			}
 
-		} else if (path.replace("*", "").equals(node.getName())) {
+		} else if (path.replace("*", "").equals(node.getName())||
+				path.replace("*", "").equals(node.getNamespacePrefix() + ":" + node.getName())) {
 			String text = "";
 			if (path.contains("*") && depth >= 2) {
 				text = getBlob(node);
