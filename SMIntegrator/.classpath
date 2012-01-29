@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry combineaccessrules="false" kind="src" path="/JSON.org"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/scribe-java"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/JSON.org"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Commons"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SMCore"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SMProviders"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SMService"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/xstream-1.4.2.jar"/>
-	<classpathentry kind="lib" path="lib/xercesImpl.jar"/>
-	<classpathentry kind="lib" path="lib/xml-apis.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang3-3.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/jcommon-1.0.17.jar"/>
 	<classpathentry kind="lib" path="lib/jfreechart-1.0.14.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.15.jar"/>
 	<classpathentry kind="lib" path="lib/robosuite-api.jar"/>
+	<classpathentry kind="lib" path="lib/xercesImpl.jar"/>
+	<classpathentry kind="lib" path="lib/xml-apis.jar"/>
+	<classpathentry kind="lib" path="lib/xstream-1.4.2.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

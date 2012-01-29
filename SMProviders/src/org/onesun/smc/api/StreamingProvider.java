@@ -18,11 +18,11 @@ package org.onesun.smc.api;
 
 import java.util.List;
 
-import org.onesun.smc.api.Connector;
+import org.onesun.smc.api.ConnectionProperties;
 import org.onesun.smc.api.ServiceProvider;
 import org.onesun.smc.core.resources.StreamingResource;
 
 public interface StreamingProvider extends ServiceProvider {
-	void setConnection(Connector connection);
+	void setConnection(ConnectionProperties connection);
 	List<StreamingResource> getResources();
 }

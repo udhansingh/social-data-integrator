@@ -44,7 +44,7 @@ import org.onesun.smc.app.AppCommons;
 import org.onesun.smc.app.AppCommonsUI;
 import org.onesun.smc.app.handlers.RequestUpdateHandler;
 import org.onesun.smc.app.views.dialogs.SetterDialog;
-import org.onesun.smc.core.connectors.WebConnector;
+import org.onesun.smc.core.connection.properties.WebConnectionProperties;
 import org.onesun.smc.core.metadata.FilterMetadata;
 import org.onesun.smc.core.providers.web.kapow.KapowObject;
 import org.onesun.smc.core.resources.WebResource;
@@ -93,7 +93,7 @@ public class WebDataAccessView extends AbstractDataAccessView {
 		refreshButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				WebConnector c = (WebConnector)AppCommons.TASKLET.getConnection();
+				WebConnectionProperties c = (WebConnectionProperties)AppCommons.TASKLET.getConnection();
 
 				WebProvider provider = (WebProvider)ProviderFactory.getProvider(c.getIdentity(), "KAPOW");
 
@@ -146,6 +146,10 @@ public class WebDataAccessView extends AbstractDataAccessView {
 					@Override
 					public void update(final FilterMetadata fm) {
 						filterMetadata = fm;
+						
+						AppCommons.TASKLET.setFilterMetadata(fm);
+						AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.TASKLET.toXML());
+			    		AppCommonsUI.MODEL_TEXTAREA.invalidate();
 					}
 				});
 				setterDialog.setVisible(true);
@@ -161,7 +165,7 @@ public class WebDataAccessView extends AbstractDataAccessView {
 				WebResource resource = (WebResource)r.clone();
 				if(resource == null) return;
 
-				WebConnector c = (WebConnector)AppCommons.TASKLET.getConnection();
+				WebConnectionProperties c = (WebConnectionProperties)AppCommons.TASKLET.getConnection();
 				WebProvider provider = (WebProvider)ProviderFactory.getProvider(c.getIdentity(), "KAPOW");
 
 				// TODO Set Headers, Parameters, ...

@@ -33,7 +33,7 @@ import org.onesun.smc.app.handlers.UserAction;
 import org.onesun.smc.app.handlers.UserActionListener;
 import org.onesun.smc.app.views.data.SetterView;
 import org.onesun.smc.core.metadata.FilterMetadata;
-import org.onesun.smc.core.model.RequestParamObject;
+import org.onesun.smc.core.model.Parameter;
 import org.onesun.smc.core.model.Tasklet;
 
 public class SetterDialog extends AbstractDialog {
@@ -80,8 +80,8 @@ public class SetterDialog extends AbstractDialog {
 
 	void onOkButtonClicked(ActionEvent event) {
 		if(handler != null){
-			List<RequestParamObject> params = view.getParams();
-			List<RequestParamObject> headers = view.getHeaders();
+			List<Parameter> params = view.getParams();
+			List<Parameter> headers = view.getHeaders();
 			String requestBody = view.getRequestBody();
 			
 			Tasklet bobj = AppCommons.TASKLET;
@@ -93,8 +93,8 @@ public class SetterDialog extends AbstractDialog {
 			}
 			
 			if(params != null){
-				Map<String, RequestParamObject> paramMap = Collections.synchronizedMap(new TreeMap<String, RequestParamObject>());
-				for(RequestParamObject o : params){
+				Map<String, Parameter> paramMap = Collections.synchronizedMap(new TreeMap<String, Parameter>());
+				for(Parameter o : params){
 					paramMap.put(o.getInternalName(), o);
 				}
 				
@@ -104,8 +104,8 @@ public class SetterDialog extends AbstractDialog {
 				fm.setParams(null);
 			}
 			if(headers != null){
-				Map<String, RequestParamObject> headerMap = Collections.synchronizedMap(new TreeMap<String, RequestParamObject>());
-				for(RequestParamObject o : headers){
+				Map<String, Parameter> headerMap = Collections.synchronizedMap(new TreeMap<String, Parameter>());
+				for(Parameter o : headers){
 					headerMap.put(o.getInternalName(), o);
 				}
 				fm.setHeaders(headerMap);
@@ -114,7 +114,7 @@ public class SetterDialog extends AbstractDialog {
 				fm.setHeaders(null);
 			}
 			
-			fm.setPayload(new RequestParamObject("payload", "param_payload", requestBody));
+			fm.setPayload(new Parameter("payload", "request_body", requestBody));
 			
 			handler.update(fm);
 			

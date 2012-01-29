@@ -27,7 +27,7 @@ import java.util.UUID;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.onesun.commons.xml.XMLUtils;
-import org.onesun.smc.api.Connector;
+import org.onesun.smc.api.ConnectionProperties;
 import org.onesun.smc.api.Exporter;
 import org.onesun.smc.api.Resource;
 import org.onesun.smc.core.metadata.FilterMetadata;
@@ -41,7 +41,7 @@ import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 public class Tasklet implements Exporter, Cloneable {
 	private String name;
 	private String identity;
-	private Connector connection;
+	private ConnectionProperties connection;
 	private Resource resource;
 	private Metadata metadata;
 	private FilterMetadata filterMetadata;
@@ -84,10 +84,10 @@ public class Tasklet implements Exporter, Cloneable {
 		this.resource = resource;
 	}
 
-	public Connector getConnection() {
+	public ConnectionProperties getConnection() {
 		return connection;
 	}
-	public void setConnection(Connector connection) {
+	public void setConnection(ConnectionProperties connection) {
 		this.connection = connection;
 	}
 

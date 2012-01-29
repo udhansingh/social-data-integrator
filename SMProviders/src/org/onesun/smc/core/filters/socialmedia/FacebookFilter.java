@@ -18,7 +18,7 @@ package org.onesun.smc.core.filters.socialmedia;
 
 import org.onesun.smc.core.filters.AbstractFilter;
 import org.onesun.smc.core.metadata.FilterMetadata;
-import org.onesun.smc.core.model.RequestParamObject;
+import org.onesun.smc.core.model.Parameter;
 
 public class FacebookFilter extends AbstractFilter {
 	public FacebookFilter(){
@@ -32,9 +32,9 @@ public class FacebookFilter extends AbstractFilter {
 	
 	@Override
 	public void init() {
-		final RequestParamObject limitObject = new RequestParamObject("limit", "max_result", "500");
-		final RequestParamObject queryObject = new RequestParamObject("q", "search_term", "");
-		final RequestParamObject userObject = new RequestParamObject("$USER_NAME$", "user_name", "me");
+		final Parameter limitObject = new Parameter("limit", "max_result", "500");
+		final Parameter queryObject = new Parameter("q", "search_term", "");
+		final Parameter userObject = new Parameter("$USER_NAME$", "user_name", "me");
 		
 		FilterMetadata fm = null;
 		fm = new FilterMetadata();

@@ -23,7 +23,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.onesun.smc.api.Connector;
+import org.onesun.smc.api.ConnectionProperties;
 import org.onesun.smc.app.AppCommons;
 import org.onesun.smc.app.AppCommonsUI;
 import org.onesun.smc.app.views.data.DataAccessViews;
@@ -55,7 +55,7 @@ public class AppMainView extends JPanel{
 					boolean displayed = false;
 					
 					if(bobj != null){
-						Connector connection = bobj.getConnection();
+						ConnectionProperties connection = bobj.getConnection();
 						if(connection != null){
 							String category = connection.getCategory();
 
@@ -71,8 +71,8 @@ public class AppMainView extends JPanel{
 							else if(category.compareTo("SOCIAL_MEDIA") == 0){
 								pane.setComponentAt(index, DataAccessViews.SOCIAL_DATA_ACCESS_LIST_VIEW);
 							}
-							else if(category.compareTo("FACEBOOK_STREAMING") == 0 || category.compareTo("TWITTER_STREAMING") == 0){
-								pane.setComponentAt(index, DataAccessViews.STREAMING_DATA_ACCESS_VIEW);
+							else if(category.compareTo("TWITTER_STREAMING") == 0){
+								pane.setComponentAt(index, DataAccessViews.TWITTER_STREAMING_DATA_ACCESS_VIEW);
 							}
 							
 							displayed = true;
@@ -99,10 +99,8 @@ public class AppMainView extends JPanel{
 
 		tab.add("Tasklets", new TaskletsView());
 
-		// tab.add("Workflow", new WorkFlowView());
+		tab.add("Workflow", new WorkFlowView());
 		
-		// tab.add("Services", new DataServicesView());
-
 		tab.add("Scheduler", new SchedulerView());
 
 		this.setLayout(new BorderLayout(5, 5));

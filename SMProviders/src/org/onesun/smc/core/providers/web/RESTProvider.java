@@ -18,7 +18,6 @@ package org.onesun.smc.core.providers.web;
 
 
 import org.onesun.smc.api.ServiceProvider;
-import org.onesun.smc.core.model.Authentication;
 
 public class RESTProvider implements ServiceProvider {
 
@@ -38,8 +37,8 @@ public class RESTProvider implements ServiceProvider {
 	}
 
 	@Override
-	public Authentication getAuthentication() {
-		return Authentication.REST;
+	public String getAuthentication() {
+		return "REST";
 	}
 
 	@Override

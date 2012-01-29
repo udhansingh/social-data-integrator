@@ -37,7 +37,6 @@ import org.onesun.commons.xml.XMLUtils;
 import org.onesun.smc.api.Exporter;
 import org.onesun.smc.api.Importer;
 import org.onesun.smc.api.SocialMediaProvider;
-import org.onesun.smc.core.model.Authentication;
 import org.onesun.smc.core.model.OAuthVersion;
 import org.onesun.smc.core.resources.RESTResource;
 import org.scribe.builder.api.Api;
@@ -71,8 +70,8 @@ public abstract class AbstractSocialMediaProvider implements SocialMediaProvider
 	public abstract String getIdentity();
 
 	@Override
-	final public Authentication getAuthentication() {
-		return Authentication.OAUTH;
+	final public String getAuthentication() {
+		return "OAUTH";
 	}
 
 	public OAuthVersion getOAuthVersion(){
@@ -351,7 +350,7 @@ public abstract class AbstractSocialMediaProvider implements SocialMediaProvider
 				root.setAttribute("apiClass", apiClass.getCanonicalName());
 				root.setAttribute("category", getCategory());
 				root.setAttribute("identity", getIdentity());
-				root.setAttribute("authentication", getAuthentication().name());
+				root.setAttribute("authentication", getAuthentication());
 				document.appendChild(root);
 
 				format = new OutputFormat(document);

@@ -20,14 +20,13 @@ package org.onesun.smc.core.providers.stream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.onesun.smc.api.Connector;
+import org.onesun.smc.api.ConnectionProperties;
 import org.onesun.smc.api.StreamingProvider;
-import org.onesun.smc.core.model.Authentication;
 import org.onesun.smc.core.resources.StreamingResource;
 
 public abstract class AbstractStreamingProvider implements StreamingProvider {
 	protected String serviceProviderName = null;
-	protected Connector connection = null;
+	protected ConnectionProperties connection = null;
 	
 	protected List<StreamingResource> resources = new ArrayList<StreamingResource>();
 	
@@ -38,7 +37,7 @@ public abstract class AbstractStreamingProvider implements StreamingProvider {
 	public abstract String getCategory();
 	
 	@Override
-	public void setConnection(Connector connection){
+	public void setConnection(ConnectionProperties connection){
 		this.connection = connection;
 	}
 	
@@ -48,7 +47,7 @@ public abstract class AbstractStreamingProvider implements StreamingProvider {
 	}
 	
 	@Override
-	public abstract Authentication getAuthentication();
+	public abstract String getAuthentication();
 	
 	public AbstractStreamingProvider(){
 		super();

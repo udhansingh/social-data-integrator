@@ -171,8 +171,8 @@ public class Metadata implements Cloneable {
 		parent.appendChild(child);
 
 		child = document.createElement("items");
-		for(String k : map.keySet()){
-			MetaObject mo = map.get(k);
+		for(String key : map.keySet()){
+			MetaObject mo = map.get(key);
 
 			Element grandChild = document.createElement("item");
 

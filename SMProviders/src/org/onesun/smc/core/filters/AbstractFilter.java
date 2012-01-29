@@ -32,7 +32,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.log4j.Logger;
 import org.onesun.smc.api.Filter;
 import org.onesun.smc.core.metadata.FilterMetadata;
-import org.onesun.smc.core.model.RequestParamObject;
+import org.onesun.smc.core.model.Parameter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -123,7 +123,7 @@ public abstract class AbstractFilter implements Filter {
 						String text = null;
 
 						// Pay load
-						RequestParamObject object = fm.getPayload();
+						Parameter object = fm.getPayload();
 						if(object != null){
 							Element node = document.createElement("payload");
 
@@ -150,7 +150,7 @@ public abstract class AbstractFilter implements Filter {
 
 						// Params
 						Element parent = document.createElement("params");
-						for(RequestParamObject r : fm.paramValues()){
+						for(Parameter r : fm.paramValues()){
 							Element node = document.createElement("param");
 							
 							Element e = document.createElement("externalName");
@@ -178,7 +178,7 @@ public abstract class AbstractFilter implements Filter {
 						
 						// Headers
 						parent = document.createElement("headers");
-						for(RequestParamObject r : fm.paramValues()){
+						for(Parameter r : fm.paramValues()){
 							Element node = document.createElement("header");
 							
 							Element e = document.createElement("externalName");

@@ -25,7 +25,7 @@ import java.net.URISyntaxException;
 
 import org.apache.log4j.Logger;
 import org.onesun.smc.api.SocialMediaProvider;
-import org.onesun.smc.core.connectors.SocialMediaConnector;
+import org.onesun.smc.core.connection.properties.SocialMediaConnectionProperties;
 import org.onesun.smc.core.model.OAuthVersion;
 import org.onesun.smc.core.resources.RESTParams;
 import org.scribe.builder.ServiceBuilder;
@@ -98,7 +98,7 @@ public class Authenticator {
 	private SocialMediaProvider provider = null;
 
 	private volatile OAuthService service = null;
-	private volatile SocialMediaConnector connection = null;
+	private volatile SocialMediaConnectionProperties connection = null;
 
 	private volatile Token requestToken = null;
 	private volatile Token accessToken = null;
@@ -113,13 +113,13 @@ public class Authenticator {
 		Authenticator.TIMEOUT = timeout;
 	}
 
-	public Authenticator(SocialMediaProvider provider, SocialMediaConnector connection, final int timeout){
+	public Authenticator(SocialMediaProvider provider, SocialMediaConnectionProperties connection, final int timeout){
 		this(provider, connection);
 
 		Authenticator.TIMEOUT = timeout;
 	}
 
-	public Authenticator(SocialMediaProvider provider, SocialMediaConnector connection){
+	public Authenticator(SocialMediaProvider provider, SocialMediaConnectionProperties connection){
 		this.provider = provider;
 		this.connection = connection;
 	}

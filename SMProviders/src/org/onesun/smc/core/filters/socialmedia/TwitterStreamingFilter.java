@@ -18,7 +18,7 @@ package org.onesun.smc.core.filters.socialmedia;
 
 import org.onesun.smc.core.filters.AbstractFilter;
 import org.onesun.smc.core.metadata.FilterMetadata;
-import org.onesun.smc.core.model.RequestParamObject;
+import org.onesun.smc.core.model.Parameter;
 
 public class TwitterStreamingFilter extends AbstractFilter {
 	@Override
@@ -33,18 +33,18 @@ public class TwitterStreamingFilter extends AbstractFilter {
 	@Override
 	public void init() {
 		FilterMetadata fm = null;
-		RequestParamObject o = null;
+		Parameter o = null;
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("count", "param_count", "0");
+		o = new Parameter("count", "param_count", "0");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("delimited", "param_delimited", "");
+		o = new Parameter("delimited", "param_delimited", "");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("follow", "param_follow", "");
+		o = new Parameter("follow", "param_follow", "");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("locations", "param_locations", "");
+		o = new Parameter("locations", "param_locations", "");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("track", "param_track", "<TOPIC>");
+		o = new Parameter("track", "param_track", "<TOPIC>");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("statuses/filter", fm);
 	}

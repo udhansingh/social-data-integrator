@@ -21,7 +21,6 @@ import java.io.File;
 import java.util.List;
 
 import org.onesun.smc.api.FileSystemProvider;
-import org.onesun.smc.core.model.Authentication;
 
 public class FileProvider implements FileSystemProvider {
 	protected List<File> resources = null;
@@ -32,8 +31,8 @@ public class FileProvider implements FileSystemProvider {
 	}
 	
 	@Override
-	final public Authentication getAuthentication() {
-		return Authentication.FILE_SYSTEM;
+	final public String getAuthentication() {
+		return "FILE_SYSTEM";
 	}
 	
 	public FileProvider(){

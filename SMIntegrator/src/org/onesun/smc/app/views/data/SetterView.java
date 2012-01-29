@@ -37,7 +37,7 @@ import org.onesun.smc.app.AppIcons;
 import org.onesun.smc.app.AppCommons;
 import org.onesun.smc.app.model.RequestParamModel;
 import org.onesun.smc.core.metadata.FilterMetadata;
-import org.onesun.smc.core.model.RequestParamObject;
+import org.onesun.smc.core.model.Parameter;
 import org.onesun.smc.core.model.Tasklet;
 
 public class SetterView  extends JPanel {
@@ -61,11 +61,11 @@ public class SetterView  extends JPanel {
 	private JScrollPane requestBodyScrollPane = new JScrollPane(requestBodyTextArea);
 
 
-	public List<RequestParamObject> getParams(){
+	public List<Parameter> getParams(){
 		return paramsModel.getData();
 	}
 
-	public List<RequestParamObject> getHeaders(){
+	public List<Parameter> getHeaders(){
 		return headerModel.getData();
 	}
 
@@ -127,7 +127,7 @@ public class SetterView  extends JPanel {
 		insertButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RequestParamObject o = new RequestParamObject("", "", "");
+				Parameter o = new Parameter("", "", "");
 				paramsModel.add(o);
 
 				paramsTable.invalidate();
@@ -173,7 +173,7 @@ public class SetterView  extends JPanel {
 		insertButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RequestParamObject o = new RequestParamObject("", "", "");
+				Parameter o = new Parameter("", "", "");
 				headerModel.add(o);
 
 				headerTable.invalidate();

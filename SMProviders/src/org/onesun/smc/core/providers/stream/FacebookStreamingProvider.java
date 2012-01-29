@@ -19,7 +19,6 @@ package org.onesun.smc.core.providers.stream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.onesun.smc.core.model.Authentication;
 import org.onesun.smc.core.resources.StreamingResource;
 import org.scribe.model.Verb;
 
@@ -46,8 +45,8 @@ public class FacebookStreamingProvider extends AbstractStreamingProvider {
 	}
 	
 	@Override
-	public Authentication getAuthentication() {
-		return Authentication.FACEBOOK_STREAMING;
+	public String getAuthentication() {
+		return "FACEBOOK_STREAMING";
 	}
 	
 	@Override

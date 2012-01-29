@@ -39,17 +39,16 @@ import javax.swing.JTextField;
 
 import org.onesun.commons.swing.cursors.DefaultCusor;
 import org.onesun.commons.text.format.detectors.TextFormat;
-import org.onesun.smc.api.Connector;
+import org.onesun.smc.api.ConnectionProperties;
 import org.onesun.smc.api.ProviderFactory;
 import org.onesun.smc.api.ServiceProvider;
-import org.onesun.smc.app.AppMessages;
 import org.onesun.smc.app.AppCommons;
 import org.onesun.smc.app.AppCommonsUI;
+import org.onesun.smc.app.AppMessages;
 import org.onesun.smc.app.handlers.RequestUpdateHandler;
 import org.onesun.smc.app.views.dialogs.SetterDialog;
 import org.onesun.smc.core.metadata.FilterMetadata;
-import org.onesun.smc.core.model.Authentication;
-import org.onesun.smc.core.model.RequestParamObject;
+import org.onesun.smc.core.model.Parameter;
 import org.onesun.smc.core.resources.RESTResource;
 import org.onesun.smc.core.services.auth.Authenticator;
 import org.onesun.smc.core.services.rest.RestListener;
@@ -157,6 +156,10 @@ public class SocialMediaDataAccessView extends AbstractDataAccessView {
 					@Override
 					public void update(final FilterMetadata fm) {
 						filterMetadata = fm;
+						
+						AppCommons.TASKLET.setFilterMetadata(fm);
+						AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.TASKLET.toXML());
+			    		AppCommonsUI.MODEL_TEXTAREA.invalidate();
 					}
 				});
 				setterDialog.setVisible(true);
@@ -171,7 +174,7 @@ public class SocialMediaDataAccessView extends AbstractDataAccessView {
 				if(resource == null) return;
 				RESTResource clone = (RESTResource) resource.clone();
 
-				Connector connection = AppCommons.TASKLET.getConnection();
+				ConnectionProperties connection = AppCommons.TASKLET.getConnection();
 
 				if(AppCommons.AUTHENTICATOR == null && clone.isAccessTokenRequired() == true){
 					if(connection == null){
@@ -187,13 +190,13 @@ public class SocialMediaDataAccessView extends AbstractDataAccessView {
 				
 				// Set Query Params
 				String params = null;
-				Collection<RequestParamObject> requestParams = null;
+				Collection<Parameter> requestParams = null;
 				if(filterMetadata != null) {
 					requestParams = filterMetadata.paramValues();
 				}
 				if(requestParams != null){
 					boolean start = true;
-					for(RequestParamObject param : requestParams){
+					for(Parameter param : requestParams){
 						String en = param.getExternalName();
 						if(en.startsWith("$")){
 							url = url.replace(en, param.getDefaultValue());
@@ -215,20 +218,20 @@ public class SocialMediaDataAccessView extends AbstractDataAccessView {
 				clone.setUrl(url);
 				
 				// Set Headers
-				Collection<RequestParamObject> requestHeaders = null;
+				Collection<Parameter> requestHeaders = null;
 				if(filterMetadata != null){
 					requestHeaders = filterMetadata.headerValues();
 				}
 				if(requestHeaders != null){
 					Map<String, String> headers = new HashMap<String, String>();
-					for(RequestParamObject header : requestHeaders){
+					for(Parameter header : requestHeaders){
 						headers.put(header.getExternalName(), header.getDefaultValue());
 					}
 					clone.setHeaders(headers);
 				}
 				
 				// Set Payload
-				RequestParamObject payloadObject = null;
+				Parameter payloadObject = null;
 				if(filterMetadata != null) {
 					payloadObject = filterMetadata.getPayload();
 				}
@@ -245,7 +248,7 @@ public class SocialMediaDataAccessView extends AbstractDataAccessView {
 				RestListener executor = new RestListener(provider, clone, AppCommons.AUTHENTICATION, Authenticator.getCallbackurl());
 				
 				executor.setConnection(connection);
-				if(AppCommons.AUTHENTICATION == Authentication.OAUTH && AppCommons.AUTHENTICATOR != null){
+				if(AppCommons.AUTHENTICATION.compareTo("OAUTH") == 0 && AppCommons.AUTHENTICATOR != null){
 					executor.setOauthService(AppCommons.AUTHENTICATOR.getService());
 					executor.setAccessToken(AppCommons.AUTHENTICATOR.getAccessToken());
 				}
@@ -273,6 +276,7 @@ public class SocialMediaDataAccessView extends AbstractDataAccessView {
 				}
 				
 				// Update the meta-model
+				AppCommons.TASKLET.setFilterMetadata(filterMetadata);
 				AppCommons.TASKLET.setResource(clone);
 	    		AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.TASKLET.toXML());
 	    		AppCommonsUI.MODEL_TEXTAREA.invalidate();

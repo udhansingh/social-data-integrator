@@ -19,11 +19,10 @@ package org.onesun.smc.core.services.rest;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.onesun.smc.api.Connector;
+import org.onesun.smc.api.ConnectionProperties;
 import org.onesun.smc.api.ServiceProvider;
 import org.onesun.smc.api.SocialMediaProvider;
-import org.onesun.smc.core.connectors.SocialMediaConnector;
-import org.onesun.smc.core.model.Authentication;
+import org.onesun.smc.core.connection.properties.SocialMediaConnectionProperties;
 import org.onesun.smc.core.resources.RESTResource;
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.model.OAuthRequest;
@@ -37,9 +36,9 @@ public class RestListener {
 	
 	private String callbackUrl = null;
 	private RESTResource resource = null;
-	private Authentication authentication = Authentication.NONE;
+	private String authentication = "NONE";
 	
-	private Connector connection = null;
+	private ConnectionProperties connection = null;
 	private OAuthService service = null;
 	private Token accessToken = null;
 	
@@ -47,7 +46,7 @@ public class RestListener {
 	private String responseBody = null;
 	private ServiceProvider serviceProvider = null;
 	
-	public RestListener(ServiceProvider serviceProvider, RESTResource resource, Authentication authentication, String callbackUrl){
+	public RestListener(ServiceProvider serviceProvider, RESTResource resource, String authentication, String callbackUrl){
 		// Generic
 		this.serviceProvider = serviceProvider;
 		this.resource = resource;
@@ -71,7 +70,7 @@ public class RestListener {
 		Request request = null;
 		
 		// Sign with access token if required
-		if(authentication == Authentication.OAUTH  && resource.isAccessTokenRequired() == true){
+		if(authentication.compareTo("OAUTH") == 0  && resource.isAccessTokenRequired() == true){
 			request = new OAuthRequest(resource.getVerb(), url);
 			
 			// Assume that authorizer will not be null as it must authenticated
@@ -79,11 +78,11 @@ public class RestListener {
 
 			// Strings loaded from file
 			if(connection != null){
-				SocialMediaConnector oauthConnection = (SocialMediaConnector)connection;
+				SocialMediaConnectionProperties oauthConnection = (SocialMediaConnectionProperties)connection;
 				
 				accessToken = new Token(oauthConnection.getAccessToken(), oauthConnection.getAccessSecret());
 
-				if(serviceProvider.getAuthentication() == Authentication.OAUTH){
+				if(serviceProvider.getAuthentication().compareTo("OAUTH") == 0){
 					SocialMediaProvider oauthServiceProvider = (SocialMediaProvider)serviceProvider;
 					
 					String scope = oauthConnection.scopeCSV();
@@ -111,7 +110,7 @@ public class RestListener {
 				service.signRequest(accessToken, (OAuthRequest)request);
 			}
 		}
-		else if(authentication == Authentication.REST){
+		else if(authentication.compareTo("REST") == 0){
 			request = new Request(resource.getVerb(), url);
 		}
 		else {
@@ -157,7 +156,7 @@ public class RestListener {
 		return responseBody;
 	}
 
-	public void setConnection(Connector connection) {
+	public void setConnection(ConnectionProperties connection) {
 		this.connection = connection;
 	}
 

@@ -26,14 +26,13 @@ import org.onesun.commons.swing.IconUtils;
 import org.onesun.commons.text.classification.opencalais.OpenCalaisClient;
 import org.onesun.commons.text.classification.uclassify.UClassifyClient;
 import org.onesun.smc.api.ConfigurationHelper;
-import org.onesun.smc.api.ConnectionsFactory;
-import org.onesun.smc.api.ConnectorViewsFactory;
+import org.onesun.smc.api.ConnectionPropertiesFactory;
+import org.onesun.smc.api.ConnectionPropertiesViewsFactory;
 import org.onesun.smc.api.DataServicesFactory;
 import org.onesun.smc.api.DataTypeFactory;
 import org.onesun.smc.api.FilterFactory;
 import org.onesun.smc.api.ProviderFactory;
 import org.onesun.smc.api.TaskletsFactory;
-import org.onesun.smc.core.model.Authentication;
 import org.onesun.smc.core.model.Tasklet;
 import org.onesun.smc.core.services.auth.Authenticator;
 
@@ -44,7 +43,7 @@ public class AppCommons {
 
 	public static String 								APPLICATION_TITLE				= "Social Data Integrator";
 	
-	public static Authentication 						AUTHENTICATION					= Authentication.NONE;
+	public static String 								AUTHENTICATION					= "NONE";
 
 	public static int 									HTTP_CONNECTION_TIMEOUT			= 1000 * 25;
 	
@@ -90,7 +89,8 @@ public class AppCommons {
 		} catch (UnknownHostException e) {
 		}
 		
-		PATH_TO_APP_HOME = System.getenv("SDI_HOME");
+		final String APP_HOME = "SDI_HOME";
+		PATH_TO_APP_HOME = System.getenv(APP_HOME);
 		
 		if(PATH_TO_APP_HOME == null){
 			String os = System.getProperty("os.name");
@@ -111,7 +111,7 @@ public class AppCommons {
 			PATH_TO_APP_HOME += "/";
 		}
 		
-		logger.info("SDI_HOME=" + PATH_TO_APP_HOME);
+		logger.info("HOME=" + PATH_TO_APP_HOME);
 		
 		// Initialize
 		PATH_TO_WORK				= PATH_TO_APP_HOME		+ "work/";
@@ -187,10 +187,10 @@ public class AppCommons {
 		// Load Data
 		DataTypeFactory.load(PATH_TO_CORE + "core-data-types.xml");
 		
-		ConnectionsFactory.load(PATH_TO_CORE + "connectors.xml");
-		ConnectionsFactory.loadConnections(PATH_TO_CONNECTIONS);
+		ConnectionPropertiesFactory.load(PATH_TO_CORE + "connection-properties.xml");
+		ConnectionPropertiesFactory.loadConnectionProperties(PATH_TO_CONNECTIONS);
 		
-		ConnectorViewsFactory.load(PATH_TO_CORE + "connector-views.xml");
+		ConnectionPropertiesViewsFactory.load(PATH_TO_CORE + "connection-properties-views.xml");
 		
 		DataServicesFactory.load(PATH_TO_CORE + "data-services.xml");
 		ProviderFactory.load(PATH_TO_CORE + "data-providers.xml", PATH_TO_DATA_ACCESS);

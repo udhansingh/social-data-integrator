@@ -21,19 +21,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.onesun.smc.api.WebProvider;
-import org.onesun.smc.core.connectors.WebConnector;
-import org.onesun.smc.core.model.Authentication;
+import org.onesun.smc.core.connection.properties.WebConnectionProperties;
 import org.onesun.smc.core.resources.WebResource;
 
 public abstract class AbstractWebProvider implements WebProvider {
 	protected List<WebResource> resources = new ArrayList<WebResource>();
-	protected WebConnector connection = null;
+	protected WebConnectionProperties connection = null;
 	
 	@Override
 	public abstract String getIdentity();
 	
 	@Override
-	public void setConnection(WebConnector connection){
+	public void setConnection(WebConnectionProperties connection){
 		this.connection = connection;
 	}
 	
@@ -43,8 +42,8 @@ public abstract class AbstractWebProvider implements WebProvider {
 	}
 	
 	@Override
-	public Authentication getAuthentication() {
-		return Authentication.WEB_SERVER;
+	public String getAuthentication() {
+		return "WEB_SERVER";
 	}
 	
 	public AbstractWebProvider(){

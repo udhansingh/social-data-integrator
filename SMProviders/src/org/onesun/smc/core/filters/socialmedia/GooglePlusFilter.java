@@ -18,7 +18,7 @@ package org.onesun.smc.core.filters.socialmedia;
 
 import org.onesun.smc.core.filters.AbstractFilter;
 import org.onesun.smc.core.metadata.FilterMetadata;
-import org.onesun.smc.core.model.RequestParamObject;
+import org.onesun.smc.core.model.Parameter;
 
 public class GooglePlusFilter extends AbstractFilter {
 
@@ -34,59 +34,59 @@ public class GooglePlusFilter extends AbstractFilter {
 	@Override
 	public void init() {
 		FilterMetadata fm = null;
-		RequestParamObject o = null;
+		Parameter o = null;
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$USER$", "param_user", "self");
+		o = new Parameter("$USER$", "param_user", "self");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Plus-People", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("maxResults", "param_max_results", "20");
+		o = new Parameter("maxResults", "param_max_results", "20");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("query", "param_query", "");
+		o = new Parameter("query", "param_query", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Plus-People-Query", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$USER$", "param_user", "self");
+		o = new Parameter("$USER$", "param_user", "self");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("$SCOPE$", "param_scope", "public");
+		o = new Parameter("$SCOPE$", "param_scope", "public");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("maxResults", "param_max_results", "100");
+		o = new Parameter("maxResults", "param_max_results", "100");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Plus-People-Activities", fm);
 		
 		// Activities
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$ACTIVITY_ID$", "param_activity_id", "");
+		o = new Parameter("$ACTIVITY_ID$", "param_activity_id", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Plus-Activities", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$USER$", "param_user", "self");
+		o = new Parameter("$USER$", "param_user", "self");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("$SCOPE$", "param_scope", "public");
+		o = new Parameter("$SCOPE$", "param_scope", "public");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("maxResults", "param_max_results", "100");
+		o = new Parameter("maxResults", "param_max_results", "100");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Plus-Activities-People", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("maxResults", "param_max_results", "100");
+		o = new Parameter("maxResults", "param_max_results", "100");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("query", "param_query", "");
+		o = new Parameter("query", "param_query", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Plus-Activities-Query", fm);
 		
 		// Comments
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$COMMENT_ID$", "param_comment_id", "");
+		o = new Parameter("$COMMENT_ID$", "param_comment_id", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Plus-Comments", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$ACTIVITY_ID$", "param_activity_id", "");
+		o = new Parameter("$ACTIVITY_ID$", "param_activity_id", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Plus-Comments-Activities", fm);
 		
@@ -94,12 +94,12 @@ public class GooglePlusFilter extends AbstractFilter {
 		// ---------------------------------------------------------------------------
 		// Google Mail
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$EMAIL$", "param_email", "");
+		o = new Parameter("$EMAIL$", "param_email", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Mail-IMAP", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$EMAIL$", "param_email", "");
+		o = new Parameter("$EMAIL$", "param_email", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Mail-SMTP", fm);
 	}

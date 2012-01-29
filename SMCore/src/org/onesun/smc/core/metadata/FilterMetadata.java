@@ -24,22 +24,22 @@ import java.util.TreeMap;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.onesun.smc.core.model.RequestParamObject;
+import org.onesun.smc.core.model.Parameter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class FilterMetadata {
 	// Key: Internal Name
 	// Value: Filter Object
-	private Map<String, RequestParamObject> headers = Collections.synchronizedMap(new TreeMap<String, RequestParamObject>());
-	private Map<String, RequestParamObject> params = Collections.synchronizedMap(new TreeMap<String, RequestParamObject>());
-	private RequestParamObject payload = null;
+	private Map<String, Parameter> headers = Collections.synchronizedMap(new TreeMap<String, Parameter>());
+	private Map<String, Parameter> params = Collections.synchronizedMap(new TreeMap<String, Parameter>());
+	private Parameter payload = null;
 	
-	public void setParams(Map<String, RequestParamObject> params){
+	public void setParams(Map<String, Parameter> params){
 		this.params = params;
 	}
 	
-	public void setHeaders(Map<String, RequestParamObject> headers){
+	public void setHeaders(Map<String, Parameter> headers){
 		this.headers = headers;
 	}
 	
@@ -47,7 +47,7 @@ public class FilterMetadata {
 		return headers.containsKey(key);
 	}
 
-	public RequestParamObject getHeaderObject(String key) {
+	public Parameter getHeaderObject(String key) {
 		return headers.get(key);
 	}
 	
@@ -56,12 +56,12 @@ public class FilterMetadata {
 		return headers.keySet();
 	}
 
-	public void putHeaderObject(String key, RequestParamObject value) {
+	public void putHeaderObject(String key, Parameter value) {
 		headers.put(key, value);
 	}
 
 	
-	public Collection<RequestParamObject> headerValues() {
+	public Collection<Parameter> headerValues() {
 		return headers.values();
 	}
 //	public Properties toProperties(){
@@ -82,7 +82,7 @@ public class FilterMetadata {
 		return params.containsKey(key);
 	}
 
-	public RequestParamObject getParamObject(String key) {
+	public Parameter getParamObject(String key) {
 		return params.get(key);
 	}
 	
@@ -91,20 +91,20 @@ public class FilterMetadata {
 		return params.keySet();
 	}
 
-	public void putParamObject(String key, RequestParamObject value) {
+	public void putParamObject(String key, Parameter value) {
 		params.put(key, value);
 	}
 
 	
-	public Collection<RequestParamObject> paramValues() {
+	public Collection<Parameter> paramValues() {
 		return params.values();
 	}
 
-	public RequestParamObject getPayload() {
+	public Parameter getPayload() {
 		return payload;
 	}
 
-	public void setPayload(RequestParamObject payload) {
+	public void setPayload(Parameter payload) {
 		this.payload = payload;
 	}
 	
@@ -114,7 +114,7 @@ public class FilterMetadata {
 		String text = null;
 
 		// Pay load
-		RequestParamObject object = getPayload();
+		Parameter object = getPayload();
 		if(object != null){
 			Element node = document.createElement("payload");
 
@@ -141,7 +141,7 @@ public class FilterMetadata {
 
 		// Params
 		Element parent = document.createElement("params");
-		for(RequestParamObject r : paramValues()){
+		for(Parameter r : paramValues()){
 			Element node = document.createElement("param");
 
 			Element e = document.createElement("externalName");
@@ -169,7 +169,7 @@ public class FilterMetadata {
 
 		// Headers
 		parent = document.createElement("headers");
-		for(RequestParamObject r : headerValues()){
+		for(Parameter r : headerValues()){
 			Element node = document.createElement("header");
 
 			Element e = document.createElement("externalName");

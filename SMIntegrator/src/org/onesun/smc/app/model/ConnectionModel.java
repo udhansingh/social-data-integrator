@@ -22,7 +22,7 @@ import java.util.List;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
-import org.onesun.smc.api.Connector;
+import org.onesun.smc.api.ConnectionProperties;
 
 
 public class ConnectionModel extends AbstractTableModel {
@@ -30,7 +30,7 @@ public class ConnectionModel extends AbstractTableModel {
 	 * 
 	 */
 	private static final long serialVersionUID = 6432588878507116532L;
-	private List<Connector> connections = new ArrayList<Connector>();
+	private List<ConnectionProperties> connections = new ArrayList<ConnectionProperties>();
 
 	public ConnectionModel(){
 		super();
@@ -67,7 +67,7 @@ public class ConnectionModel extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Connector connection = connections.get(rowIndex);
+		ConnectionProperties connection = connections.get(rowIndex);
 		
 		switch(columnIndex){
 		case 0: return connection.getName();
@@ -78,7 +78,7 @@ public class ConnectionModel extends AbstractTableModel {
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		connections.add((Connector)aValue);
+		connections.add((ConnectionProperties)aValue);
 		fireTableCellUpdated(rowIndex, columnIndex);
 	}
 
@@ -96,7 +96,7 @@ public class ConnectionModel extends AbstractTableModel {
 	
 	public void removeAll(){
 		connections = null;
-		connections = new ArrayList<Connector>();
+		connections = new ArrayList<ConnectionProperties>();
 	}
 
 	public void removeRow(int index) {

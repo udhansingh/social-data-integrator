@@ -35,17 +35,16 @@ import javax.swing.JTextField;
 
 import org.onesun.commons.swing.cursors.DefaultCusor;
 import org.onesun.commons.text.format.detectors.TextFormat;
-import org.onesun.smc.api.Connector;
+import org.onesun.smc.api.ConnectionProperties;
 import org.onesun.smc.api.ProviderFactory;
 import org.onesun.smc.api.ServiceProvider;
-import org.onesun.smc.app.AppMessages;
 import org.onesun.smc.app.AppCommons;
 import org.onesun.smc.app.AppCommonsUI;
+import org.onesun.smc.app.AppMessages;
 import org.onesun.smc.app.handlers.RequestUpdateHandler;
 import org.onesun.smc.app.views.dialogs.SetterDialog;
 import org.onesun.smc.core.metadata.FilterMetadata;
-import org.onesun.smc.core.model.Authentication;
-import org.onesun.smc.core.model.RequestParamObject;
+import org.onesun.smc.core.model.Parameter;
 import org.onesun.smc.core.resources.RESTResource;
 import org.onesun.smc.core.services.auth.Authenticator;
 import org.onesun.smc.core.services.rest.RestListener;
@@ -97,6 +96,11 @@ public class RESTDataAccessView extends AbstractDataAccessView {
 					@Override
 					public void update(final FilterMetadata fm) {
 						filterMetadata = fm;
+
+						AppCommons.TASKLET.setFilterMetadata(fm);
+						AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.TASKLET.toXML());
+			    		AppCommonsUI.MODEL_TEXTAREA.invalidate();
+
 					}
 				});
 				setterDialog.setVisible(true);
@@ -138,13 +142,13 @@ public class RESTDataAccessView extends AbstractDataAccessView {
 				
 				// Set Query Params
 				String params = null;
-				Collection<RequestParamObject> requestParams = null;
+				Collection<Parameter> requestParams = null;
 				if(filterMetadata != null) {
 					requestParams = filterMetadata.paramValues();
 				}
 				if(requestParams != null){
 					boolean start = true;
-					for(RequestParamObject param : requestParams){
+					for(Parameter param : requestParams){
 						String en = param.getExternalName();
 						if(en.startsWith("$")){
 							url = url.replace(en, param.getDefaultValue());
@@ -166,20 +170,20 @@ public class RESTDataAccessView extends AbstractDataAccessView {
 				resource.setUrl(url);
 				
 				// Set Headers
-				Collection<RequestParamObject> requestHeaders = null;
+				Collection<Parameter> requestHeaders = null;
 				if(filterMetadata != null){
 					requestHeaders = filterMetadata.headerValues();
 				}
 				if(requestHeaders != null){
 					Map<String, String> headers = new HashMap<String, String>();
-					for(RequestParamObject header : requestHeaders){
+					for(Parameter header : requestHeaders){
 						headers.put(header.getExternalName(), header.getDefaultValue());
 					}
 					resource.setHeaders(headers);
 				}
 				
 				// Set Payload
-				RequestParamObject payloadObject = filterMetadata.getPayload();
+				Parameter payloadObject = filterMetadata.getPayload();
 				String payload = null;
 				if(payloadObject != null){
 					payload = payloadObject.getDefaultValue();
@@ -188,13 +192,13 @@ public class RESTDataAccessView extends AbstractDataAccessView {
 					resource.setPayload(payload);
 				}
 				
-				Connector connection = AppCommons.TASKLET.getConnection();
+				ConnectionProperties connection = AppCommons.TASKLET.getConnection();
 				ServiceProvider provider = ProviderFactory.getProvider(connection.getIdentity().toLowerCase(), "SOCIAL_MEDIA");
 				
 				RestListener executor = new RestListener(provider, resource, AppCommons.AUTHENTICATION, Authenticator.getCallbackurl());
 				
 				executor.setConnection(connection);
-				if(AppCommons.AUTHENTICATION == Authentication.OAUTH){
+				if(AppCommons.AUTHENTICATION.compareTo("OAUTH") == 0) {
 					if(AppCommons.AUTHENTICATOR != null){
 						executor.setOauthService(AppCommons.AUTHENTICATOR.getService());
 						executor.setAccessToken(AppCommons.AUTHENTICATOR.getAccessToken());
@@ -225,6 +229,7 @@ public class RESTDataAccessView extends AbstractDataAccessView {
 				scrollPane.invalidate();
 				
 				// Update the meta-model
+				AppCommons.TASKLET.setFilterMetadata(filterMetadata);
 				AppCommons.TASKLET.setResource(resource);
 	    		AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.TASKLET.toXML());
 				

@@ -42,20 +42,19 @@ import javax.swing.tree.TreeSelectionModel;
 
 import org.apache.log4j.Logger;
 import org.onesun.commons.swing.JTreeUtils;
-import org.onesun.smc.api.ConnectionsFactory;
-import org.onesun.smc.api.Connector;
-import org.onesun.smc.api.ConnectorPanel;
-import org.onesun.smc.api.ConnectorView;
-import org.onesun.smc.api.ConnectorViewsFactory;
+import org.onesun.smc.api.ConnectionPropertiesFactory;
+import org.onesun.smc.api.ConnectionProperties;
+import org.onesun.smc.api.ConnectionPropertiesPanel;
+import org.onesun.smc.api.ConnectionPropertiesView;
+import org.onesun.smc.api.ConnectionPropertiesViewsFactory;
 import org.onesun.smc.api.ProviderFactory;
 import org.onesun.smc.api.ServiceProvider;
 import org.onesun.smc.api.SocialMediaProvider;
 import org.onesun.smc.app.AppCommons;
 import org.onesun.smc.app.AppCommonsUI;
 import org.onesun.smc.app.AppIcons;
-import org.onesun.smc.app.views.connectors.SocialMediaConnectorView;
-import org.onesun.smc.core.connectors.SocialMediaConnector;
-import org.onesun.smc.core.model.Authentication;
+import org.onesun.smc.app.views.connection.properties.SocialMediaConnectionPropertiesView;
+import org.onesun.smc.core.connection.properties.SocialMediaConnectionProperties;
 
 
 public class ConnectionsView extends JPanel {
@@ -121,8 +120,8 @@ public class ConnectionsView extends JPanel {
 			Object object = node.getUserObject();
 
 			if (leaf) {
-				if(object instanceof SocialMediaConnector){
-					SocialMediaConnector c = (SocialMediaConnector)object;
+				if(object instanceof SocialMediaConnectionProperties){
+					SocialMediaConnectionProperties c = (SocialMediaConnectionProperties)object;
 					setText(c.getName());
 
 					ImageIcon icon = AppIcons.getIcon(c.getIdentity().toLowerCase());
@@ -134,8 +133,8 @@ public class ConnectionsView extends JPanel {
 					}
 				}
 				// Inherited objects before the parent
-				else if(object instanceof Connector){
-					Connector c = (Connector)object;
+				else if(object instanceof ConnectionProperties){
+					ConnectionProperties c = (ConnectionProperties)object;
 					setText(c.getName());
 
 					ImageIcon icon = AppIcons.getIcon(c.getIdentity().toLowerCase());
@@ -202,11 +201,11 @@ public class ConnectionsView extends JPanel {
 			controlBar.getAddButton().setEnabled(false);
 			controlBar.getDeleteButton().setEnabled(false);
 
-			Connector c = null;
+			ConnectionProperties c = null;
 
 			if (object != null) {
-				if(object instanceof Connector){
-					c = (Connector)object;
+				if(object instanceof ConnectionProperties){
+					c = (ConnectionProperties)object;
 				}
 				else if(object instanceof ServiceProvider){
 					controlBar.getAddButton().setEnabled(true);
@@ -233,23 +232,23 @@ public class ConnectionsView extends JPanel {
 		private void renderConnectionDetailView(String connectionName){
 			AppCommons.TASKLET.reset();
 
-			Connector connection = ConnectionsFactory.getConnectionByName(connectionName);
+			ConnectionProperties connection = ConnectionPropertiesFactory.getConnectionPropertiesByName(connectionName);
 			AppCommons.TASKLET.setConnection(connection);
 			AppCommons.AUTHENTICATION = null;
 
 			if(connection == null){
-				container.add(ConnectorViewsFactory.DEFAULT_CONNECTION_VIEW, BorderLayout.CENTER);
+				container.add(ConnectionPropertiesViewsFactory.DEFAULT_CONNECTION_VIEW, BorderLayout.CENTER);
 			}
 			else {
 				String category = connection.getCategory();
-				Authentication authentication = connection.getAuthentication();
+				String authentication = connection.getAuthentication();
 				AppCommons.AUTHENTICATION = authentication;
 				JPanel panel = null;
 
 				controlBar.getDeleteButton().setEnabled(true);
 
 				if(category != null && category.trim().length() > 0){
-					ConnectorView view = ConnectorViewsFactory.getViewByCategory(category);
+					ConnectionPropertiesView view = ConnectionPropertiesViewsFactory.getViewByCategory(category);
 
 					if(view != null){
 						view.init();
@@ -275,7 +274,7 @@ public class ConnectionsView extends JPanel {
 		containerPanel.add(container, BorderLayout.CENTER);
 		this.add(containerPanel, BorderLayout.CENTER);
 
-		container.add(ConnectorViewsFactory.DEFAULT_CONNECTION_VIEW, BorderLayout.CENTER);
+		container.add(ConnectionPropertiesViewsFactory.DEFAULT_CONNECTION_VIEW, BorderLayout.CENTER);
 
 		JPanel mainPanel = new JPanel(new BorderLayout(5,5));
 
@@ -296,7 +295,7 @@ public class ConnectionsView extends JPanel {
 	}
 
 	private void initModel(){
-		Map<String, Connector> connections = ConnectionsFactory.getConnections();
+		Map<String, ConnectionProperties> connections = ConnectionPropertiesFactory.getConnections();
 
 		for(String providerName :  ProviderFactory.getNames()){
 			// Skip empty/null names
@@ -315,7 +314,7 @@ public class ConnectionsView extends JPanel {
 
 			// connections by provider
 			for(String connectionName : connections.keySet()){
-				Connector connection = connections.get(connectionName);
+				ConnectionProperties connection = connections.get(connectionName);
 
 				if(connection.getCategory() == category){
 					if(serviceProvider.getIdentity().compareToIgnoreCase(connection.getIdentity()) == 0){
@@ -372,15 +371,15 @@ public class ConnectionsView extends JPanel {
 
 					Object object = node.getUserObject();
 
-					ConnectorView view = null;
+					ConnectionPropertiesView view = null;
 					if(object != null){
 						if(object instanceof SocialMediaProvider){
-							view = ConnectorViewsFactory.newConnectorViewByName("Social Media");
+							view = ConnectionPropertiesViewsFactory.newConnectorViewByName("Social Media");
 							
 							SocialMediaProvider p = (SocialMediaProvider)object;
 
-							if(view instanceof SocialMediaConnectorView){
-								SocialMediaConnectorView v = (SocialMediaConnectorView)view;
+							if(view instanceof SocialMediaConnectionPropertiesView){
+								SocialMediaConnectionPropertiesView v = (SocialMediaConnectionPropertiesView)view;
 								v.init();
 								
 								// fill up provider names
@@ -401,19 +400,19 @@ public class ConnectionsView extends JPanel {
 						}
 						else if(object instanceof ServiceProvider){
 							ServiceProvider p = (ServiceProvider)object;
-							view = ConnectorViewsFactory.newConnectorViewByCategory(p.getCategory());
+							view = ConnectionPropertiesViewsFactory.newConnectorViewByCategory(p.getCategory());
 							view.init();
 						}
 
 						
 						container.removeAll();
 						if(view != null){
-							Connector connector = AppCommons.TASKLET.getConnection();
+							ConnectionProperties connector = AppCommons.TASKLET.getConnection();
 							if(connector != null){
 								view.updateFields(connector);
 							}
 							
-							ConnectorPanel v = view.getView();
+							ConnectionPropertiesPanel v = view.getView();
 							if(v != null){
 								container.add(v, BorderLayout.CENTER);
 							}
@@ -442,17 +441,17 @@ public class ConnectionsView extends JPanel {
 					Object object = node.getUserObject();
 					String connectionName = null;
 
-					if(object != null && object instanceof Connector) {
-						Connector c = (Connector)object;
+					if(object != null && object instanceof ConnectionProperties) {
+						ConnectionProperties c = (ConnectionProperties)object;
 						connectionName = c.getName();
 					}
 
 					if(connectionName != null){
-						Connector connection = ConnectionsFactory.getConnectionByName(connectionName);
+						ConnectionProperties connection = ConnectionPropertiesFactory.getConnectionPropertiesByName(connectionName);
 
 						container.removeAll();
 
-						ConnectionsFactory.deleteConnection(connection, AppCommons.PATH_TO_CONNECTIONS);
+						ConnectionPropertiesFactory.deleteConnectionProperties(connection, AppCommons.PATH_TO_CONNECTIONS);
 						treeModel.removeNodeFromParent(node);
 
 						container.validate();

@@ -18,7 +18,7 @@ package org.onesun.smc.core.filters.socialmedia;
 
 import org.onesun.smc.core.filters.AbstractFilter;
 import org.onesun.smc.core.metadata.FilterMetadata;
-import org.onesun.smc.core.model.RequestParamObject;
+import org.onesun.smc.core.model.Parameter;
 
 public class FoursquareFilter extends AbstractFilter {
 
@@ -37,14 +37,14 @@ public class FoursquareFilter extends AbstractFilter {
 
 		// Checkin
 		fm = new FilterMetadata();
-		RequestParamObject o = new RequestParamObject("$CHECKIN_ID$", "param_checkin_id", "");
+		Parameter o = new Parameter("$CHECKIN_ID$", "param_checkin_id", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("CheckIns", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("broadcast", "param_broadcast", "");
+		o = new Parameter("broadcast", "param_broadcast", "");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("venueId", "param_venue_id", "");
+		o = new Parameter("venueId", "param_venue_id", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("CheckIns-Add", fm);
 		
@@ -52,22 +52,22 @@ public class FoursquareFilter extends AbstractFilter {
 		this.put("CheckIns-Recent", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$CHECKIN_ID$", "param_checkin_id", "");
+		o = new Parameter("$CHECKIN_ID$", "param_checkin_id", "");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("text", "param_text", "");
+		o = new Parameter("text", "param_text", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("CheckIns-Add-Comment", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$CHECKIN_ID$", "param_checkin_id", "");
+		o = new Parameter("$CHECKIN_ID$", "param_checkin_id", "");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("commentId", "param_comment_id", "");
+		o = new Parameter("commentId", "param_comment_id", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("CheckIns-Delete-Comment", fm);
 		
 		// Photo
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$PHOTO_ID$", "param_photo_id", "");
+		o = new Parameter("$PHOTO_ID$", "param_photo_id", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Photos", fm);
 		
@@ -76,13 +76,13 @@ public class FoursquareFilter extends AbstractFilter {
 		
 		// Multi
 		fm = new FilterMetadata();
-		o = new RequestParamObject("requests", "param_multi_request_csv", "request_1,request_2,...,request_N");
+		o = new Parameter("requests", "param_multi_request_csv", "request_1,request_2,...,request_N");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Multi", fm);
 		
 		// Settings
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$SETTINGS_ID$", "param_settings_id", "");
+		o = new Parameter("$SETTINGS_ID$", "param_settings_id", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Settings", fm);
 		
@@ -90,75 +90,75 @@ public class FoursquareFilter extends AbstractFilter {
 		this.put("Settings-All", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$SETTINGS_ID$", "param_settings_id", "");
+		o = new Parameter("$SETTINGS_ID$", "param_settings_id", "");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("value", "param_value", "");
+		o = new Parameter("value", "param_value", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Settings-Set-Value", fm);
 		
 		// Special
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$SPECIALS_ID$", "param_specials_id", "");
+		o = new Parameter("$SPECIALS_ID$", "param_specials_id", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Specials", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$LATITUDE$", "param_latitude", "");
+		o = new Parameter("$LATITUDE$", "param_latitude", "");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("$LONGTITUDE$", "param_longtitude", "");
+		o = new Parameter("$LONGTITUDE$", "param_longtitude", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Specials-Search", fm);
 		
 		// Tip
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$TIPS_ID$", "param_tips_id", "");
+		o = new Parameter("$TIPS_ID$", "param_tips_id", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Tips", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("venueId", "param_venue_id", "");
+		o = new Parameter("venueId", "param_venue_id", "");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("text", "param_text", "");
+		o = new Parameter("text", "param_text", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Tips-Add-Venue-Id", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$LATITUDE$", "param_latitude", "");
+		o = new Parameter("$LATITUDE$", "param_latitude", "");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("$LONGTITUDE$", "param_longtitude", "");
+		o = new Parameter("$LONGTITUDE$", "param_longtitude", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Tips-Search-Longtitude", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$LATITUDE$", "param_latitude", "");
+		o = new Parameter("$LATITUDE$", "param_latitude", "");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("$LONGTITUDE$", "param_longtitude", "");
+		o = new Parameter("$LONGTITUDE$", "param_longtitude", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Tips-Search-Longtitude-Post", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$TIPS_ID$", "param_tips_id", "");
+		o = new Parameter("$TIPS_ID$", "param_tips_id", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Tips-MarkDone", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$TIPS_ID$", "param_tips_id", "");
+		o = new Parameter("$TIPS_ID$", "param_tips_id", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Tips-Unmark", fm);
 		
 		// User
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$USERS_ID$", "param_users_id", "");
+		o = new Parameter("$USERS_ID$", "param_users_id", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Users", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("email", "param_users_email", "");
+		o = new Parameter("email", "param_users_email", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Users-Search-Email", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("email", "param_users_email", "");
+		o = new Parameter("email", "param_users_email", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Users-Search-Email-Post", fm);
 		
@@ -166,78 +166,78 @@ public class FoursquareFilter extends AbstractFilter {
 		this.put("Users-Requests", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$USERS_ID$", "param_users_id", "");
+		o = new Parameter("$USERS_ID$", "param_users_id", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Users-Badges", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$USERS_ID$", "param_users_id", "");
+		o = new Parameter("$USERS_ID$", "param_users_id", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Users-CheckIns", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$USERS_ID$", "users_id", "");
+		o = new Parameter("$USERS_ID$", "users_id", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Users-Friends", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$USERS_ID$", "param_users_id", "");
+		o = new Parameter("$USERS_ID$", "param_users_id", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Users-Tips", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$USERS_ID$", "param_users_id", "");
+		o = new Parameter("$USERS_ID$", "param_users_id", "");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("$LATITUDE$", "param_latitude", "");
+		o = new Parameter("$LATITUDE$", "param_latitude", "");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("$LONGTITUDE$", "param_longtitude", "");
+		o = new Parameter("$LONGTITUDE$", "param_longtitude", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Users-TODO", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$USERS_ID$", "param_users_id", "");
+		o = new Parameter("$USERS_ID$", "param_users_id", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Users-Venue-History", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$USERS_ID$", "param_users_id", "");
+		o = new Parameter("$USERS_ID$", "param_users_id", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Users-Request", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$USERS_ID$", "param_users_id", "");
+		o = new Parameter("$USERS_ID$", "param_users_id", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Users-Unfriend", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$USERS_ID$", "param_users_id", "");
+		o = new Parameter("$USERS_ID$", "param_users_id", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Users-Approve", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$USERS_ID$", "param_users_id", "");
+		o = new Parameter("$USERS_ID$", "param_users_id", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Users-Deny", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$USERS_ID$", "param_users_id", "");
+		o = new Parameter("$USERS_ID$", "param_users_id", "");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("value", "param_value", "");
+		o = new Parameter("value", "param_value", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Users-Set-Pings", fm);
 		
 		// Venue
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$VENUES_ID$", "param_venues_id", "");
+		o = new Parameter("$VENUES_ID$", "param_venues_id", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Venues", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("name", "param_name", "");
+		o = new Parameter("name", "param_name", "");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("$LATITUDE$", "param_latitude", "");
+		o = new Parameter("$LATITUDE$", "param_latitude", "");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("$LONGTITUDE$", "param_longtitude", "");
+		o = new Parameter("$LONGTITUDE$", "param_longtitude", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Venues-Add", fm);
 		
@@ -245,55 +245,55 @@ public class FoursquareFilter extends AbstractFilter {
 		this.put("Venues-Categoreis", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$LATITUDE$", "param_latitude", "");
+		o = new Parameter("$LATITUDE$", "param_latitude", "");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("$LONGTITUDE$", "param_longtitude", "");
+		o = new Parameter("$LONGTITUDE$", "param_longtitude", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Venues-Search", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$VENUES_ID$", "param_venues_id", "");
+		o = new Parameter("$VENUES_ID$", "param_venues_id", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Venues-Here-Now", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$VENUES_ID$", "param_venues_id", "");
+		o = new Parameter("$VENUES_ID$", "param_venues_id", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Venues-Tips", fm);
 
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$VENUES_ID$", "param_venues_id", "");
+		o = new Parameter("$VENUES_ID$", "param_venues_id", "");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("group", "param_group", "");
+		o = new Parameter("group", "param_group", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Venues-Photos-Group", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$VENUES_ID$", "param_venues_id", "");
+		o = new Parameter("$VENUES_ID$", "param_venues_id", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Venues-Mark-TODO", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$VENUES_ID$", "param_venues_id", "");
+		o = new Parameter("$VENUES_ID$", "param_venues_id", "");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("problem", "param_problem", "");
+		o = new Parameter("problem", "param_problem", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Venues-Flag-Problem", fm);
 		
 		fm = new FilterMetadata();
-		o = new RequestParamObject("$VENUES_ID$", "param_venues_id", "");
+		o = new Parameter("$VENUES_ID$", "param_venues_id", "");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("name", "param_full_name", "");
+		o = new Parameter("name", "param_full_name", "");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("address", "param_address", "");
+		o = new Parameter("address", "param_address", "");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("city", "param_city", "");
+		o = new Parameter("city", "param_city", "");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("state", "param_sate", "");
+		o = new Parameter("state", "param_sate", "");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("$LATITUDE$", "param_latitude", "");
+		o = new Parameter("$LATITUDE$", "param_latitude", "");
 		fm.putParamObject(o.getInternalName(), o);
-		o = new RequestParamObject("$LONGTITUDE$", "param_longtitude", "");
+		o = new Parameter("$LONGTITUDE$", "param_longtitude", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("Venues-Propose-Edit", fm);
 	}

@@ -16,13 +16,12 @@
  */
 package org.onesun.smc.api;
 
-import org.onesun.smc.core.model.Authentication;
 
 public interface ServiceProvider {
 	String getCategory();
 	String getIdentity();
 	boolean isResponseRequired();
-	Authentication getAuthentication();
+	String getAuthentication();
 	void init();
 	boolean save(String pathToExports);
 	boolean load(String pathToExports);

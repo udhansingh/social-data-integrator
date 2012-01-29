@@ -36,12 +36,12 @@ import org.onesun.commons.StreamUtils;
 import org.onesun.commons.swing.ExtensionFileFilter;
 import org.onesun.commons.swing.cursors.DefaultCusor;
 import org.onesun.commons.text.format.detectors.TextFormat;
-import org.onesun.smc.api.Connector;
+import org.onesun.smc.api.ConnectionProperties;
 import org.onesun.smc.api.Resource;
 import org.onesun.smc.app.AppMessages;
 import org.onesun.smc.app.AppCommons;
 import org.onesun.smc.app.AppCommonsUI;
-import org.onesun.smc.core.connectors.FileSystemConnector;
+import org.onesun.smc.core.connection.properties.FileSystemConnectionProperties;
 import org.onesun.smc.core.resources.FileResource;
 
 public class FileDataAccessView extends AbstractDataAccessView {
@@ -79,10 +79,10 @@ public class FileDataAccessView extends AbstractDataAccessView {
 		setterButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Connector connection = AppCommons.TASKLET.getConnection();
+				ConnectionProperties connection = AppCommons.TASKLET.getConnection();
 				
 				if(connection != null){
-					FileSystemConnector c = (FileSystemConnector)connection;
+					FileSystemConnectionProperties c = (FileSystemConnectionProperties)connection;
 					String path = c.getPath();
 					List<String> filterList = c.getFilter();
 					
@@ -157,6 +157,7 @@ public class FileDataAccessView extends AbstractDataAccessView {
 				}
 				
 				// Update the meta-model
+				AppCommons.TASKLET.setFilterMetadata(filterMetadata);
 				AppCommons.TASKLET.setResource(resource);
 	    		AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.TASKLET.toXML());
 	    		AppCommonsUI.MODEL_TEXTAREA.invalidate();

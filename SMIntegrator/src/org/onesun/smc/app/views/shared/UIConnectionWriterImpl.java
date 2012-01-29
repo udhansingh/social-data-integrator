@@ -8,14 +8,14 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
-import org.onesun.smc.api.Connector;
-import org.onesun.smc.api.ConnectionsFactory;
+import org.onesun.smc.api.ConnectionProperties;
+import org.onesun.smc.api.ConnectionPropertiesFactory;
 import org.onesun.smc.app.AppCommons;
 import org.onesun.smc.app.AppCommonsUI;
 
 public class UIConnectionWriterImpl implements UIConnectionWriter {
 	@Override
-	public void saveToFile(Connector connection) {
+	public void saveToFile(ConnectionProperties connection) {
 		try {
 			connection.save(AppCommons.PATH_TO_CONNECTIONS);
 		} catch (FileNotFoundException ex) {
@@ -27,7 +27,7 @@ public class UIConnectionWriterImpl implements UIConnectionWriter {
 		updateTreeView(connection);
 	}
 
-	private void updateTreeView(Connector connection) {
+	private void updateTreeView(ConnectionProperties connection) {
 		JTree tree = AppCommonsUI.CONNECTION_MANAGER_TREE_VIEW.getTree();
 		
 		TreePath nodePath = tree.getSelectionPath();
@@ -40,9 +40,9 @@ public class UIConnectionWriterImpl implements UIConnectionWriter {
 		if(parent != null){
 			Object object = node.getUserObject();
 			
-			if(object instanceof Connector){
+			if(object instanceof ConnectionProperties){
 				// Check if the connection exists by that name
-				Connector existing = (Connector)object;
+				ConnectionProperties existing = (ConnectionProperties)object;
 				boolean isRemoveable = false;
 
 				if(existing != null){
@@ -75,6 +75,6 @@ public class UIConnectionWriterImpl implements UIConnectionWriter {
 		tree.revalidate();
 		tree.invalidate();
 		
-		ConnectionsFactory.addConnection(connection);
+		ConnectionPropertiesFactory.addConnectionProperties(connection);
 	}
 }

@@ -22,18 +22,18 @@ import java.util.List;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
-import org.onesun.smc.core.model.RequestParamObject;
+import org.onesun.smc.core.model.Parameter;
 
 public class RequestParamModel extends AbstractTableModel {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 6432588878507116532L;
-	private List<RequestParamObject> data = new ArrayList<RequestParamObject>();
+	private List<Parameter> data = new ArrayList<Parameter>();
 
 	private String[] headers = {"External name", "Internal name", "Default Value"};
 	
-	public List<RequestParamObject> getData(){
+	public List<Parameter> getData(){
 		return data;
 	}
 	
@@ -72,7 +72,7 @@ public class RequestParamModel extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		RequestParamObject object = data.get(rowIndex);
+		Parameter object = data.get(rowIndex);
 		
 		switch(columnIndex){
 		case 0: return object.getExternalName();
@@ -83,14 +83,14 @@ public class RequestParamModel extends AbstractTableModel {
 		return null;
 	}
 
-	public void add(RequestParamObject aValue){
+	public void add(Parameter aValue){
 		data.add(aValue);
 		fireTableDataChanged();
 	}
 	
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		RequestParamObject value = null;
+		Parameter value = null;
 		if(rowIndex >= 0){
 			value = data.get(rowIndex);
 		}
@@ -130,6 +130,6 @@ public class RequestParamModel extends AbstractTableModel {
 	
 	public void removeAll(){
 		data = null;
-		data = new ArrayList<RequestParamObject>();
+		data = new ArrayList<Parameter>();
 	}
 }

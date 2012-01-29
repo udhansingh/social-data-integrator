@@ -55,7 +55,7 @@ import org.onesun.commons.swing.JTableUtils;
 import org.onesun.commons.swing.SpringLayoutUtils;
 import org.onesun.commons.swing.cursors.DefaultCusor;
 import org.onesun.commons.text.format.detectors.TextFormat;
-import org.onesun.smc.api.Connector;
+import org.onesun.smc.api.ConnectionProperties;
 import org.onesun.smc.api.DataPreviewer;
 import org.onesun.smc.api.DataTypeFactory;
 import org.onesun.smc.api.MetadataReader;
@@ -72,10 +72,9 @@ import org.onesun.smc.core.metadata.JSONMetadataReader;
 import org.onesun.smc.core.metadata.MasterMetadataMerger;
 import org.onesun.smc.core.metadata.Metadata;
 import org.onesun.smc.core.metadata.XMLMetadataReader;
-import org.onesun.smc.core.model.Authentication;
 import org.onesun.smc.core.model.DataType;
 import org.onesun.smc.core.model.MetaObject;
-import org.onesun.smc.core.model.RequestParamObject;
+import org.onesun.smc.core.model.Parameter;
 import org.onesun.smc.core.providers.web.kapow.KapowObject;
 import org.onesun.smc.core.resources.WebResource;
 
@@ -119,7 +118,7 @@ public class MetadataTableView extends JPanel {
 
 			@Override
 			public void componentShown(ComponentEvent e) {
-				if(AppCommons.AUTHENTICATION == Authentication.TWITTER_STREAMING){
+				if(AppCommons.AUTHENTICATION.compareTo("TWITTER_STREAMING") == 0){
 					schemaFacets.setEnabled(true);
 				}
 				else {
@@ -254,7 +253,7 @@ public class MetadataTableView extends JPanel {
 				String resourceName = AppCommons.TASKLET.getResource().getResourceName();
 
 				String folderName = null;
-				if(AppCommons.AUTHENTICATION == Authentication.TWITTER_STREAMING){
+				if(AppCommons.AUTHENTICATION.compareTo("TWITTER_STREAMING") == 0){
 					folderName = resourceName;
 					resourceName = (String)schemaFacets.getSelectedItem();
 
@@ -278,9 +277,8 @@ public class MetadataTableView extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				AppCommons.TASKLET.setMetadata(null);
-				AppCommons.TASKLET.setFilterMetadata(null);
 				
-				Connector connection = AppCommons.TASKLET.getConnection();
+				ConnectionProperties connection = AppCommons.TASKLET.getConnection();
 
 				if(connection == null){
 					JOptionPane.showMessageDialog(rootPanel, AppMessages.INFORMATION_CHOOSE_A_CONNECTION);
@@ -409,11 +407,11 @@ public class MetadataTableView extends JPanel {
 
 					// Fill FilterMetadata
 					FilterMetadata fm = AppCommons.TASKLET.getFilterMetadata();
+					final String suffix = "social.media.internal.metadata.mapping.";
 					if(fm != null){
-						final String paramSuffix = "social/media/internal/request/param/";
-						for(RequestParamObject o : fm.paramValues()){
-							String xpath = paramSuffix + o.getExternalName() + "/$$" + o.getDefaultValue() + "$$/";
+						for(Parameter o : fm.paramValues()){
 							String name = o.getInternalName();
+							String xpath = suffix + "param." + name;
 
 							MetaObject mo  = new MetaObject();
 							mo.setPath(xpath);
@@ -422,10 +420,9 @@ public class MetadataTableView extends JPanel {
 							metadata.put(xpath, mo);
 						}
 
-						final String headerSuffix = "social/media/internal/request/header/";
-						for(RequestParamObject o : fm.headerValues()){
-							String xpath = headerSuffix + o.getExternalName() + "/$$" + o.getDefaultValue() + "$$/";
+						for(Parameter o : fm.headerValues()){
 							String name = o.getInternalName();
+							String xpath = suffix + "header." + name;
 
 							MetaObject mo  = new MetaObject();
 							mo.setPath(xpath);
@@ -435,17 +432,15 @@ public class MetadataTableView extends JPanel {
 						}
 
 
-						RequestParamObject payloadObject = fm.getPayload();
+						Parameter o = fm.getPayload();
 						String payload = null;
-						if(payloadObject != null){
-							payload = payloadObject.getDefaultValue();
+						if(o != null){
+							payload = o.getDefaultValue();
 						}
 
 						if(payload != null){
-							final String payloadSuffix = "social/media/internal/request/body/";
-
-							String xpath = payloadSuffix + payloadObject.getExternalName() + "/$$" + payload + "$$/";
-							String name = payloadObject.getInternalName();
+							String name = o.getInternalName();
+							String xpath = suffix + "payload." + name;
 
 							MetaObject mo = new MetaObject();
 							mo.setPath(xpath);

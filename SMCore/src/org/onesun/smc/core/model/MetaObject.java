@@ -19,8 +19,8 @@ package org.onesun.smc.core.model;
 import org.onesun.smc.api.DataTypeFactory;
 
 public class MetaObject implements Cloneable {
-	private String name;
-	private String path;
+	private String name = "";
+	private String path = "";
 	private DataType type = DataTypeFactory.getDataType("String");
 	private Boolean ignore = false;
 	private Integer size = 0;

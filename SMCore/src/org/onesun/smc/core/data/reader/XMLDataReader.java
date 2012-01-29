@@ -28,7 +28,6 @@ import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.jdom.Attribute;
-import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
@@ -46,7 +45,7 @@ public class XMLDataReader extends AbstractDataReader {
 	private boolean putWrapper = true;
 	boolean multivalued = false;
 
-	/*public XMLDataReader(File file) {
+	public XMLDataReader(File file) {
 		try {
 			rootnode = new SAXBuilder().build(file).getRootElement();
 		} catch (JDOMException e) {
@@ -56,7 +55,7 @@ public class XMLDataReader extends AbstractDataReader {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}*/
+	}
 
 	public XMLDataReader(String xmlString) {
 		try {

@@ -18,7 +18,7 @@ package org.onesun.smc.tests;
 
 import org.onesun.smc.api.ProviderFactory;
 import org.onesun.smc.api.SocialMediaProvider;
-import org.onesun.smc.core.connectors.SocialMediaConnector;
+import org.onesun.smc.core.connection.properties.SocialMediaConnectionProperties;
 import org.onesun.smc.core.services.auth.Authenticator;
 import org.scribe.model.Token;
 
@@ -48,7 +48,7 @@ public class TestAuthenticator {
 					"secret = " + secret + "\n" +
 					"timeout = " + timeout);
 
-			SocialMediaConnector connection = new SocialMediaConnector();
+			SocialMediaConnectionProperties connection = new SocialMediaConnectionProperties();
 			connection.setApiKey(key);
 			connection.setApiSecret(secret);
 			connection.setIdentity(providerName);

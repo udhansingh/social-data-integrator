@@ -37,7 +37,7 @@ import org.onesun.commons.swing.JTableUtils;
 import org.onesun.commons.swing.SpringLayoutUtils;
 import org.onesun.commons.swing.cursors.DefaultCusor;
 import org.onesun.commons.text.format.detectors.TextFormat;
-import org.onesun.smc.api.Connector;
+import org.onesun.smc.api.ConnectionProperties;
 import org.onesun.smc.api.DataProfiler;
 import org.onesun.smc.api.DataReader;
 import org.onesun.smc.api.ProviderFactory;
@@ -104,7 +104,7 @@ public class DataPreviewTableView extends JPanel {
 	}
 
 	public void generateDataPreview(Boolean profiling) {
-		Connector connection = AppCommons.TASKLET.getConnection();
+		ConnectionProperties connection = AppCommons.TASKLET.getConnection();
 
 		if(connection == null){
 			JOptionPane.showMessageDialog(rootPanel, AppMessages.INFORMATION_CHOOSE_A_CONNECTION);

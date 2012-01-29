@@ -19,13 +19,13 @@ package org.onesun.smc.api;
 import java.util.List;
 
 import org.onesun.smc.api.ServiceProvider;
-import org.onesun.smc.core.connectors.WebConnector;
+import org.onesun.smc.core.connection.properties.WebConnectionProperties;
 import org.onesun.smc.core.resources.WebResource;
 
 
 public interface WebProvider extends ServiceProvider {
 	void validate();
-	void setConnection(WebConnector connection);
+	void setConnection(WebConnectionProperties connection);
 	List<WebResource> getResources();
 	Object execute(WebResource request);
 	void refreshMetadata();

@@ -28,7 +28,7 @@ public final class DataAccessViews {
 	public static final SocialMediaDataAccessView 		SOCIAL_DATA_ACCESS_LIST_VIEW	= new SocialMediaDataAccessView();
 	public static final FileDataAccessView 				FILE_DATA_ACCESS_VIEW			= new FileDataAccessView();
 	public static final WebDataAccessView 				WEB_DATA_ACCESS_VIEW			= new WebDataAccessView();
-	public static final StreamingDataAccessView 		STREAMING_DATA_ACCESS_VIEW		= new StreamingDataAccessView();
+	public static final TwitterStreamingDataAccessView 	TWITTER_STREAMING_DATA_ACCESS_VIEW	= new TwitterStreamingDataAccessView();
 	
 	public static final JPanel 							DEFAULT_DATA_ACCESS_VIEW		= new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
 	
