@@ -32,6 +32,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
+import org.onesun.commons.swing.ClipboardUtils;
 import org.onesun.commons.swing.SpringLayoutUtils;
 import org.onesun.smc.app.AppCommons;
 import org.onesun.smc.app.AppIcons;
@@ -193,16 +194,14 @@ public class PreferencesDialog extends AbstractDialog {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				String selection = 
-						protocolTextField.getText().trim() + 
-						"://" +
-						hostnameTextField.getText().trim() +
-						":" +
-						portTextField.getText().trim() +
-						callbackContextTextField.getText().trim();
+					protocolTextField.getText().trim() + 
+					"://" +
+					hostnameTextField.getText().trim() +
+					":" +
+					portTextField.getText().trim() +
+					callbackContextTextField.getText().trim();
 				
-				StringSelection data = new StringSelection(selection);
-				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-				clipboard.setContents(data, data);
+				ClipboardUtils.copyToClipboard(selection);
 			}
 		});
 		
