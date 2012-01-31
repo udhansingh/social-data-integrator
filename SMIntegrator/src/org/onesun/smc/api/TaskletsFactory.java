@@ -8,8 +8,6 @@ import org.apache.log4j.Logger;
 import org.onesun.smc.core.model.Tasklet;
 import org.onesun.smc.core.tools.XMLImporter;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 public class TaskletsFactory {
 	private static Logger logger = Logger.getLogger(TaskletsFactory.class);
@@ -68,30 +66,7 @@ public class TaskletsFactory {
 			if(object != null && object instanceof Document){
 				Document document = (Document)object;
 
-				Tasklet tasklet = new Tasklet();
-				Element root = document.getDocumentElement();
-				tasklet.setIdentity(root.getAttribute("identity"));
-				tasklet.setName(root.getAttribute("name"));
-
-				NodeList nodes = root.getElementsByTagName("item");
-				if(nodes != null && nodes.getLength() > 0){
-					for(int index = 0; index < nodes.getLength(); index++){
-						Element element = (Element)nodes.item(index);
-
-						try{
-							// process connection
-							
-							// process resource
-							
-							// process metadata
-							
-							// process filter
-
-						}catch(Exception e){
-							logger.error("Exception while extracting tasks : " + e.getMessage());
-						}
-					}
-				}
+				Tasklet tasklet = Tasklet.toTasklet(document);
 				
 				tasklets.add(tasklet);
 			}

@@ -26,19 +26,24 @@ import java.util.UUID;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.log4j.Logger;
 import org.onesun.commons.xml.XMLUtils;
 import org.onesun.smc.api.ConnectionProperties;
+import org.onesun.smc.api.ConnectionPropertiesFactory;
 import org.onesun.smc.api.Exporter;
 import org.onesun.smc.api.Resource;
 import org.onesun.smc.core.metadata.FilterMetadata;
 import org.onesun.smc.core.metadata.Metadata;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 public class Tasklet implements Exporter, Cloneable {
+	private static Logger logger = Logger.getLogger(Tasklet.class);
+	
 	private String name;
 	private String identity;
 	private ConnectionProperties connection;
@@ -214,5 +219,53 @@ public class Tasklet implements Exporter, Cloneable {
 
 		}
 		return false;
+	}
+
+	public static Tasklet toTasklet(Document document) {
+		Tasklet tasklet = new Tasklet();
+		
+		Element root = document.getDocumentElement();
+		tasklet.setIdentity(root.getAttribute("identity"));
+		tasklet.setName(root.getAttribute("name"));
+
+		Element element = null;
+		
+		// process connection
+		element = XMLUtils.getElement(root, "connection");
+		tasklet.setConnection(toConnection(element));
+
+		// process resource
+		element = XMLUtils.getElement(root, "resource");
+		tasklet.setResource(toResource(element));
+
+		// process metadata
+		element = XMLUtils.getElement(root, "metadata");
+		tasklet.setMetadata(toMetadata(element));
+		
+		// process filter
+		element = XMLUtils.getElement(root, "filter");
+		tasklet.setFilterMetadata(toFilterMetadata(element));
+		
+		return tasklet;
+	}
+
+	private static FilterMetadata toFilterMetadata(Element element) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private static Metadata toMetadata(Element element) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private static Resource toResource(Element element) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private static ConnectionProperties toConnection(Element element) {
+		// ConnectionProperties properties = ConnectionPropertiesFactory.toConnectionProperties(element);
+		return null;
 	}
 }
