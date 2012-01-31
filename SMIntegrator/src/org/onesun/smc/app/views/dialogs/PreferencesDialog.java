@@ -19,7 +19,11 @@ package org.onesun.smc.app.views.dialogs;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -30,6 +34,7 @@ import javax.swing.SpringLayout;
 
 import org.onesun.commons.swing.SpringLayoutUtils;
 import org.onesun.smc.app.AppCommons;
+import org.onesun.smc.app.AppIcons;
 import org.onesun.smc.app.handlers.UserAction;
 import org.onesun.smc.app.handlers.UserActionListener;
 
@@ -182,8 +187,32 @@ public class PreferencesDialog extends AbstractDialog {
 		
 		SpringLayoutUtils.makeCompactGrid(panel, 8, 1, 5, 5,	5, 5);
 		
-		JPanel containerPanel = new JPanel(new BorderLayout());
-		containerPanel.add(panel, BorderLayout.NORTH);
+		JButton copyCallbackUrlButton = new JButton("Copy to Clipboard", AppIcons.getIcon("copy"));
+		copyCallbackUrlButton.setToolTipText("Copy Callback URL to Clipboard");
+		copyCallbackUrlButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				String selection = 
+						protocolTextField.getText().trim() + 
+						"://" +
+						hostnameTextField.getText().trim() +
+						":" +
+						portTextField.getText().trim() +
+						callbackContextTextField.getText().trim();
+				
+				StringSelection data = new StringSelection(selection);
+				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+				clipboard.setContents(data, data);
+			}
+		});
+		
+		JPanel containerPanel = new JPanel(new BorderLayout(5, 5));
+		containerPanel.add(panel, BorderLayout.CENTER);
+		
+		panel = new JPanel(new BorderLayout(5, 5));
+		panel.add(copyCallbackUrlButton, BorderLayout.EAST);
+		
+		containerPanel.add(panel, BorderLayout.SOUTH);
 		
 		return containerPanel;
 	}
@@ -214,13 +243,13 @@ public class PreferencesDialog extends AbstractDialog {
 		String openCalaisLicense = openCalasisLicenseKeyTextField.getText().trim();
 		openCalaisLicense = (openCalaisLicense != null && openCalaisLicense.length() > 0) ? openCalaisLicense : AppCommons.OPENCALAIS_LICENSE_KEY;
 		
-		AppCommons.HTTP_CONNECTION_TIMEOUT			= timeout;
-		AppCommons.OAUTH_CALLBACK_SERVER_PORT		= port;
-		AppCommons.OAUTH_CALLBACK_SERVER_NAME		= hostname;
-		AppCommons.OAUTH_CALLBACK_SERVER_PROTOCOL	= protocol;
+		AppCommons.HTTP_CONNECTION_TIMEOUT				= timeout;
+		AppCommons.OAUTH_CALLBACK_SERVER_PORT			= port;
+		AppCommons.OAUTH_CALLBACK_SERVER_NAME			= hostname;
+		AppCommons.OAUTH_CALLBACK_SERVER_PROTOCOL		= protocol;
 		AppCommons.OAUTH_CALLBACK_SERVER_CONTEXT		= context;
 		AppCommons.UCLASSIFY_READ_ACCESS_KEY			= uclassifyLicense;
-		AppCommons.OPENCALAIS_LICENSE_KEY			= openCalaisLicense;
+		AppCommons.OPENCALAIS_LICENSE_KEY				= openCalaisLicense;
 		 
 		AppCommons.saveConfiguration();
 		
