@@ -23,9 +23,13 @@ import java.util.Map;
 import org.onesun.commons.text.classification.opencalais.OpenCalaisClassifier;
 import org.onesun.commons.text.classification.opencalais.OpenCalaisClient;
 import org.onesun.commons.text.classification.opencalais.OpenCalaisDocument;
-import org.onesun.smc.core.services.data.AbstractDataService;
 
-public class OpenCalaisEntityExtractor extends AbstractDataService {
+public class OpenCalaisEntityExtractor extends AbstractTextAnalysisService {
+	@Override
+	public String getIdentity() {
+		return "OpenCalais Entity Extractor";
+	}
+	
 	@Override
 	protected void process(Map<String, String> datum, String text) {
 		// TODO: Throttle this request

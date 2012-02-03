@@ -57,13 +57,10 @@ public class TaskletsView extends JPanel {
 		subPanel.add(new JScrollPane(taskletsList), BorderLayout.CENTER);
 		
 		splitPane.add(subPanel);
-		
 		splitPane.setDividerSize(5);
 		
 		double weight = splitPane.getResizeWeight(); // 0.0 by default
-	    weight = .20D;
-	    splitPane.setResizeWeight(weight);
-	    weight = .80D;
+	    weight = .85D;
 	    splitPane.setResizeWeight(weight);
 	    
 		this.add(splitPane, BorderLayout.CENTER);

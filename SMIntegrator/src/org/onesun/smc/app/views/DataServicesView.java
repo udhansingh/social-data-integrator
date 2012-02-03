@@ -47,6 +47,7 @@ import org.onesun.commons.swing.SpringLayoutUtils;
 import org.onesun.commons.swing.cursors.DefaultCusor;
 import org.onesun.smc.api.DataService;
 import org.onesun.smc.api.DataServicesFactory;
+import org.onesun.smc.api.TextAnalysisService;
 import org.onesun.smc.app.AppIcons;
 import org.onesun.smc.app.AppMessages;
 import org.onesun.smc.app.AppCommons;
@@ -221,13 +222,19 @@ public class DataServicesView extends JPanel {
 				Metadata metadata = datasetModel.getMetadata();
 				
 				for(String name : selectedServiceNames){
-					DataService dataService = DataServicesFactory.getDataService(name);
+					DataService service = DataServicesFactory.getDataService(name);
 					
-					dataService.setData(data);
-					dataService.setMetadata(metadata);
-					dataService.setColumns(selectedColumnNames);
+					if(service instanceof TextAnalysisService){
+						TextAnalysisService taService = (TextAnalysisService)service;
+						
+						taService.setData(data);
+						taService.setMetadata(metadata);
+						taService.setColumns(selectedColumnNames);
+						
+						service = taService;
+					}
 					
-					dataService.execute();
+					service.execute();
 				}
 				
 				rowCountLabel.setText("Rows: " + data.size() + ", Columns: " + metadata.size());

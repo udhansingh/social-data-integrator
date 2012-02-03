@@ -61,21 +61,27 @@ public class AppMainView extends JPanel{
 
 							if(category.compareTo("GENERAL") == 0){
 								pane.setComponentAt(index, DataAccessViews.RESTFUL_DATA_ACCESS_INPUT_VIEW);
+								displayed = true;
 							}
 							else if(category.compareTo("FILE_SYSTEM") == 0){
 								pane.setComponentAt(index, DataAccessViews.FILE_DATA_ACCESS_VIEW);
-							}
-							else if(category.compareTo("KAPOW") == 0 || category.compareTo("CONNOTATE") == 0){
-								pane.setComponentAt(index, DataAccessViews.WEB_DATA_ACCESS_VIEW);
+								displayed = true;
 							}
 							else if(category.compareTo("SOCIAL_MEDIA") == 0){
 								pane.setComponentAt(index, DataAccessViews.SOCIAL_DATA_ACCESS_LIST_VIEW);
+								displayed = true;
 							}
 							else if(category.compareTo("TWITTER_STREAMING") == 0){
 								pane.setComponentAt(index, DataAccessViews.TWITTER_STREAMING_DATA_ACCESS_VIEW);
+								displayed = true;
+							} 
+							else if(category.compareTo("KAPOW") == 0){
+								pane.setComponentAt(index, DataAccessViews.KAPOW_DATA_ACCESS_VIEW);
+								displayed = true;
 							}
-							
-							displayed = true;
+//							else if(category.compareTo("CONNOTATE") == 0){
+//								pane.setComponentAt(index, DataAccessViews.WEB_DATA_ACCESS_VIEW);
+//							}
 						}
 					}
 

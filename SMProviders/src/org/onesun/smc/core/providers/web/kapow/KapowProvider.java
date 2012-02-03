@@ -73,7 +73,7 @@ public class KapowProvider extends AbstractWebProvider {
 				
 				localhostEngine = new RemoteRQLEngine(new SocketBasedObjectRQLProtocol(host, port));
 				
-					engines.add(localhostEngine);
+				engines.add(localhostEngine);
 			} catch (RepositoryClientException e) {
 				e.printStackTrace();
 			}

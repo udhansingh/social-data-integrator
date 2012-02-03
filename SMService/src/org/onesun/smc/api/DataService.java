@@ -22,16 +22,11 @@ import java.util.Map;
 import org.onesun.smc.core.metadata.Metadata;
 
 public interface DataService {
-
-	void setColumns(String[] columns);
-
 	void setData(List<Map<String, String>> data);
 
 	void setMetadata(Metadata metadata);
 
 	void execute();
 	
-	String getColumnName();
-
-	void setColumnName(String columnName);
+	String getIdentity();
 }

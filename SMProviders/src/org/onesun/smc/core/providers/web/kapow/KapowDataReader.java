@@ -16,6 +16,7 @@
  */
 package org.onesun.smc.core.providers.web.kapow;
 
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -23,50 +24,41 @@ import org.onesun.smc.core.data.reader.AbstractDataReader;
 
 import com.kapowtech.robosuite.api.java.repository.construct.Attribute;
 import com.kapowtech.robosuite.api.java.repository.construct.Type;
-import com.kapowtech.robosuite.api.java.rql.RQLResult;
 import com.kapowtech.robosuite.api.java.rql.construct.RQLObject;
-import com.kapowtech.robosuite.api.java.rql.construct.RQLObjects;
 
 public class KapowDataReader extends AbstractDataReader {
 	private KapowObject object = null;
-	private RQLResult result = null;
+	private List<RQLObject> rqlObjects = null;
 
-	public KapowDataReader(KapowObject object, RQLResult result){
+	public KapowDataReader(KapowObject object, List<RQLObject> rqlObjects){
 		this.object = object;
-		this.result = result;
+		this.rqlObjects = rqlObjects;
 	}
 	
 	@Override
 	public void load() {
-		if(object != null && result != null){
+		if(object != null && rqlObjects != null){
 			Type[] types = object.getReturnedTypes();
 
 			for(Type type : types){
-				String modelName = type.getTypeName();
+				for(RQLObject rqlObject : rqlObjects){
+					Attribute[] attributes = type.getAttributes();
+					Map<String, String> m = new TreeMap<String, String>();
 
-				RQLObjects objects = result.getOutputObjectsByName(modelName);
-				if(objects.size() > 0){
-					for(int index = 0; index < objects.size(); index++){
-						RQLObject rqlObject = (RQLObject) objects.get(index);
+					for(Attribute attribute : attributes){
+						String attributeName = attribute.getName();
+						String attributeValue = "";
 
-						Attribute[] attributes = type.getAttributes();
-						Map<String, String> m = new TreeMap<String, String>();
-						
-						for(Attribute attribute : attributes){
-							String attributeName = attribute.getName();
-							String attributeValue = "";
-							
-							Object vo = rqlObject.get(attributeName);
-							if(vo instanceof String){
-								attributeValue = (String)vo;
-							}
-							
-							// Use XPATH as column identifier
-							m.put(type.getTypeName() + "/" + attribute.getName() + "/" + attribute.getType().getName(), attributeValue);
+						Object vo = rqlObject.get(attributeName);
+						if(vo instanceof String){
+							attributeValue = (String)vo;
 						}
-						
-						data.add(m);
+
+						// Use XPATH as column identifier
+						m.put(type.getTypeName() + "/" + attribute.getName(), attributeValue);
 					}
+
+					data.add(m);
 				}
 			}
 		}

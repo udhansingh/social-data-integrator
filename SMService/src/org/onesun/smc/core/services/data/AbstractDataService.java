@@ -19,35 +19,12 @@ package org.onesun.smc.core.services.data;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-import org.onesun.commons.text.classification.TextClassificaionHelper;
 import org.onesun.smc.api.DataService;
 import org.onesun.smc.core.metadata.Metadata;
-import org.onesun.smc.core.model.MetaObject;
 
 public abstract class AbstractDataService implements DataService {
-	private static Logger logger = Logger.getLogger(AbstractDataService.class);
-	
-	protected String columnName = null;
-	
-	@Override
-	public String getColumnName() {
-		return columnName;
-	}
-
-	@Override
-	public void setColumnName(String columnName) {
-		this.columnName = columnName;
-	}
-
-	protected String[] columns = null;
 	protected List<Map<String, String>> data = null;
 	protected Metadata metadata = null;
-	
-	@Override
-	public final void setColumns(String[] columns){
-		this.columns = columns;
-	}
 	
 	@Override
 	public final void setData(List<Map<String, String>> data){
@@ -59,40 +36,8 @@ public abstract class AbstractDataService implements DataService {
 		this.metadata = metadata;
 	}
 	
-	protected final void validateColumn() {
-		boolean columnExists = metadata.containsKey(columnName);
-
-		if(columnExists == false){
-			MetaObject mo = new MetaObject();
-			mo.setPath(columnName);
-			
-			metadata.put(columnName, mo);
-		}
-	}
-	
 	protected abstract void process(Map<String, String> datum, String text);
 	
 	@Override
-	public final void execute(){
-		for(Map<String, String> datum : data){
-			String text = "";
-			for(String column : columns){
-				String columnValue = datum.get(column); 
-
-				if(columnValue != null){
-					text += columnValue + "\n";
-				}
-			}
-
-			text = TextClassificaionHelper.cleanUpAll(text);
-			text = (text != null && text.trim().length() > 0) ? text : null;
-
-			logger.info(text);
-
-			if(text == null) return;
-			
-			validateColumn();
-			process(datum, text);
-		}
-	}
+	public abstract void execute();
 }

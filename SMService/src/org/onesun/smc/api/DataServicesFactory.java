@@ -31,6 +31,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
 import org.onesun.commons.xml.XMLUtils;
+import org.onesun.smc.core.services.data.DatabaseWriter;
 import org.onesun.smc.core.services.text.analysis.OpenCalaisEntityExtractor;
 import org.onesun.smc.core.services.text.analysis.UClassifyMoodDetector;
 import org.onesun.smc.core.services.text.analysis.UClassifySentimentAnalyzer;
@@ -69,6 +70,12 @@ public class DataServicesFactory {
 		item.setIdentity("opencalais_entities");
 		item.setName("OpenCalais Entity Extractor");
 		item.setClazz(OpenCalaisEntityExtractor.class.getCanonicalName());
+		items.add(item);
+		
+		item = new Item();
+		item.setIdentity("null");
+		item.setName("DB Writer Service");
+		item.setClazz(DatabaseWriter.class.getCanonicalName());
 		items.add(item);
 
 		return items;
@@ -112,16 +119,30 @@ public class DataServicesFactory {
 			for(Item item : items){
 				logger.info("Instantiating data service ... " + item.getClazz());
 				
+				Class<?> instance = null;
 				try {
-					Class<?> instance = Class.forName(item.getClazz());
-
+					instance = Class.forName(item.getClazz());
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+				
+				try {
 					if(instance != null){
-						DataService ds = (DataService)instance.newInstance();
+						TextAnalysisService ds = (TextAnalysisService)instance.newInstance();
 						ds.setColumnName(item.getIdentity());
 						services.put(item.getName(), ds);
 					}
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
+				} catch(ClassCastException e){
+					if(instance != null){
+						try {
+							DataService ds = (DataService)instance.newInstance();
+							services.put(item.getName(), ds);
+						} catch (InstantiationException ex) {
+							ex.printStackTrace();
+						} catch (IllegalAccessException ex) {
+							ex.printStackTrace();
+						}
+					}
 				} catch (InstantiationException e) {
 					e.printStackTrace();
 				} catch (IllegalAccessException e) {

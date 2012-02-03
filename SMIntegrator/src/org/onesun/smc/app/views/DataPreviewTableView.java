@@ -20,6 +20,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -57,7 +59,7 @@ import org.onesun.smc.core.providers.web.kapow.KapowDataReader;
 import org.onesun.smc.core.providers.web.kapow.KapowObject;
 import org.onesun.smc.core.resources.WebResource;
 
-import com.kapowtech.robosuite.api.java.rql.RQLResult;
+import com.kapowtech.robosuite.api.java.rql.construct.RQLObject;
 
 public class DataPreviewTableView extends JPanel {
 	/**
@@ -138,15 +140,11 @@ public class DataPreviewTableView extends JPanel {
 
 				Object returnObject = AppCommons.RESPONSE_OBJECT;
 
-				if(returnObject instanceof RQLResult){
-					Object o = clone.getObject();
-					KapowObject object = null;
-
-					if(o instanceof KapowObject){
-						object = (KapowObject)o;
-					}
-
-					dataReader = new KapowDataReader(object, (RQLResult)returnObject);
+				if(returnObject instanceof List){
+					@SuppressWarnings("unchecked")
+					List<RQLObject> rqlObjects = (List<RQLObject>) returnObject;
+					
+					dataReader = new KapowDataReader((KapowObject)clone.getObject(), rqlObjects);
 				}
 			}
 		}
@@ -171,7 +169,7 @@ public class DataPreviewTableView extends JPanel {
 
 		dataReader.setMetadata(metadata);
 		dataReader.initialize();
-				dataReader.load();
+		dataReader.load();
 
 		List<Map<String, String>> data = dataReader.getData();
 

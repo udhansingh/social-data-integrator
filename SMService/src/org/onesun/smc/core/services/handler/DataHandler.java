@@ -17,5 +17,5 @@
 package org.onesun.smc.core.services.handler;
 
 public interface DataHandler {
-	void flush(String text);
+	void flush(Object object);
 }

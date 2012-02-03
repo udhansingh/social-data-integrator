@@ -326,7 +326,7 @@ public class MetadataTableView extends JPanel {
 									Attribute[] attributes = type.getAttributes();
 
 									for(Attribute attribute : attributes){
-										String xpath = type.getTypeName() + "/" + attribute.getName() + "/" + attribute.getType().getName();
+										String xpath = type.getTypeName() + "/" + attribute.getName();
 										String name = attribute.getName();
 
 										MetaObject mo  = new MetaObject();

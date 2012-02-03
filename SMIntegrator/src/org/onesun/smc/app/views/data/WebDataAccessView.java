@@ -126,16 +126,18 @@ public class WebDataAccessView extends AbstractDataAccessView {
 		resourceComboBox.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				if(resourceComboBox.getSelectedIndex() > 0){
-					WebResource resource = (WebResource)resourceComboBox.getSelectedItem();
-
+				Object o = e.getItem();
+				
+				if(o != null && o instanceof WebResource){
+					WebResource resource = (WebResource)o;
+					
 					AppCommons.TASKLET.setResource(resource);
-					AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.TASKLET.toXML());
-					AppCommonsUI.MODEL_TEXTAREA.invalidate();
+		    		AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.TASKLET.toXML());
+		    		AppCommonsUI.MODEL_TEXTAREA.invalidate();
 				}
 			}
 		});
-
+		
 		dataTextArea.setEditable(false);
 
 		setterButton.addActionListener(new ActionListener() {

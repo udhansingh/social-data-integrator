@@ -21,9 +21,13 @@ import java.util.Map;
 import org.onesun.commons.text.classification.uclassify.Classifier;
 import org.onesun.commons.text.classification.uclassify.UClassifyClassifier;
 import org.onesun.commons.text.classification.uclassify.UClassifyClient;
-import org.onesun.smc.core.services.data.AbstractDataService;
 
-public class UClassifyMoodDetector extends AbstractDataService {
+public class UClassifyMoodDetector extends AbstractTextAnalysisService {
+	@Override
+	public String getIdentity() {
+		return "UClassify Mood Detector";
+	}
+	
 	@Override
 	protected void process(Map<String, String> datum, String text) {
 		UClassifyClient client = new UClassifyClient(text, Classifier.MOOD, 
