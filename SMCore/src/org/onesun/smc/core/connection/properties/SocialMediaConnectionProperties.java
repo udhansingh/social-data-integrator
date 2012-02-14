@@ -27,6 +27,8 @@ import java.util.Properties;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
+import org.onesun.commons.xml.XMLUtils;
+import org.onesun.smc.api.ConnectionProperties;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -45,7 +47,7 @@ public class SocialMediaConnectionProperties extends AbstractConnectionPropertie
 		super("Social Media", "SOCIAL_MEDIA", "OAUTH");
 	}
 	
-	public String scopeCSV() {
+	public String toScopeCSV() {
 		if(apiScopeList != null && apiScopeList.size() > 0){
 			String scope = apiScopeList.toString();
 		
@@ -60,12 +62,12 @@ public class SocialMediaConnectionProperties extends AbstractConnectionPropertie
 	}
 	
 	public String toString(){
-		String scope = scopeCSV();
+		String scope = toScopeCSV();
 		
 		return name + "\t" + identity + "\t" + apiKey + "\t" + apiSecret + "\t" + ((scope != null) ? scope : "null")  + "\t" + accessToken + "\t" + accessSecret;
 	}
 
-	public void scopeCSV(String csvText) {
+	public void toScopeList(String csvText) {
 		if((csvText == null) || ((csvText != null) && (csvText.length() <= 0))){
 			apiScopeList = null;
 		}
@@ -128,7 +130,7 @@ public class SocialMediaConnectionProperties extends AbstractConnectionPropertie
 		setApiSecret(properties.getProperty("apiSecret"));
 		setAccessToken(properties.getProperty("accessToken"));
 		setAccessSecret(properties.getProperty("accessSecret"));
-		scopeCSV(properties.getProperty("apiScope"));		
+		toScopeList(properties.getProperty("apiScope"));		
 	}
 	
 	@Override
@@ -146,7 +148,7 @@ public class SocialMediaConnectionProperties extends AbstractConnectionPropertie
 		properties.put("apiKey", getApiKey().trim());
 		properties.put("apiSecret", getApiSecret().trim());
 		
-		String scope = scopeCSV();
+		String scope = toScopeCSV();
 		if(scope == null) {
 			scope = "";
 		}
@@ -192,9 +194,33 @@ public class SocialMediaConnectionProperties extends AbstractConnectionPropertie
 		parent.appendChild(child);
 
 		child = document.createElement("apiScope");
-		child.setTextContent((apiScopeList != null) ? scopeCSV() : "");
+		child.setTextContent((apiScopeList != null) ? toScopeCSV() : "");
 		parent.appendChild(child);
 		
 		return parent;
+	}
+	
+	@Override
+	public ConnectionProperties fromElement(Element element) throws ParserConfigurationException {
+		super.fromElement(element);
+		
+		String value = null;
+
+		value = XMLUtils.getValue(element, "apiKey");
+		setApiKey((value != null) ? value : "");
+
+		value = XMLUtils.getValue(element, "apiSecret");
+		setApiSecret((value != null) ? value : "");
+
+		value = XMLUtils.getValue(element, "accessToken");
+		setAccessToken((value != null) ? value : "");
+
+		value = XMLUtils.getValue(element, "accessSecret");
+		setAccessSecret((value != null) ? value : "");
+
+		value = XMLUtils.getValue(element,"apiScope");
+		toScopeList((value != null) ? value : "");
+		
+		return this;
 	}
 }

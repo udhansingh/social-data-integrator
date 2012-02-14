@@ -102,6 +102,37 @@ public class ConnectionPropertiesFactory {
 		
 		return null;
 	}
+
+	public static ConnectionProperties toConnection(String authentication, 
+			Element element) throws FileNotFoundException, IOException, ParserConfigurationException{
+		// Process Properties
+		ConnectionProperties connector = null;
+		
+		if(connectionPropertiesByCategory.containsKey(authentication)){
+			Item item = connectionPropertiesByCategory.get(authentication);
+			
+			try {
+				Class<?> instance = Class.forName(item.getClazz());
+
+				if(instance != null){
+					connector = (ConnectionProperties)instance.newInstance();
+					connector.fromElement(element);
+					
+					logger.info("instantiating connection instance " + connector.getClass().getCanonicalName());
+				}
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch(ParserConfigurationException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return connector;
+	}
 	
 	private static List<Item> init(){
 		List<Item> items = new ArrayList<Item>();

@@ -67,7 +67,6 @@ public class TaskletsFactory {
 				Document document = (Document)object;
 
 				Tasklet tasklet = Tasklet.toTasklet(document);
-				
 				tasklets.add(tasklet);
 			}
 		}

@@ -137,7 +137,7 @@ public class Authenticator {
 	private void requestAuthorization(){
 		String scope = null;
 		if(connection != null){
-			scope = connection.scopeCSV();
+			scope = connection.toScopeCSV();
 		}
 
 		if(provider.getApiClass() != null){

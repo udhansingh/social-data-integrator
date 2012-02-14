@@ -153,4 +153,12 @@ public abstract class AbstractResource implements Resource, Cloneable {
 
 		return parent;
 	}
+	
+	@Override
+	public Resource fromElement(Element element) throws ParserConfigurationException {
+		
+		//TBD
+		
+		return this;
+	}
 }

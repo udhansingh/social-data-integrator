@@ -8,7 +8,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 
-import org.onesun.smc.api.DataService;
 import org.onesun.smc.api.DataServicesFactory;
 
 public class WorkFlowView extends JPanel {

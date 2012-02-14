@@ -11,6 +11,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import org.onesun.smc.app.AppCommons;
 import org.onesun.smc.app.AppCommonsUI;
@@ -55,6 +58,20 @@ public class TaskletsView extends JPanel {
 		subPanel = new JPanel(new BorderLayout(5, 5));
 		subPanel.add(new JLabel("Saved Tasklets"), BorderLayout.NORTH);
 		subPanel.add(new JScrollPane(taskletsList), BorderLayout.CENTER);
+		
+		taskletsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		taskletsList.addListSelectionListener(new ListSelectionListener() {
+			
+			@Override
+			public void valueChanged(ListSelectionEvent event) {
+				int index = event.getFirstIndex();
+				
+				if(event.getValueIsAdjusting() == false){
+					Tasklet t = taskletsList.getModel().getElementAt(index);
+					System.out.println(t.toXML());
+				}
+			}
+		});
 		
 		splitPane.add(subPanel);
 		splitPane.setDividerSize(5);

@@ -41,4 +41,6 @@ public interface Resource {
 	Verb getVerb();
 	
 	Element toElement(Document document) throws ParserConfigurationException;
+	
+	Resource fromElement(Element element) throws ParserConfigurationException;
 }

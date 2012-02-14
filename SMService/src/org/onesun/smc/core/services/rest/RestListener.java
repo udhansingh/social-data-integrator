@@ -85,7 +85,7 @@ public class RestListener {
 				if(serviceProvider.getAuthentication().compareTo("OAUTH") == 0){
 					SocialMediaProvider oauthServiceProvider = (SocialMediaProvider)serviceProvider;
 					
-					String scope = oauthConnection.scopeCSV();
+					String scope = oauthConnection.toScopeCSV();
 					if(scope != null){
 						service = new ServiceBuilder()
 						.provider(oauthServiceProvider.getApiClass())

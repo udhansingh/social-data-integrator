@@ -47,4 +47,6 @@ public interface ConnectionProperties {
 	void save(String path) throws FileNotFoundException, IOException;
 	
 	Element toElement(Document document) throws ParserConfigurationException;
+	
+	ConnectionProperties fromElement(Element element) throws ParserConfigurationException;
 }

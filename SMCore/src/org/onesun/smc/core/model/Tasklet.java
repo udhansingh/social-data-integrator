@@ -26,7 +26,6 @@ import java.util.UUID;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.log4j.Logger;
 import org.onesun.commons.xml.XMLUtils;
 import org.onesun.smc.api.ConnectionProperties;
 import org.onesun.smc.api.ConnectionPropertiesFactory;
@@ -36,14 +35,11 @@ import org.onesun.smc.core.metadata.FilterMetadata;
 import org.onesun.smc.core.metadata.Metadata;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 public class Tasklet implements Exporter, Cloneable {
-	private static Logger logger = Logger.getLogger(Tasklet.class);
-	
 	private String name;
 	private String identity;
 	private ConnectionProperties connection;
@@ -255,7 +251,7 @@ public class Tasklet implements Exporter, Cloneable {
 	}
 
 	private static Metadata toMetadata(Element element) {
-		// TODO Auto-generated method stub
+		// TODO 
 		return null;
 	}
 
@@ -265,7 +261,17 @@ public class Tasklet implements Exporter, Cloneable {
 	}
 
 	private static ConnectionProperties toConnection(Element element) {
-		// ConnectionProperties properties = ConnectionPropertiesFactory.toConnectionProperties(element);
+		try {
+			String authentication = XMLUtils.getValue(element, "authentication");
+			return ConnectionPropertiesFactory.toConnection(authentication, element);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}
+		
 		return null;
 	}
 }

@@ -260,7 +260,7 @@ public class SocialMediaConnectionPropertiesView extends ConnectionPropertiesPan
 				connection.setApiKey(key);
 				connection.setApiSecret(secret);
 				connection.setIdentity(providerName);
-				connection.scopeCSV(scope);
+				connection.toScopeList(scope);
 
 				AppCommons.AUTHENTICATOR = new Authenticator(entry, connection, AppCommons.HTTP_CONNECTION_TIMEOUT);
 

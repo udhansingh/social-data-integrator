@@ -40,6 +40,9 @@ public abstract class AbstractConnectionProperties implements ConnectionProperti
 	public String getCategory() {
 		return category;
 	}
+	public void setCategory(String category) {
+		this.category = category;
+	}
 	public String getIdentity() {
 		return identity;
 	}
@@ -87,5 +90,24 @@ public abstract class AbstractConnectionProperties implements ConnectionProperti
 		parent.appendChild(child);
 
 		return parent;
+	}
+	
+	@Override
+	public ConnectionProperties fromElement(Element element) throws ParserConfigurationException {
+		String value = null;
+		
+		value = XMLUtils.getValue(element, "identity");
+		setIdentity((value != null) ? value : "");
+		
+		value = XMLUtils.getValue(element, "category");
+		setCategory((value != null) ?  value : "");
+
+		value = XMLUtils.getValue(element, "name");
+		setName((value != null) ? value : "");
+		
+		value = XMLUtils.getValue(element, "authentication");
+		setAuthentication((value != null) ? value : "");
+		
+		return this;
 	}
 }

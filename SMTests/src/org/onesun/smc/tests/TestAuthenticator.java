@@ -52,7 +52,7 @@ public class TestAuthenticator {
 			connection.setApiKey(key);
 			connection.setApiSecret(secret);
 			connection.setIdentity(providerName);
-			connection.scopeCSV(scope);
+			connection.toScopeList(scope);
 			
 			SocialMediaProvider provider = (SocialMediaProvider)ProviderFactory.getProvider(providerName.toLowerCase());
 			
