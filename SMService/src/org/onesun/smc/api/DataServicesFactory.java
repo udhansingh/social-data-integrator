@@ -50,7 +50,7 @@ public class DataServicesFactory {
 
 	private static Map<String, DataService> services = new TreeMap<String, DataService>();
 
-	private static List<Item> initConnectors() {
+	private static List<Item> init() {
 		List<Item> items = new ArrayList<Item>();
 		Item item = null;
 
@@ -108,7 +108,7 @@ public class DataServicesFactory {
 			logger.info("Found " + items.size() + " service entries");
 		}
 		else {
-			items = initConnectors();
+			items = init();
 			importerExporter.setItems(items);
 			importerExporter.save(pathToServicesFile);
 

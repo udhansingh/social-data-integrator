@@ -50,7 +50,7 @@ public class FilterFactory {
 
 	private static Map<String, Filter> filters = new TreeMap<String, Filter>();
 
-	private static List<Item> initConnectors() {
+	private static List<Item> init() {
 		List<Item> items = new ArrayList<Item>();
 		Item item = null;
 
@@ -105,7 +105,7 @@ public class FilterFactory {
 			items = importerExporter.getItems();
 			logger.info("Found " + items.size() + " provider entries");
 		}else {
-			items = initConnectors();
+			items = init();
 			importerExporter.setItems(items);
 			importerExporter.save(pathToServicesFile);
 

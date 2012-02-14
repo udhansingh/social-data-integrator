@@ -51,6 +51,7 @@ public class Metadata implements Cloneable {
 	}
 
 	// key=Path, value=Name
+	private String name = null;
 	private Map<String, MetaObject> map = Collections.synchronizedMap(new TreeMap<String, MetaObject>());
 	private String nodeName = null;
 	private String url = null;
@@ -97,6 +98,13 @@ public class Metadata implements Cloneable {
 		}
 	}
 		
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	public boolean containsKey(String key) {
 		return map.containsKey(key);
@@ -156,6 +164,10 @@ public class Metadata implements Cloneable {
 		Element parent = document.createElement("metadata");
 		Element child = document.createElement("verb");
 		child.setTextContent((verb != null) ? verb : "");
+		parent.appendChild(child);
+
+		child = document.createElement("name");
+		child.setTextContent((name != null) ? name : "");
 		parent.appendChild(child);
 
 		child = document.createElement("url");

@@ -56,7 +56,7 @@ public class ProviderFactory {
 
 	private static Map<String, ServiceProvider>	providers				= new TreeMap<String, ServiceProvider>();
 
-	private static List<Item> initConnectors() {
+	private static List<Item> init() {
 		List<Item> items = new ArrayList<Item>();
 		Item item = null;
 
@@ -180,7 +180,7 @@ public class ProviderFactory {
 			items = importerExporter.getItems();
 			logger.info("Found " + items.size() + " provider entries");
 		}else {
-			items = initConnectors();
+			items = init();
 			importerExporter.setItems(items);
 			importerExporter.save(pathToServicesFile);
 

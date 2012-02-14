@@ -70,7 +70,7 @@ public class ConnectionPropertiesViewsFactory {
 
 	private ConnectionPropertiesViewsFactory(){}
 
-	private static List<Item> initConnectors() {
+	private static List<Item> init() {
 		List<Item> items = new ArrayList<Item>();
 		Item item = null;
 		
@@ -157,7 +157,7 @@ public class ConnectionPropertiesViewsFactory {
 			logger.info("Found " + items.size() + " connector view entries");
 		}
 		else {
-			items = initConnectors();
+			items = init();
 			importerExporter.setItems(items);
 			importerExporter.save(pathToServicesFile);
 

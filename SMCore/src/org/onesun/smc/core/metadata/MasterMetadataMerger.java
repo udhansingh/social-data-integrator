@@ -19,20 +19,15 @@ package org.onesun.smc.core.metadata;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
 import org.onesun.commons.xml.XMLUtils;
-import org.onesun.smc.api.DataTypeFactory;
 import org.onesun.smc.core.model.MetaObject;
-import org.onesun.smc.core.tools.XMLImporter;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
@@ -75,8 +70,6 @@ public class MasterMetadataMerger {
 		
 		if(document == null) return;
 		
-		
-		
 		Comment comment = document.createComment(commentText);
 		document.appendChild(comment);
 
@@ -88,10 +81,10 @@ public class MasterMetadataMerger {
 				MetadataImporter mi = new MetadataImporter();
 				mi.load(fileName);
 				
-				List<MetaObject> items = mi.getItems();
+				Metadata md = mi.getMetadata();
 				
 				// merge master into cache
-				for(MetaObject item : items){
+				for(MetaObject item : md.values()){
 					String key = item.getPath();
 					
 					if(! metadata.containsKey(key) ){
@@ -128,68 +121,6 @@ public class MasterMetadataMerger {
 			ex.printStackTrace();
 		}
 		finally{
-		}
-	}
-	
-	private static class MetadataImporter extends XMLImporter {
-		public MetadataImporter() {
-			super();
-		}
-
-		private List<MetaObject> items = new ArrayList<MetaObject>();
-
-		public List<MetaObject> getItems(){
-			return items;
-		}
-		
-		@Override
-		public void process() {
-		}
-
-		@Override
-		public void parse(Object object) {
-			if(object != null && object instanceof Document){
-				Document document = (Document)object;
-
-				Element root = document.getDocumentElement();
-
-				NodeList nodes = root.getElementsByTagName("item");
-				if(nodes != null && nodes.getLength() > 0){
-					for(int index = 0; index < nodes.getLength(); index++){
-						Element element = (Element)nodes.item(index);
-
-						try{
-							MetaObject item = new MetaObject();
-							item.setName(XMLUtils.getValue(element, "name"));
-							item.setPath(XMLUtils.getValue(element, "path"));
-							item.setType(
-								DataTypeFactory.getDataType(
-										XMLUtils.getValue(element, "type")
-								)
-							);
-
-							items.add(item);
-						}catch(Exception e){
-							logger.error("Exception while extracting subscriptions : " + e.getMessage());
-						}
-					}
-				}
-			}
-		}
-
-		@Override
-		public boolean load(String pathToImports) {
-			File file = new File(pathToImports);
-			setResource(file);
-
-			init();
-			process();
-
-			if(items != null && items.size() > 0){
-				return true;
-			}
-
-			return false;
 		}
 	}
 }

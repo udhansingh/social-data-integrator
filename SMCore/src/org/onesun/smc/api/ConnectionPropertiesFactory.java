@@ -103,7 +103,7 @@ public class ConnectionPropertiesFactory {
 		return null;
 	}
 	
-	private static List<Item> initConnectionProperties(){
+	private static List<Item> init(){
 		List<Item> items = new ArrayList<Item>();
 		
 		Item item = null;
@@ -183,7 +183,7 @@ public class ConnectionPropertiesFactory {
 			logger.info("Found " + items.size() + " connector class entries, imported " + connectionPropertiesByCategory.size());
 		}
 		else {
-			List<Item> items = initConnectionProperties();
+			List<Item> items = init();
 			importerExporter.setItems(items);
 			importerExporter.save(pathToServicesFile);
 			

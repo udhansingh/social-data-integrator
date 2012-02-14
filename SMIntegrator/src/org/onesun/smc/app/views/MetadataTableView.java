@@ -48,7 +48,6 @@ import javax.swing.SpringLayout;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
 
 import org.apache.log4j.Logger;
 import org.onesun.commons.swing.JTableUtils;
@@ -57,7 +56,6 @@ import org.onesun.commons.swing.cursors.DefaultCusor;
 import org.onesun.commons.text.format.detectors.TextFormat;
 import org.onesun.smc.api.ConnectionProperties;
 import org.onesun.smc.api.DataPreviewer;
-import org.onesun.smc.api.DataTypeFactory;
 import org.onesun.smc.api.MetadataReader;
 import org.onesun.smc.api.ProviderFactory;
 import org.onesun.smc.api.Resource;
@@ -72,7 +70,6 @@ import org.onesun.smc.core.metadata.JSONMetadataReader;
 import org.onesun.smc.core.metadata.MasterMetadataMerger;
 import org.onesun.smc.core.metadata.Metadata;
 import org.onesun.smc.core.metadata.XMLMetadataReader;
-import org.onesun.smc.core.model.DataType;
 import org.onesun.smc.core.model.MetaObject;
 import org.onesun.smc.core.model.Parameter;
 import org.onesun.smc.core.providers.web.kapow.KapowObject;
@@ -399,6 +396,7 @@ public class MetadataTableView extends JPanel {
 					}
 
 					metadata = metadataReader.getMetadata();
+					metadata.setName(AppCommons.TASKLET.getResource().getResourceName());
 					metadata.setNodeName(nodeName);
 					metadata.setUrl(AppCommons.TASKLET.getResource().getUrl());
 					metadata.setVerb(AppCommons.TASKLET.getResource().getVerb().name());

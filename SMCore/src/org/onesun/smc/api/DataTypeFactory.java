@@ -29,7 +29,7 @@ public class DataTypeFactory {
 	
 	private static Map<String, DataType> dataTypes = new TreeMap<String, DataType>();
 	
-	private static List<DataType> initConnectors() {
+	private static List<DataType> init() {
 		List<DataType> items = new ArrayList<DataType>();
 		DataType item = null;
 		Class<?> clazz = null;
@@ -82,7 +82,7 @@ public class DataTypeFactory {
 			items = importerExporter.getItems();
 			logger.info("Found " + items.size() + " provider entries");
 		}else {
-			items = initConnectors();
+			items = init();
 			importerExporter.setItems(items);
 			importerExporter.save(pathToServicesFile);
 
@@ -224,6 +224,7 @@ public class DataTypeFactory {
 				logger.info("Serializing completed for: " + file.getAbsolutePath());
 				serializer.serialize(document);
 
+				return true;
 			} catch (ParserConfigurationException e) {
 				e.printStackTrace();
 			} catch (FileNotFoundException e) {
