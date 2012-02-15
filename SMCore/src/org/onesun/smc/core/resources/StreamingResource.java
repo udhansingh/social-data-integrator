@@ -20,6 +20,9 @@ import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.onesun.commons.text.format.detectors.TextFormat;
+import org.onesun.commons.xml.XMLUtils;
+import org.onesun.smc.api.Resource;
 import org.scribe.model.Verb;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -132,5 +135,32 @@ public class StreamingResource extends AbstractResource {
 		}
 		
 		return parent;
+	}
+	
+	@Override
+	public String getType(){
+		return "STREAMING";
+	}
+	
+	@Override
+	public Resource toResource(Element element) throws ParserConfigurationException {
+		String text = null;
+		
+		this.url = XMLUtils.getValue(element, "url");
+		this.resourceName = XMLUtils.getValue(element, "resourceName");
+		this.parameters = XMLUtils.getValue(element, "parameters");
+		this.payload = XMLUtils.getValue(element, "payload");
+
+		text = XMLUtils.getValue(element, "verb");
+		if(text != null && text.trim().length() > 0){
+			this.verb = Verb.valueOf(text);
+		}
+		
+		text = XMLUtils.getValue(element, "textFormat");
+		if(text != null && text.trim().length() > 0){
+			this.textFormat = TextFormat.valueOf(text);
+		}
+		
+		return this;
 	}
 }

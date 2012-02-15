@@ -201,8 +201,8 @@ public class SocialMediaConnectionProperties extends AbstractConnectionPropertie
 	}
 	
 	@Override
-	public ConnectionProperties fromElement(Element element) throws ParserConfigurationException {
-		super.fromElement(element);
+	public ConnectionProperties toConnectionProperties(Element element) throws ParserConfigurationException {
+		super.toConnectionProperties(element);
 		
 		String value = null;
 

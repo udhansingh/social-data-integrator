@@ -24,6 +24,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public interface Resource {
+	String getType();
+	
 	void checkFormat();
 
 	TextFormat getTextFormat();
@@ -42,5 +44,5 @@ public interface Resource {
 	
 	Element toElement(Document document) throws ParserConfigurationException;
 	
-	Resource fromElement(Element element) throws ParserConfigurationException;
+	Resource toResource(Element element) throws ParserConfigurationException;
 }

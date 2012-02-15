@@ -31,6 +31,7 @@ import org.onesun.smc.api.ConnectionProperties;
 import org.onesun.smc.api.ConnectionPropertiesFactory;
 import org.onesun.smc.api.Exporter;
 import org.onesun.smc.api.Resource;
+import org.onesun.smc.api.ResourceFactory;
 import org.onesun.smc.core.metadata.FilterMetadata;
 import org.onesun.smc.core.metadata.Metadata;
 import org.w3c.dom.Document;
@@ -254,7 +255,17 @@ public class Tasklet implements Exporter, Cloneable {
 	}
 
 	private static Resource toResource(Element element) {
-		// TODO Auto-generated method stub
+		try {
+			String type = XMLUtils.getValue(element, "type");
+			return ResourceFactory.toResource(type, element);
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}
+		
 		return null;
 	}
 
@@ -262,9 +273,11 @@ public class Tasklet implements Exporter, Cloneable {
 		try {
 			String authentication = XMLUtils.getValue(element, "authentication");
 			return ConnectionPropertiesFactory.toConnection(authentication, element);
-		} catch (FileNotFoundException e) {
+		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();

@@ -93,7 +93,7 @@ public abstract class AbstractConnectionProperties implements ConnectionProperti
 	}
 	
 	@Override
-	public ConnectionProperties fromElement(Element element) throws ParserConfigurationException {
+	public ConnectionProperties toConnectionProperties(Element element) throws ParserConfigurationException {
 		String value = null;
 		
 		value = XMLUtils.getValue(element, "identity");

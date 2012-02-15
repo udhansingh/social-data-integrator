@@ -150,15 +150,11 @@ public abstract class AbstractResource implements Resource, Cloneable {
 		child = document.createElement("resourceName");
 		child.setTextContent((resourceName != null) ? resourceName : "");
 		parent.appendChild(child);
+		
+		child =  document.createElement("type");
+		child.setTextContent(getType());
+		parent.appendChild(child);
 
 		return parent;
-	}
-	
-	@Override
-	public Resource fromElement(Element element) throws ParserConfigurationException {
-		
-		//TBD
-		
-		return this;
 	}
 }

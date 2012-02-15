@@ -48,5 +48,5 @@ public interface ConnectionProperties {
 	
 	Element toElement(Document document) throws ParserConfigurationException;
 	
-	ConnectionProperties fromElement(Element element) throws ParserConfigurationException;
+	ConnectionProperties toConnectionProperties(Element element) throws ParserConfigurationException;
 }
