@@ -246,13 +246,11 @@ public class Tasklet implements Exporter, Cloneable {
 	}
 
 	private static FilterMetadata toFilterMetadata(Element element) {
-		// TODO Auto-generated method stub
-		return null;
+		return FilterMetadata.toFilterMetadata(element);
 	}
 
 	private static Metadata toMetadata(Element element) {
-		// TODO 
-		return null;
+		return Metadata.toMetadata(element);
 	}
 
 	private static Resource toResource(Element element) {

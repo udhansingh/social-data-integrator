@@ -24,9 +24,13 @@ import java.util.TreeMap;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.onesun.commons.xml.XMLUtils;
+import org.onesun.smc.api.DataTypeFactory;
+import org.onesun.smc.core.model.MetaObject;
 import org.onesun.smc.core.model.Parameter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 public class FilterMetadata {
 	// Key: Internal Name
@@ -64,19 +68,6 @@ public class FilterMetadata {
 	public Collection<Parameter> headerValues() {
 		return headers.values();
 	}
-//	public Properties toProperties(){
-//		Properties p = new Properties();
-//		
-//		for(String k : map.keySet()){
-//			p.put(k, map.get(k));
-//		}
-//		
-//		return p;
-//	}
-
-//	public String toString(){
-//		return toProperties().toString();
-//	}
 	
 	public boolean containsParamKey(String key) {
 		return params.containsKey(key);
@@ -195,5 +186,65 @@ public class FilterMetadata {
 		filter.appendChild(parent);
 
 		return filter;
+	}
+
+	public static FilterMetadata toFilterMetadata(Element element) {
+		FilterMetadata fm = new FilterMetadata();
+		
+		// Read params
+		Element p = XMLUtils.getElement(element, "params");
+		NodeList nodes = p.getElementsByTagName("param");
+		if(nodes != null && nodes.getLength() > 0){
+			for(int index = 0; index < nodes.getLength(); index++){
+				Element child = (Element)nodes.item(index);
+
+				try{
+					String en = XMLUtils.getValue(child, "externalName");
+					String in = XMLUtils.getValue(child, "internalName");
+					String dv = XMLUtils.getValue(child, "defaultValue");
+					
+					if(en != null && in != null){
+						Parameter pm = new Parameter(en, in, dv);
+						fm.params.put(en, pm);
+					}
+				}catch(Exception e){
+					System.out.println("Exception while extracting values from xml element : " + e.getMessage());
+				}
+			}
+		}
+		
+		// Read headers
+		Element h = XMLUtils.getElement(element, "headers");
+		nodes = h.getElementsByTagName("header");
+		if(nodes != null && nodes.getLength() > 0){
+			for(int index = 0; index < nodes.getLength(); index++){
+				Element child = (Element)nodes.item(index);
+
+				try{
+					String en = XMLUtils.getValue(child, "externalName");
+					String in = XMLUtils.getValue(child, "internalName");
+					String dv = XMLUtils.getValue(child, "defaultValue");
+					
+					if(en != null && in != null){
+						Parameter pm = new Parameter(en, in, dv);
+						fm.headers.put(en, pm);
+					}
+				}catch(Exception e){
+					System.out.println("Exception while extracting values from xml element : " + e.getMessage());
+				}
+			}
+		}
+		
+		// Read payload
+		Element l = XMLUtils.getElement(element, "payload");
+		String en = XMLUtils.getValue(l, "externalName");
+		String in = XMLUtils.getValue(l, "internalName");
+		String dv = XMLUtils.getValue(l, "defaultValue");
+		
+		if(en != null && in != null){
+			fm.payload = new Parameter(en, in, dv);
+		}
+		
+		return fm;
 	}
 }

@@ -26,9 +26,12 @@ import java.util.TreeMap;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.onesun.commons.xml.XMLUtils;
+import org.onesun.smc.api.DataTypeFactory;
 import org.onesun.smc.core.model.MetaObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 public class Metadata implements Cloneable {
 	private boolean discovered = true;
@@ -220,5 +223,47 @@ public class Metadata implements Cloneable {
 
 	public Collection<MetaObject> values() {
 		return map.values();
+	}
+	
+	public static Metadata toMetadata(Element element){
+		Metadata metadata = new Metadata();
+		
+		metadata.setVerb(XMLUtils.getValue(element, "verb"));
+		metadata.setUrl(XMLUtils.getValue(element, "url"));
+		
+		String value = XMLUtils.getValue(element, "discovered");
+		metadata.setDiscovered(Boolean.parseBoolean((value == null)? "false" : value));
+
+		metadata.setName(XMLUtils.getValue(element, "name"));
+		metadata.setNodeName(XMLUtils.getValue(element, "nodeName"));
+
+		NodeList nodes = element.getElementsByTagName("item");
+		if(nodes != null && nodes.getLength() > 0){
+			for(int index = 0; index < nodes.getLength(); index++){
+				Element child = (Element)nodes.item(index);
+
+				try{
+					MetaObject item = new MetaObject();
+					item.setName(XMLUtils.getValue(child, "name"));
+					item.setPath(XMLUtils.getValue(child, "path"));
+					item.setType(
+						DataTypeFactory.getDataType(
+							XMLUtils.getValue(child, "type")
+						)
+					);
+					value = XMLUtils.getValue(child, "size");
+					item.setSize((value == null) ? -1 : Integer.parseInt(value));
+
+					// Add to the meta-data only if it must be displayed and is relevant to the use case;
+					if((item.getSize() != -1) && (item.getPath().startsWith("social.media.internal.metadata.mapping.") == false)){
+						metadata.put(item.getPath(), item);
+					}
+				}catch(Exception e){
+					System.out.println("Exception while extracting values from xml element : " + e.getMessage());
+				}
+			}
+		}
+		
+		return metadata;
 	}
 }

@@ -68,7 +68,9 @@ public class TaskletsView extends JPanel {
 				
 				if(event.getValueIsAdjusting() == false){
 					Tasklet t = taskletsList.getModel().getElementAt(index);
-					System.out.println(t.toXML());
+					
+					AppCommonsUI.MODEL_TEXTAREA.setText(t.toXML());
+					AppCommonsUI.MODEL_TEXTAREA.invalidate();
 				}
 			}
 		});
