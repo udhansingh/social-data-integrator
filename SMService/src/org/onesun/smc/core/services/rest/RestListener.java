@@ -142,6 +142,11 @@ public class RestListener {
 
 			// record response body
 			responseBody = (response != null) ? response.getBody() : null;
+			
+			if(responseBody != null){
+				logger.info("Response\n" + responseBody + "\n");
+			}
+			
 		}catch(Exception e){
 			logger.error("Exception occured during HTTP Send: " + e.getMessage());
 			e.printStackTrace();

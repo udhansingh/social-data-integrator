@@ -25,8 +25,6 @@ import java.util.TreeMap;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.onesun.commons.xml.XMLUtils;
-import org.onesun.smc.api.DataTypeFactory;
-import org.onesun.smc.core.model.MetaObject;
 import org.onesun.smc.core.model.Parameter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

@@ -53,7 +53,6 @@ public class SocialMediaConnectionProperties extends AbstractConnectionPropertie
 		
 			scope = scope.replace("[", "");
 			scope = scope.replace("]", "");
-			scope = scope.replaceAll(" ", "");
 
 			return scope;
 		}

@@ -32,11 +32,13 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.log4j.Logger;
 import org.onesun.commons.xml.XMLUtils;
 import org.onesun.smc.core.providers.filesystem.FileProvider;
+import org.onesun.smc.core.providers.socialmedia.DropboxProvider;
 import org.onesun.smc.core.providers.socialmedia.FacebookProvider;
 import org.onesun.smc.core.providers.socialmedia.FoursquareProvider;
 import org.onesun.smc.core.providers.socialmedia.GoogleMailProvider;
 import org.onesun.smc.core.providers.socialmedia.LinkedInProvider;
 import org.onesun.smc.core.providers.socialmedia.TwitterProvider;
+import org.onesun.smc.core.providers.socialmedia.YahooProvider;
 import org.onesun.smc.core.providers.socialmedia.YouTubeProvider;
 import org.onesun.smc.core.providers.stream.FacebookStreamingProvider;
 import org.onesun.smc.core.providers.stream.TwitterStreamingProvider;
@@ -123,6 +125,16 @@ public class ProviderFactory {
 		item = new Item();
 		item.setIdentity("Connotate");
 		item.setClazz(ConnotateProvider.class.getCanonicalName());
+		items.add(item);
+		
+		item = new Item();
+		item.setIdentity("Dropbox");
+		item.setClazz(DropboxProvider.class.getCanonicalName());
+		items.add(item);
+		
+		item = new Item();
+		item.setIdentity("Yahoo");
+		item.setClazz(YahooProvider.class.getCanonicalName());
 		items.add(item);
 		
 		return items;

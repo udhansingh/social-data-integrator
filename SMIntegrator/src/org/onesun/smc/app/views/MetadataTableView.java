@@ -509,7 +509,6 @@ public class MetadataTableView extends JPanel {
 		this.dataPreviewer = dataPreviewer;
 	}
 
-//*	
 	private static class ComboBoxRenderer<T> extends JComboBox<T> implements TableCellRenderer {
 		private static final long serialVersionUID = 8017092061769520797L;
 
@@ -541,7 +540,7 @@ public class MetadataTableView extends JPanel {
 			super(new JComboBox<T>(items));
 		}
 	}
-// */
+
 	public void setMetadata(Metadata metadata) {
 		this.metadata = metadata;
 	}

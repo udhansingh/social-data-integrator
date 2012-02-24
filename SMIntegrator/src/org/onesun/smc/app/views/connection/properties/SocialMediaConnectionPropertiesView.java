@@ -238,7 +238,6 @@ public class SocialMediaConnectionPropertiesView extends ConnectionPropertiesPan
 
 					scope = scope.replace("[", "");
 					scope = scope.replace("]", "");
-					scope = scope.replaceAll(" ", "");
 					scope = scope.trim();
 				}
 
@@ -263,7 +262,6 @@ public class SocialMediaConnectionPropertiesView extends ConnectionPropertiesPan
 				connection.toScopeList(scope);
 
 				AppCommons.AUTHENTICATOR = new Authenticator(entry, connection, AppCommons.HTTP_CONNECTION_TIMEOUT);
-
 
 				try {
 					AppCommons.AUTHENTICATOR.authorize();
@@ -364,7 +362,7 @@ public class SocialMediaConnectionPropertiesView extends ConnectionPropertiesPan
 					data = accessSecretTextField.getText();
 					newData = (data.trim().length() > 0) ? data : null;
 					if(newData == null){
-						logger.error("Empty Access Access");
+						logger.error("Empty Access Secret");
 					}
 					connection.setAccessSecret( newData );
 

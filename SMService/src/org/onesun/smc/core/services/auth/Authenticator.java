@@ -16,14 +16,13 @@
  */
 package org.onesun.smc.core.services.auth;
 
-import java.awt.Desktop;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
-import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.apache.log4j.Logger;
+import org.onesun.commons.webbrowser.WebBrowser;
 import org.onesun.smc.api.SocialMediaProvider;
 import org.onesun.smc.core.connection.properties.SocialMediaConnectionProperties;
 import org.onesun.smc.core.model.OAuthVersion;
@@ -52,6 +51,8 @@ public class Authenticator {
 	private static String 		BASE_URI 			= PROTOCOL + "://" + HOST + ":" + PORT;
 	private static String 		CALLBACK_URL 		= BASE_URI + CALLBACK_CONTEXT;
 
+	private static WebBrowser	webBrowser			= null;
+	
 	class NotifierObject {}
 
 	class Notifier {
@@ -189,8 +190,9 @@ public class Authenticator {
 
 			if(authorizationUrl != null){
 				try {
-					// open the authorization URI in the browser
-					Desktop.getDesktop().browse(new URI(authorizationUrl));
+					if(webBrowser != null){
+						webBrowser.browse(authorizationUrl);
+					}
 				} catch (IOException e) {
 					logger.error("IOException while lanching browser " + provider +": " + e.getMessage());
 				} catch (URISyntaxException e) {
@@ -201,27 +203,23 @@ public class Authenticator {
 	}
 
 	public void authorize(){
-		Authenticator tokenGenerator = null;
-
 		try{
-			tokenGenerator = new Authenticator(provider, connection, TIMEOUT);
-
-			tokenGenerator.start();
+			start();
 			logger.info("HttpServer started - Requesting token generation");
-			tokenGenerator.requestAuthorization();
+			requestAuthorization();
 			logger.info("Blocking for application to complete Token generation");
-			tokenGenerator.block();
+			block();
 
 			// Validate
-			accessToken = tokenGenerator.getAccessToken();
-			service = tokenGenerator.getService();
+			accessToken = getAccessToken();
+			service = getService();
 		}
 		catch(OAuthException oae){
 			throw oae;
 		}
 		finally {
 			logger.info("HttpServer stopped");
-			tokenGenerator.stop();
+			stop();
 		}
 	}
 
@@ -242,6 +240,37 @@ public class Authenticator {
 		this.service = service;
 	}
 
+	public boolean getAccessKeys(String url){
+		String oauth_verifier = null;
+
+		RESTParams urlParams = new RESTParams(url);
+
+		if(provider.getOAuthVersion() == OAuthVersion.VERSION_2){
+			oauth_verifier = urlParams.getParam("code");
+		}
+		else {
+			oauth_verifier = urlParams.getParam("oauth_verifier");
+		}
+		
+		Verifier verifier = null;
+		try {
+			verifier= new Verifier(oauth_verifier);
+		}
+		catch(IllegalArgumentException e){
+			logger.info("Exception while extracting verifier: " + e.getMessage());
+		}
+
+		if(service != null && verifier != null){
+			accessToken = service.getAccessToken(requestToken, verifier);
+			logger.info("Access Token : " + accessToken.getToken() + " Access Secret: " + accessToken.getSecret());
+			//notifier.doNotify();
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
 	private void start(){
 		// create an instance of the lightweight HTTP server on port
 		try {
@@ -254,40 +283,25 @@ public class Authenticator {
 		server.createContext(CALLBACK_CONTEXT, new HttpHandler() {
 
 			public void handle(HttpExchange exchange) throws IOException {
-				String oauth_verifier = null;
+				logger.info("Callback Handers processing request: " + exchange.getRequestURI());
+				getAccessKeys(exchange.getRequestURI().getQuery());
 
-				RESTParams urlParams = new RESTParams(exchange.getRequestURI().getQuery());
+				exchange.sendResponseHeaders(200, 0);
+				OutputStream os = exchange.getResponseBody();
 
-				if(provider.getOAuthVersion() == OAuthVersion.VERSION_2){
-					oauth_verifier = urlParams.getParam("code");
-				}
-				else {
-					oauth_verifier = urlParams.getParam("oauth_verifier");
-				}
+				StringBuffer buffer = new StringBuffer();
+				buffer.append("<html><head></head><body>");
+				buffer.append("<h1>Authorization successful</h1>");
+				buffer.append("<p>You have successfully authorized your application to access data on '" + provider.getIdentity() + "'</p>");
+				buffer.append("<p>You may close your browser window now</p>");
+				buffer.append("</body></html>");
 
-				Verifier verifier = new Verifier(oauth_verifier);
+				logger.info("HTML: " + buffer.toString());
 
-				if(service != null){
-					accessToken = service.getAccessToken(requestToken, verifier);
-					logger.info("Access Token : " + accessToken.getToken() + " Access Secret: " + accessToken.getSecret());
+				os.write(buffer.toString().getBytes());
 
-					exchange.sendResponseHeaders(200, 0);
-					OutputStream os = exchange.getResponseBody();
-
-					StringBuffer buffer = new StringBuffer();
-					buffer.append("<html><head></head><body>");
-					buffer.append("<h1>Authorization successful</h1>");
-					buffer.append("<p>You have successfully authorized your application to access data on '" + provider.getIdentity() + "'</p>");
-					buffer.append("<p>You may close your browser window now</p>");
-					buffer.append("</body></html>");
-
-					logger.info("HTML: " + buffer.toString());
-
-					os.write(buffer.toString().getBytes());
-
-					// close the streams
-					os.close();
-				}
+				// close the streams
+				os.close();
 
 				// notify the app the user has authorized
 				notifier.doNotify();
@@ -312,5 +326,13 @@ public class Authenticator {
 
 	public static void setCallbackUrl(String callbackUrl) {
 		CALLBACK_URL = callbackUrl;
+	}
+
+	public static WebBrowser getWebBrowser() {
+		return webBrowser;
+	}
+
+	public static void setWebBrowser(WebBrowser webBrowser) {
+		Authenticator.webBrowser = webBrowser;
 	}
 }

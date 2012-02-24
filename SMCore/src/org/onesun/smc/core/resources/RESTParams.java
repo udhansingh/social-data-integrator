@@ -50,16 +50,18 @@ public class RESTParams {
 	    int index = input.indexOf("?", 0);
 	    
 	    String paramsText = input;
-	    
-	    if (index > -1) {
-	    	paramsText = input.substring(index + 1);
-	    }
+	    try {
+	    	if (index > -1) {
+	    		paramsText = input.substring(index + 1);
+	    	}
 
-	    String paramsArray[] = paramsText.split("&");
-
-	    for (String param : paramsArray) {
-	    	String temp[] = param.split("=");
-	    	params.put(temp[0], URLDecoder.decode(temp[1], "UTF-8"));
+	    	String paramsArray[] = paramsText.split("&");
+	    	
+	    	for (String param : paramsArray) {
+	    		String temp[] = param.split("=");
+	    		params.put(temp[0], URLDecoder.decode(temp[1], "UTF-8"));
+	    	}
+	    }catch(ArrayIndexOutOfBoundsException e){
 	    }
 	}
 }

@@ -25,6 +25,10 @@ import org.apache.log4j.Logger;
 import org.onesun.commons.swing.IconUtils;
 import org.onesun.commons.text.classification.opencalais.OpenCalaisClient;
 import org.onesun.commons.text.classification.uclassify.UClassifyClient;
+import org.onesun.commons.webbrowser.LocationChangeHandler;
+import org.onesun.commons.webbrowser.EmbeddedWebBrowser;
+import org.onesun.commons.webbrowser.SystemWebBrowser;
+import org.onesun.commons.webbrowser.WebBrowser;
 import org.onesun.smc.api.ConfigurationHelper;
 import org.onesun.smc.api.ConnectionPropertiesFactory;
 import org.onesun.smc.api.ConnectionPropertiesViewsFactory;
@@ -80,6 +84,8 @@ public class AppCommons {
 	public static String 								UCLASSIFY_READ_ACCESS_KEY		= null;
 
 	public static String 								OPENCALAIS_LICENSE_KEY			= null;
+
+	public static WebBrowser							WEB_BROWSER						= null;
 
 	static {
 		try {
@@ -181,6 +187,22 @@ public class AppCommons {
 			saveConfiguration();
 		}
 
+		// Initialize which browser to use
+		Authenticator.setWebBrowser(new SystemWebBrowser());
+		
+/*		Authenticator.setWebBrowser(new EmbeddedWebBrowser("Authorize Application", new LocationChangeHandler() {
+			@Override
+			public boolean execute(String url) {
+				//if(url.contains("code=") == true || url.contains("oauth_verifier=") == true
+				//if(url.contains("redirect_uri") == true 
+				//		&& AUTHENTICATOR != null){
+					return AUTHENTICATOR.getAccessKeys(url);
+				//}
+
+				//return false;
+			}
+		}));
+*/		
 		// Setup Configuration
 		setup();
 		
