@@ -119,7 +119,7 @@ public class DataPreviewTableView extends JPanel {
 		}
 
 		if(providerInstance != null && providerInstance.isResponseRequired() == true){
-			if((String)AppCommons.RESPONSE_OBJECT == null){
+			if(AppCommons.RESPONSE_OBJECT == null){
 				JOptionPane.showMessageDialog(rootPanel, AppMessages.ERROR_NO_PREVIEW_NEEDS_DATA_AND_METADATA);
 
 				return;
@@ -172,6 +172,10 @@ public class DataPreviewTableView extends JPanel {
 				else if(textFormat == TextFormat.XML) {
 					dataTable.setDataType(TextFormat.XML);
 					dataReader = new XMLDataReader((String)AppCommons.RESPONSE_OBJECT);
+				}
+				else if(textFormat == TextFormat.FACETED_JSON) {
+					dataTable.setDataType(TextFormat.FACETED_JSON);
+					dataReader = new FacetedDataReader(AppCommons.RESPONSE_OBJECT);
 				}
 			} catch (JSONException ex) {
 				ex.printStackTrace();

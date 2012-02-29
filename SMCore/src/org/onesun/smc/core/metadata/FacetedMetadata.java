@@ -180,7 +180,7 @@ public class FacetedMetadata {
 		int tolerance = (int) (discoveredMetadata.size()*toleranceRatio);
 			for(String metadataName : map.keySet()){
 				Metadata metadata = map.get(metadataName);
-				if((discoveredMetadata.size()-metadata.size())/discoveredMetadata.size() > tolerance){
+				if(Math.abs(discoveredMetadata.size()-metadata.size()) > tolerance){
 					continue;
 				}
 				int diff = 0;
@@ -190,7 +190,7 @@ public class FacetedMetadata {
 					if(diff > tolerance)
 						break;
 				}
-				if(diff < tolerance)
+				if(diff <= tolerance)
 					return metadataName;
 			}
 		return null;

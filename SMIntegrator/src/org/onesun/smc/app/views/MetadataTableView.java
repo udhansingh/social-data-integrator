@@ -223,9 +223,10 @@ public class MetadataTableView extends JPanel {
 						metadata = facetedMetadata.getMetadata(facet);
 						
 						model.setMetadata(metadata);
-						model.fireTableDataChanged();
+						//model.fireTableDataChanged();
 
 						table.setModel(model);
+						model.fireTableStructureChanged();
 
 						JTableUtils.packColumns(table, 2);
 						JTableUtils.packRows(table, 2);
@@ -352,6 +353,7 @@ public class MetadataTableView extends JPanel {
 						Metadata m = facetedMetadata.getMetadata(facet);
 						m.setUrl(AppCommons.TASKLET.getResource().getUrl());
 						m.setVerb(AppCommons.TASKLET.getResource().getVerb().name());
+						AppCommons.TASKLET.getResource().setTextFormat(TextFormat.FACETED_JSON);
 					}
 
 					ComboBoxModel<String> model = new DefaultComboBoxModel<String>(facetsArray);

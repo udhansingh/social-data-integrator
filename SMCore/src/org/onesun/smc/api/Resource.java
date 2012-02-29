@@ -45,4 +45,6 @@ public interface Resource {
 	Element toElement(Document document) throws ParserConfigurationException;
 	
 	Resource toResource(Element element) throws ParserConfigurationException;
+
+	void setTextFormat(TextFormat textFormat);
 }

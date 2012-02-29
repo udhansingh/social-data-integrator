@@ -135,6 +135,7 @@ public abstract class AbstractResource implements Resource, Cloneable {
 		}
 	}
 	
+	@Override
 	public void setTextFormat(TextFormat textFormat) {
 		this.textFormat = textFormat;
 	}
