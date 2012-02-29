@@ -190,19 +190,14 @@ public class AppCommons {
 		// Initialize which browser to use
 		Authenticator.setWebBrowser(new SystemWebBrowser());
 		
-/*		Authenticator.setWebBrowser(new EmbeddedWebBrowser("Authorize Application", new LocationChangeHandler() {
+//*		
+		Authenticator.setWebBrowser(new EmbeddedWebBrowser("Authorize Application", new LocationChangeHandler() {
 			@Override
 			public boolean execute(String url) {
-				//if(url.contains("code=") == true || url.contains("oauth_verifier=") == true
-				//if(url.contains("redirect_uri") == true 
-				//		&& AUTHENTICATOR != null){
 					return AUTHENTICATOR.getAccessKeys(url);
-				//}
-
-				//return false;
 			}
 		}));
-*/		
+//*/		
 		// Setup Configuration
 		setup();
 		

@@ -1,6 +1,7 @@
 package org.onesun.smc.app.views;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -39,9 +40,17 @@ public class TaskletsView extends JPanel {
 		JPanel subPanel = new JPanel(new BorderLayout(5, 5));
 		subPanel.add(new JLabel("Unique Task Name"), BorderLayout.WEST);
 		subPanel.add(taskNameTextField, BorderLayout.CENTER);
+		
 		JButton saveButton = new JButton("Save");
+		JButton executeButton = new JButton("Execute");
 		saveButton.addActionListener(new SaveActionListener());
-		subPanel.add(saveButton, BorderLayout.EAST);
+		
+		JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		buttonsPanel.add(saveButton);
+		buttonsPanel.add(executeButton);
+		
+		
+		subPanel.add(buttonsPanel, BorderLayout.EAST);
 		mainPanel.add(subPanel, BorderLayout.NORTH);
 
 		JScrollPane scrollPane = new JScrollPane(AppCommonsUI.MODEL_TEXTAREA);

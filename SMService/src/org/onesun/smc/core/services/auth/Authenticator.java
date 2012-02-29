@@ -284,7 +284,7 @@ public class Authenticator {
 
 			public void handle(HttpExchange exchange) throws IOException {
 				logger.info("Callback Handers processing request: " + exchange.getRequestURI());
-				getAccessKeys(exchange.getRequestURI().getQuery());
+				// getAccessKeys(exchange.getRequestURI().getQuery());
 
 				exchange.sendResponseHeaders(200, 0);
 				OutputStream os = exchange.getResponseBody();

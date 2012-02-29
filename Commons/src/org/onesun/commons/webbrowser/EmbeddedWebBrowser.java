@@ -40,6 +40,8 @@ public class EmbeddedWebBrowser implements WebBrowser {
 	}
 	
 	private void init(final Display display, Browser browser) {
+		browser.setJavascriptEnabled(true);
+		
 		browser.addOpenWindowListener(new OpenWindowListener() {
 			public void open(WindowEvent event) {
 				if (!event.required) return;	/* only do it if necessary */
