@@ -50,6 +50,7 @@ import org.onesun.smc.app.handlers.UITask;
 import org.onesun.smc.app.model.DatasetModel;
 import org.onesun.smc.app.views.shared.ColoredTable;
 import org.onesun.smc.core.data.profiler.SimpleDataProfiler;
+import org.onesun.smc.core.data.reader.FacetedDataReader;
 import org.onesun.smc.core.data.reader.JSONDataReader;
 import org.onesun.smc.core.data.reader.XMLDataReader;
 import org.onesun.smc.core.metadata.Metadata;
@@ -143,6 +144,19 @@ public class DataPreviewTableView extends JPanel {
 					List<RQLObject> rqlObjects = (List<RQLObject>) returnObject;
 					
 					dataReader = new KapowDataReader((KapowObject)clone.getObject(), rqlObjects);
+				}
+			}
+			else if(providerInstance.getCategory().compareToIgnoreCase("TWITTER_STREAMING") == 0){
+				WebResource webResource = (WebResource)resource;
+				WebResource clone = (WebResource)webResource.clone();
+
+				Object returnObject = AppCommons.RESPONSE_OBJECT;
+
+				if(returnObject instanceof List){
+					@SuppressWarnings("unchecked")
+					List<String> list = (List<String>) returnObject;
+					
+					dataReader = new FacetedDataReader(list);
 				}
 			}
 		}

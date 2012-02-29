@@ -16,6 +16,7 @@
  */
 package org.onesun.smc.core.services.streaming;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -216,21 +217,18 @@ public class TwitterStreamingListener {
 
 		public void processStream(InputStream stream){
 			if(stream != null){
-				Reader reader = null;
+				BufferedReader reader = null;
 
 				try {
-					reader = new InputStreamReader(stream, ENCODING);
+					InputStreamReader isr = new InputStreamReader(stream, ENCODING);
+					reader = new BufferedReader(isr);
 				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();
 				}
 				
 				while(running){
-					char[] chars = new char[1024];
 					try {
-						int n = reader.read(chars);
-						
-						String text = new String(chars, 0, n);
-						
+						String text = reader.readLine();
 						dataHandler.flush(text);
 					} catch (IOException e) {
 						e.printStackTrace();

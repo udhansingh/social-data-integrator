@@ -23,8 +23,11 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JComboBox;
@@ -60,6 +63,8 @@ public class TwitterStreamingDataAccessView extends AbstractDataAccessView {
 	private JScrollPane						scrollPane				= new JScrollPane(dataTextArea);
 	private StreamingResource				resource				= null;
 	
+	private List<String>					results					= Collections.synchronizedList(new ArrayList<String>());
+	
 	public TwitterStreamingDataAccessView(){
 		super();
 		
@@ -71,7 +76,10 @@ public class TwitterStreamingDataAccessView extends AbstractDataAccessView {
 				@Override
 				public void flush(Object object) {
 					if(object instanceof String){
-						dataTextArea.append((String)object);
+						String text = (String)object;
+						
+						dataTextArea.append(text + "\n");
+						results.add(text);
 					}
 				}
 			},
@@ -213,6 +221,8 @@ public class TwitterStreamingDataAccessView extends AbstractDataAccessView {
 				}
 				
 				if(validateButton.getText().compareTo(START_SAMPLING_LABEL) == 0){
+					results.clear();
+					
 					validateButton.setText(STOP_SAMPLING_LABEL);
 					
 					DefaultCusor.startWaitCursor(rootPanel);
@@ -231,8 +241,7 @@ public class TwitterStreamingDataAccessView extends AbstractDataAccessView {
 					DefaultCusor.stopWaitCursor(rootPanel);
 					executor.stop();
 
-					final String response = dataTextArea.getText();
-					AppCommons.RESPONSE_OBJECT = response;
+					AppCommons.RESPONSE_OBJECT = results;
 					
 					// Update the meta-model
 					AppCommons.TASKLET.setFilterMetadata(filterMetadata);

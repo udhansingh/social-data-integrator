@@ -339,7 +339,7 @@ public class MetadataTableView extends JPanel {
 				}
 				else if(connection.getCategory().compareTo("TWITTER_STREAMING") == 0) {
 					facetedMetadata = new FacetedMetadata();
-					facetedMetadata.setObject(AppCommons.RESPONSE_OBJECT.toString());
+					facetedMetadata.setObject(AppCommons.RESPONSE_OBJECT);
 					facetedMetadata.analyze();
 
 					Set<String> facets = facetedMetadata.getFacets();
@@ -373,9 +373,9 @@ public class MetadataTableView extends JPanel {
 						metadataReader = new XMLMetadataReader(AppCommons.RESPONSE_OBJECT.toString());
 					}
 					else {
-						DefaultCusor.stopWaitCursor(rootPanel);
+//						DefaultCusor.stopWaitCursor(rootPanel);
 
-						return;
+//						return;
 					}
 
 					// Fill other details

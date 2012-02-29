@@ -26,6 +26,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -50,18 +51,9 @@ public class FacetedMetadata {
 		return map.get(facet);
 	}
 	
-	public static void main(String[] args){
-		FacetedMetadata fm = new FacetedMetadata();
-		
-		String path = "/home/innovator/Desktop/FB_Streaming.txt";
-		
-		fm.setObject(new File(path));
-		
-		fm.analyze();
-	}
-	
 	private void makeMetadata(String text){
 		try{
+			logger.info("Processing JSON: " + text);
 			JSONObject jsonObject = new JSONObject(text);
 			
 			MetadataReader metadataReader = new JSONMetadataReader(jsonObject.toString());
@@ -72,11 +64,26 @@ public class FacetedMetadata {
 			String valuesString = metadata.values().toString().replace("[", "").replace("]", "");
 			String hash = HashUtils.makeHash(valuesString, HashUtils.Context.FILE_SYSTEM);
 			
-			if(map.containsKey(hash) == false) {
+			String matchingMetadataName = getMatchingMetadata(metadata);
+			
+			/*if(map.containsKey(hash) == false) {
 				map.put(hash, metadata);
 			}
 			else {
 				Metadata masterMetadata = map.get(hash);
+				
+				// Merge to prepare the master
+				if(masterMetadata != null){
+					for(String k : metadata.keySet()){
+						masterMetadata.put(k, metadata.get(k));
+					}
+				}
+			}*/
+			if(matchingMetadataName == null) {
+				map.put(hash, metadata);
+			}
+			else {
+				Metadata masterMetadata = map.get(matchingMetadataName);
 				
 				// Merge to prepare the master
 				if(masterMetadata != null){
@@ -95,19 +102,16 @@ public class FacetedMetadata {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public void analyze() {
-		File file = null;
-		String string = null;
+		String usagePolicy = "USE_READER";
+
+		BufferedReader reader = null;
+		List<String> list = null;
 		
 		if(object instanceof File){
-			file = (File)object;
-		}
-		else if(object instanceof String){
-			string = (String)object;
-		}
-		
-		BufferedReader reader = null;
-		if(file != null){
+			File file = (File)object;
+			
 			try {
 				InputStream in = new FileInputStream(file);
 				reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
@@ -117,19 +121,38 @@ public class FacetedMetadata {
 				e.printStackTrace();
 			}
 		}
-		else if(string != null){
+		else if(object instanceof String){
+			String string = (String)object;
+			
 			try {
 				reader = new BufferedReader(new StringReader(string));
 			} finally {
 			}
 		}
+		else if(object instanceof List){
+			list = (List<String>)object;
+			usagePolicy = "USE_LIST";
+		}
 		
 		try {
-			if(reader != null){
-				String text = null;
+			if(usagePolicy.compareTo("USE_READER") == 0){
+				logger.info("Using Reader interfaces");
+
+				if(reader != null){
+					String text = null;
+
+					while((text = reader.readLine()) != null){
+						makeMetadata(text);
+					}
+				}
+			}
+			else if(usagePolicy.compareTo("USE_LIST") == 0){
+				logger.info("Using List interfaces");
 				
-				while((text = reader.readLine()) != null){
-					makeMetadata(text);
+				if(list != null){
+					for(String text : list){
+						makeMetadata(text);
+					}
 				}
 			}
 		} catch (IOException e) {
@@ -149,5 +172,27 @@ public class FacetedMetadata {
 
 	public void setObject(Object object) {
 		this.object = object;
+	}
+	
+	private float toleranceRatio = 0.1f;
+	
+	private String getMatchingMetadata(Metadata discoveredMetadata){
+		int tolerance = (int) (discoveredMetadata.size()*toleranceRatio);
+			for(String metadataName : map.keySet()){
+				Metadata metadata = map.get(metadataName);
+				if((discoveredMetadata.size()-metadata.size())/discoveredMetadata.size() > tolerance){
+					continue;
+				}
+				int diff = 0;
+				for(String field : discoveredMetadata.keySet()){
+					if(!metadata.containsKey(field))
+						diff++;
+					if(diff > tolerance)
+						break;
+				}
+				if(diff < tolerance)
+					return metadataName;
+			}
+		return null;
 	}
 }

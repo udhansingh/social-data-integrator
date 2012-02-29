@@ -20,4 +20,6 @@ public enum TextFormat {
 	UNKNOWN, 
 	JSON,
 	XML,
+	FACETED_JSON,
+	RQL_OBJECT
 }

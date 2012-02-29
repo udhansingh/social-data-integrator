@@ -35,6 +35,7 @@ public class TextFormatDetector {
 	static {
 		formatDetectors.add(new JSONFormatDetector());
 		formatDetectors.add(new XMLFormatDetector());
+		formatDetectors.add(new FacetedJSONFormatDetector());
 	};
 	
 	private TextFormat format = TextFormat.UNKNOWN;
