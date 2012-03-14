@@ -29,6 +29,7 @@ public interface Resource {
 	void checkFormat();
 
 	TextFormat getTextFormat();
+	void setTextFormat(TextFormat textFormat);
 
 	String getFormattedText();
 
@@ -45,6 +46,4 @@ public interface Resource {
 	Element toElement(Document document) throws ParserConfigurationException;
 	
 	Resource toResource(Element element) throws ParserConfigurationException;
-
-	void setTextFormat(TextFormat textFormat);
 }

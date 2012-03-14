@@ -105,14 +105,14 @@ public class DataPreviewTableView extends JPanel {
 	}
 
 	public void generateDataPreview(Boolean profiling) {
-		ConnectionProperties connection = AppCommons.TASKLET.getConnection();
+		ConnectionProperties cp = AppCommons.TASKLET.getConnectionProperties();
 
-		if(connection == null){
+		if(cp == null){
 			JOptionPane.showMessageDialog(rootPanel, AppMessages.INFORMATION_CHOOSE_A_CONNECTION);
 			return;
 		}
 
-		String providerName = connection.getIdentity();
+		String providerName = cp.getIdentity();
 		ServiceProvider providerInstance = null;
 		if(providerName != null){
 			providerInstance = ProviderFactory.getProvider(providerName);

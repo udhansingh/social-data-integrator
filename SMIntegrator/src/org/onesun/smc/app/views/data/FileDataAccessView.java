@@ -79,10 +79,10 @@ public class FileDataAccessView extends AbstractDataAccessView {
 		setterButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ConnectionProperties connection = AppCommons.TASKLET.getConnection();
+				ConnectionProperties cp = AppCommons.TASKLET.getConnectionProperties();
 				
-				if(connection != null){
-					FileSystemConnectionProperties c = (FileSystemConnectionProperties)connection;
+				if(cp != null){
+					FileSystemConnectionProperties c = (FileSystemConnectionProperties)cp;
 					String path = c.getPath();
 					List<String> filterList = c.getFilter();
 					

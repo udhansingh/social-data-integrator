@@ -55,9 +55,9 @@ public class AppMainView extends JPanel{
 					boolean displayed = false;
 					
 					if(bobj != null){
-						ConnectionProperties connection = bobj.getConnection();
-						if(connection != null){
-							String category = connection.getCategory();
+						ConnectionProperties cp = bobj.getConnectionProperties();
+						if(cp != null){
+							String category = cp.getCategory();
 
 							if(category.compareTo("GENERAL") == 0){
 								pane.setComponentAt(index, DataAccessViews.RESTFUL_DATA_ACCESS_INPUT_VIEW);

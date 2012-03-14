@@ -26,8 +26,6 @@ import org.onesun.smc.core.resources.WebResource;
 import org.onesun.smc.core.services.handler.ConnectionHandler;
 import org.onesun.smc.core.services.handler.DataHandler;
 
-import com.kapowtech.robosuite.api.java.repository.construct.Project;
-import com.kapowtech.robosuite.api.java.repository.construct.Robot;
 import com.kapowtech.robosuite.api.java.rql.ExecuteRequestBuilder;
 import com.kapowtech.robosuite.api.java.rql.RQLException;
 import com.kapowtech.robosuite.api.java.rql.RobotExecutor;
@@ -49,7 +47,7 @@ import com.kapowtech.robosuite.api.java.rql.engine.remote.socket.SocketBasedObje
 
 public class KapowStreamingListener {
 	private WebResource								resource 			= null;
-	private KapowConnectionProperties				connection 			= null;
+	private KapowConnectionProperties				connectionProperties 			= null;
 	private StreamProcessor							processor 			= null;
 
 	private DataHandler 							dataHandler 		= null;
@@ -72,11 +70,11 @@ public class KapowStreamingListener {
 	}
 
 	public ConnectionProperties getConnection() {
-		return connection;
+		return connectionProperties;
 	}
 
-	public void setConnection(KapowConnectionProperties connection) {
-		this.connection = connection;
+	public void setConnectionProperties(KapowConnectionProperties connectionProperties) {
+		this.connectionProperties = connectionProperties;
 	}
 
 	public void start() {
@@ -105,32 +103,41 @@ public class KapowStreamingListener {
 			try {
 				KapowObject object = (KapowObject)resource.getObject();
 
-				Project project = null;
-				Robot robot = null;
+				String projectName = null;
+				String robotName = null;
 				if(object != null){
-					project = object.getProject();
-					robot = object.getRobot();
+					projectName = object.getProject().getName();
+					robotName = object.getRobot().getName();
+				}
+				else {
+					// Obtain project and robot name from WebResource
+					String[] tokens = resource.getName().split("/");
+					
+					if(tokens != null && tokens.length >= 2){
+						projectName = tokens[0];
+						robotName = tokens[1];
+					}
 				}
 
-				URI uri = new URI(connection.getUrl());
-				engine = new RemoteRQLEngine(new SocketBasedObjectRQLProtocol(uri.getHost(), connection.getRqlPort()));
+				URI uri = new URI(connectionProperties.getUrl());
+				engine = new RemoteRQLEngine(new SocketBasedObjectRQLProtocol(uri.getHost(), connectionProperties.getRqlPort()));
 
 				RQLHandler handler = new MyDemultiplexingRQLHandler(engine, true, dataHandler, connectionHandler);
 
-				String username = connection.getUsername();
+				String username = connectionProperties.getUsername();
 				if(username == null){
 					username = "";
 				}
 
-				String password = connection.getPassword();
+				String password = connectionProperties.getPassword();
 				if(password == null){
 					password = "";
 				}
 
-				RepositoryRobotLibrary lib = new RepositoryRobotLibrary(connection.getUrl(),
-						project.getName(), 10000L, username, password);
+				RepositoryRobotLibrary lib = new RepositoryRobotLibrary(connectionProperties.getUrl(),
+						projectName, 10000L, username, password);
 
-				ExecuteRequestBuilder builder = new ExecuteRequestBuilder("Library:/" + robot.getName());
+				ExecuteRequestBuilder builder = new ExecuteRequestBuilder("Library:/" + robotName);
 				builder.setRobotLibrary(lib);
 
 				try {

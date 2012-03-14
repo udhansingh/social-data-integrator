@@ -16,19 +16,21 @@
  */
 package org.onesun.smc.core.services.text.analysis;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.onesun.commons.text.classification.TextClassificaionHelper;
 import org.onesun.smc.api.TextAnalysisService;
+import org.onesun.smc.core.metadata.Metadata;
 import org.onesun.smc.core.model.MetaObject;
 import org.onesun.smc.core.services.data.AbstractDataService;
 
 public abstract class AbstractTextAnalysisService extends AbstractDataService implements TextAnalysisService {
 	private static Logger logger = Logger.getLogger(AbstractTextAnalysisService.class);
-	
+
 	protected String columnName = null;
-	
+
 	@Override
 	public String getColumnName() {
 		return columnName;
@@ -40,46 +42,59 @@ public abstract class AbstractTextAnalysisService extends AbstractDataService im
 	}
 
 	protected String[] columns = null;
-	
+
 	@Override
 	public final void setColumns(String[] columns){
 		this.columns = columns;
 	}
-	
-	protected final void validateColumn() {
-		boolean columnExists = metadata.containsKey(columnName);
 
-		if(columnExists == false){
-			MetaObject mo = new MetaObject();
-			mo.setPath(columnName);
-			
-			metadata.put(columnName, mo);
+	protected final void validateColumn() {
+		if(this.metadata instanceof Metadata){
+			Metadata metadata = (Metadata)this.metadata;
+
+			boolean columnExists = metadata.containsKey(columnName);
+			if(columnExists == false){
+				MetaObject mo = new MetaObject();
+				mo.setPath(columnName);
+
+				metadata.put(columnName, mo);
+			}
 		}
 	}
-	
+
 	protected abstract void process(Map<String, String> datum, String text);
-	
+
 	@Override
 	public final void execute(){
-		for(Map<String, String> datum : data){
-			String text = "";
-			for(String column : columns){
-				String columnValue = datum.get(column); 
+		if(data instanceof List){
+			@SuppressWarnings("unchecked")
+			List<Object> objects = (List<Object>)data;
+			
+			for(Object object : objects){
+				if(object instanceof Map){
+					@SuppressWarnings("unchecked")
+					Map<String, String> datum = (Map<String, String>)object;
 
-				if(columnValue != null){
-					text += columnValue + "\n";
+					String text = "";
+					for(String column : columns){
+						String columnValue = datum.get(column); 
+
+						if(columnValue != null){
+							text += columnValue + "\n";
+						}
+					}
+
+					text = TextClassificaionHelper.cleanUpAll(text);
+					text = (text != null && text.trim().length() > 0) ? text : null;
+
+					logger.info(text);
+
+					if(text == null) return;
+
+					validateColumn();
+					process(datum, text);
 				}
 			}
-
-			text = TextClassificaionHelper.cleanUpAll(text);
-			text = (text != null && text.trim().length() > 0) ? text : null;
-
-			logger.info(text);
-
-			if(text == null) return;
-			
-			validateColumn();
-			process(datum, text);
 		}
 	}
 }

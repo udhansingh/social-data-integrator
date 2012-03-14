@@ -18,6 +18,8 @@ package org.onesun.smc.core.connection.properties;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.onesun.commons.xml.XMLUtils;
+import org.onesun.smc.api.ConnectionProperties;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -26,7 +28,7 @@ public abstract class WebConnectionProperties extends AbstractConnectionProperti
 		super(identity, category, authentication);
 	}
 
-	protected String url = "http://localhost:50080";
+	protected String url = null;
 	protected String username = null;
 	protected String password = null;
 	
@@ -75,5 +77,23 @@ public abstract class WebConnectionProperties extends AbstractConnectionProperti
 		parent.appendChild(child);
 		
 		return parent;
+	}
+	
+	@Override
+	public ConnectionProperties toConnectionProperties(Element element) throws ParserConfigurationException {
+		super.toConnectionProperties(element);
+		
+		String value = null;
+		
+		value = XMLUtils.getValue(element, "url");
+		setUrl((value != null) ? value : "");
+		
+		value = XMLUtils.getValue(element, "username");
+		setUsername((value != null) ?  value : "");
+
+		value = XMLUtils.getValue(element, "password");
+		setPassword((value != null) ? value : "");
+		
+		return this;
 	}
 }

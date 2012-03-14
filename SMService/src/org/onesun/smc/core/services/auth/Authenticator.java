@@ -81,7 +81,7 @@ public class Authenticator {
 		}
 	}
 
-	public static void initialize(String protocol, String host, int port, String context, int timeout){
+	public static String initialize(String protocol, String host, int port, String context, int timeout){
 		PROTOCOL = protocol;
 		HOST = host;
 		PORT = port;
@@ -90,6 +90,8 @@ public class Authenticator {
 
 		BASE_URI = PROTOCOL + "://" + HOST + ":" + PORT;
 		CALLBACK_URL = BASE_URI + CALLBACK_CONTEXT;
+		
+		return CALLBACK_URL;
 	}
 
 	public static String getCallbackurl() {

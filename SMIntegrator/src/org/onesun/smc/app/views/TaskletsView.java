@@ -19,6 +19,8 @@ import javax.swing.event.ListSelectionListener;
 import org.onesun.smc.app.AppCommons;
 import org.onesun.smc.app.AppCommonsUI;
 import org.onesun.smc.core.model.Tasklet;
+import org.onesun.smc.core.services.data.HSQLDBService;
+import org.onesun.smc.core.services.runtime.Taskator;
 
 public class TaskletsView extends JPanel {
 	private static final long serialVersionUID = 3550296359531493880L;
@@ -43,7 +45,9 @@ public class TaskletsView extends JPanel {
 		
 		JButton saveButton = new JButton("Save");
 		JButton executeButton = new JButton("Execute");
+		
 		saveButton.addActionListener(new SaveActionListener());
+		executeButton.addActionListener(new ExecuteActionListener());
 		
 		JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		buttonsPanel.add(saveButton);
@@ -76,9 +80,9 @@ public class TaskletsView extends JPanel {
 				int index = event.getFirstIndex();
 				
 				if(event.getValueIsAdjusting() == false){
-					Tasklet t = taskletsList.getModel().getElementAt(index);
+					AppCommons.TASKLET = taskletsList.getModel().getElementAt(index);
 					
-					AppCommonsUI.MODEL_TEXTAREA.setText(t.toXML());
+					AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.TASKLET.toXML());
 					AppCommonsUI.MODEL_TEXTAREA.invalidate();
 				}
 			}
@@ -110,6 +114,20 @@ public class TaskletsView extends JPanel {
 				
 				tasklet.save(AppCommons.PATH_TO_TASKLETS + name + ".task");
 			}
+		}
+	}
+	private class ExecuteActionListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent event) {
+			Tasklet t = AppCommons.TASKLET;
+			
+			Taskator tr = new Taskator();
+			tr.setDataService(new HSQLDBService());
+			tr.setCached(true);
+			tr.setCallbackUrl(AppCommons.CALLBACK_URL);
+			tr.setTasklet(t);
+			
+			tr.execute();
 		}
 	}
 }

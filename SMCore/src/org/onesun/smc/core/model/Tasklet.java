@@ -43,7 +43,7 @@ import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 public class Tasklet implements Exporter, Cloneable {
 	private String name;
 	private String identity;
-	private ConnectionProperties connection;
+	private ConnectionProperties connectionProperties;
 	private Resource resource;
 	private Metadata metadata;
 	private FilterMetadata filterMetadata;
@@ -86,11 +86,11 @@ public class Tasklet implements Exporter, Cloneable {
 		this.resource = resource;
 	}
 
-	public ConnectionProperties getConnection() {
-		return connection;
+	public ConnectionProperties getConnectionProperties() {
+		return connectionProperties;
 	}
-	public void setConnection(ConnectionProperties connection) {
-		this.connection = connection;
+	public void setConnectionProperties(ConnectionProperties connectionProperties) {
+		this.connectionProperties = connectionProperties;
 	}
 
 	public String toXML(){
@@ -121,7 +121,7 @@ public class Tasklet implements Exporter, Cloneable {
 
 	public void reset() {
 		name = null;
-		connection = null;
+		connectionProperties = null;
 		resource = null;
 		metadata = null;
 		filterMetadata = null;
@@ -167,8 +167,8 @@ public class Tasklet implements Exporter, Cloneable {
 		Element parent = null;
 
 		// connection
-		if(connection != null){
-			parent = connection.toElement(document);
+		if(connectionProperties != null){
+			parent = connectionProperties.toElement(document);
 			root.appendChild(parent);
 		}
 
@@ -229,7 +229,7 @@ public class Tasklet implements Exporter, Cloneable {
 		
 		// process connection
 		element = XMLUtils.getElement(root, "connection");
-		tasklet.setConnection(toConnection(element));
+		tasklet.setConnectionProperties(toConnection(element));
 
 		// process resource
 		element = XMLUtils.getElement(root, "resource");

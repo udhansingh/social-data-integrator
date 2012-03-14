@@ -10,7 +10,9 @@
 	<classpathentry kind="lib" path="lib/httpcore-4.1.2.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.15.jar"/>
 	<classpathentry kind="lib" path="lib/robosuite-api.jar"/>
+	<classpathentry kind="lib" path="lib/hsqldb.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Commons"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SMProviders"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/JSON.org"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

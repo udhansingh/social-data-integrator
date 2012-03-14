@@ -106,7 +106,7 @@ public class RESTConnectionPropertiesView extends ConnectionPropertiesPanel {
 		connectionNameTextField.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				AppCommons.TASKLET.getConnection().setName(connectionNameTextField.getText().trim());
+				AppCommons.TASKLET.getConnectionProperties().setName(connectionNameTextField.getText().trim());
 			}
 		});
 

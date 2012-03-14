@@ -232,16 +232,16 @@ public class ConnectionsView extends JPanel {
 		private void renderConnectionDetailView(String connectionName){
 			AppCommons.TASKLET.reset();
 
-			ConnectionProperties connection = ConnectionPropertiesFactory.getConnectionPropertiesByName(connectionName);
-			AppCommons.TASKLET.setConnection(connection);
+			ConnectionProperties cp = ConnectionPropertiesFactory.getConnectionPropertiesByName(connectionName);
+			AppCommons.TASKLET.setConnectionProperties(cp);
 			AppCommons.AUTHENTICATION = null;
 
-			if(connection == null){
+			if(cp == null){
 				container.add(ConnectionPropertiesViewsFactory.DEFAULT_CONNECTION_VIEW, BorderLayout.CENTER);
 			}
 			else {
-				String category = connection.getCategory();
-				String authentication = connection.getAuthentication();
+				String category = cp.getCategory();
+				String authentication = cp.getAuthentication();
 				AppCommons.AUTHENTICATION = authentication;
 				JPanel panel = null;
 
@@ -253,7 +253,7 @@ public class ConnectionsView extends JPanel {
 					if(view != null){
 						view.init();
 						panel = view.getView();
-						view.updateFields(connection);
+						view.updateFields(cp);
 					}
 				}
 
@@ -263,7 +263,7 @@ public class ConnectionsView extends JPanel {
 			}
 
 			// Update the meta-model
-			AppCommons.TASKLET.setConnection(connection);
+			AppCommons.TASKLET.setConnectionProperties(cp);
 			AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.TASKLET.toXML());
 		}
 	}
@@ -407,9 +407,9 @@ public class ConnectionsView extends JPanel {
 						
 						container.removeAll();
 						if(view != null){
-							ConnectionProperties connector = AppCommons.TASKLET.getConnection();
-							if(connector != null){
-								view.updateFields(connector);
+							ConnectionProperties cp = AppCommons.TASKLET.getConnectionProperties();
+							if(cp != null){
+								view.updateFields(cp);
 							}
 							
 							ConnectionPropertiesPanel v = view.getView();

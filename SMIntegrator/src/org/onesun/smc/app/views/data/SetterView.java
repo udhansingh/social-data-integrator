@@ -92,7 +92,7 @@ public class SetterView  extends JPanel {
 		String name = null;
 		if(r != null){
 			name = r.getResourceName();
-			f = FilterFactory.getFilterByIdentity(bobj.getConnection().getIdentity());
+			f = FilterFactory.getFilterByIdentity(bobj.getConnectionProperties().getIdentity());
 		}
 
 		if(f != null && name != null){

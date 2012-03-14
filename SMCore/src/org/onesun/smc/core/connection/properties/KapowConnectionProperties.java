@@ -25,6 +25,8 @@ import java.util.Properties;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
+import org.onesun.commons.xml.XMLUtils;
+import org.onesun.smc.api.ConnectionProperties;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -90,5 +92,17 @@ public class KapowConnectionProperties extends WebConnectionProperties {
 		parent.appendChild(child);
 
 		return parent;
+	}
+	
+	@Override
+	public ConnectionProperties toConnectionProperties(Element element) throws ParserConfigurationException {
+		super.toConnectionProperties(element);
+		
+		String value = null;
+		
+		value = XMLUtils.getValue(element, "rqlPort");
+		setRqlPort(Integer.parseInt((value != null) ? value : "-1"));
+		
+		return this;
 	}
 }

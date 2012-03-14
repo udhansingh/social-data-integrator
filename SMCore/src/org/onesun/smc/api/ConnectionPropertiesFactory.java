@@ -106,7 +106,7 @@ public class ConnectionPropertiesFactory {
 	public static ConnectionProperties toConnection(String authentication, 
 			Element element) throws ClassNotFoundException, InstantiationException, IllegalAccessException, ParserConfigurationException {
 		// Process Properties
-		ConnectionProperties connector = null;
+		ConnectionProperties cp = null;
 		
 		if(connectionPropertiesByCategory.containsKey(authentication)){
 			Item item = connectionPropertiesByCategory.get(authentication);
@@ -114,14 +114,14 @@ public class ConnectionPropertiesFactory {
 			Class<?> instance = Class.forName(item.getClazz());
 
 			if(instance != null){
-				connector = (ConnectionProperties)instance.newInstance();
-				connector.toConnectionProperties(element);
+				cp = (ConnectionProperties)instance.newInstance();
+				cp.toConnectionProperties(element);
 
-				logger.info("instantiating connection instance " + connector.getClass().getCanonicalName());
+				logger.info("instantiating connection instance " + cp.getClass().getCanonicalName());
 			}
 		}
 		
-		return connector;
+		return cp;
 	}
 	
 	private static List<Item> init(){

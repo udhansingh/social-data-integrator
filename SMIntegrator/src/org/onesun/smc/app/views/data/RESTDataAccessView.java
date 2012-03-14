@@ -192,31 +192,31 @@ public class RESTDataAccessView extends AbstractDataAccessView {
 					resource.setPayload(payload);
 				}
 				
-				ConnectionProperties connection = AppCommons.TASKLET.getConnection();
-				ServiceProvider provider = ProviderFactory.getProvider(connection.getIdentity().toLowerCase(), "SOCIAL_MEDIA");
+				ConnectionProperties cp = AppCommons.TASKLET.getConnectionProperties();
+				ServiceProvider provider = ProviderFactory.getProvider(cp.getIdentity().toLowerCase(), cp.getCategory());
 				
-				RestListener executor = new RestListener(provider, resource, AppCommons.AUTHENTICATION, Authenticator.getCallbackurl());
+				RestListener listener = new RestListener(provider, resource, AppCommons.AUTHENTICATION, Authenticator.getCallbackurl());
 				
-				executor.setConnection(connection);
+				listener.setConnection(cp);
 				if(AppCommons.AUTHENTICATION.compareTo("OAUTH") == 0) {
 					if(AppCommons.AUTHENTICATOR != null){
-						executor.setOauthService(AppCommons.AUTHENTICATOR.getService());
-						executor.setAccessToken(AppCommons.AUTHENTICATOR.getAccessToken());
+						listener.setOauthService(AppCommons.AUTHENTICATOR.getService());
+						listener.setAccessToken(AppCommons.AUTHENTICATOR.getAccessToken());
 					}
 				}
 				else {
 					resource.setAccessTokenRequired(false);
 				}
 
-				executor.execute();
+				listener.execute();
 				
 				
-				resource.setObject(executor.getResponseBody());
+				resource.setObject(listener.getResponseBody());
 				resource.checkFormat();
 				
 				TextFormat textFormat = resource.getTextFormat();
 				
-				String statusText =  "Status: " + executor.getResponseCode() + "; Data Format: " + textFormat.name();
+				String statusText =  "Status: " + listener.getResponseCode() + "; Data Format: " + textFormat.name();
 				setStatus(statusText);
 				
 				final String response = resource.getFormattedText();

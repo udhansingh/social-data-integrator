@@ -227,7 +227,7 @@ public class TwitterStreamingDataAccessView extends AbstractDataAccessView {
 					
 					DefaultCusor.startWaitCursor(rootPanel);
 					
-					executor.setConnection((TwitterStreamingConnectionProperties) AppCommons.TASKLET.getConnection());
+					executor.setConnectionProperties((TwitterStreamingConnectionProperties) AppCommons.TASKLET.getConnectionProperties());
 					executor.setResource(r);
 					
 					setStatus("");

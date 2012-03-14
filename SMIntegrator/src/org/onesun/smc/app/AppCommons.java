@@ -87,6 +87,7 @@ public class AppCommons {
 
 	public static WebBrowser							WEB_BROWSER						= null;
 
+	public static String								CALLBACK_URL					= null;
 	static {
 		try {
 			InetAddress addr = InetAddress.getLocalHost();
@@ -188,7 +189,7 @@ public class AppCommons {
 		}
 
 		// Initialize which browser to use
-		Authenticator.setWebBrowser(new SystemWebBrowser());
+		// Authenticator.setWebBrowser(new SystemWebBrowser());
 		
 //*		
 		Authenticator.setWebBrowser(new EmbeddedWebBrowser("Authorize Application", new LocationChangeHandler() {
@@ -237,7 +238,7 @@ public class AppCommons {
 	}
 	
 	public static void setup() {
-		Authenticator.initialize(
+		CALLBACK_URL = Authenticator.initialize(
 			OAUTH_CALLBACK_SERVER_PROTOCOL, 
 			OAUTH_CALLBACK_SERVER_NAME, 
 			OAUTH_CALLBACK_SERVER_PORT, 

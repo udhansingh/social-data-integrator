@@ -16,28 +16,23 @@
  */
 package org.onesun.smc.core.services.data;
 
-import java.util.List;
-import java.util.Map;
-
 import org.onesun.smc.api.DataService;
-import org.onesun.smc.core.metadata.Metadata;
 
 public abstract class AbstractDataService implements DataService {
-	protected List<Map<String, String>> data = null;
-	protected Metadata metadata = null;
+	protected Object data = null;
+	protected Object metadata = null;
 	
 	@Override
-	public final void setData(List<Map<String, String>> data){
+	public final void setData(Object data){
 		this.data = data;
 	}
 	
 	@Override
-	public final void setMetadata(Metadata metadata){
+	public final void setMetadata(Object metadata){
 		this.metadata = metadata;
 	}
 	
-	protected abstract void process(Map<String, String> datum, String text);
-	
-	@Override
-	public abstract void execute();
+	public AbstractDataService(){
+		super();
+	}
 }

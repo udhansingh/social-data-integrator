@@ -31,7 +31,8 @@ import org.w3c.dom.Element;
 public class RESTResource extends AbstractResource implements Cloneable {
 	private boolean accessTokenRequired = true;
 	private Object additionalInformation = null;
-	
+
+	private TextFormat textFormat = TextFormat.UNKNOWN;
 	private String url = null;
 	private String parameters = null;
 	private Map<String, String> headers = null;
@@ -147,6 +148,10 @@ public class RESTResource extends AbstractResource implements Cloneable {
 		child.setTextContent((payload != null) ? payload : "");
 		parent.appendChild(child);
 		
+		child =  document.createElement("textFormat");
+		child.setTextContent((textFormat != null) ? textFormat.name() : "UNKNOWN");
+		parent.appendChild(child);
+		
 		if(headers != null && headers.size() > 0){
 			child = document.createElement("headers");
 			
@@ -201,5 +206,13 @@ public class RESTResource extends AbstractResource implements Cloneable {
 		}
 		
 		return this;
+	}
+
+	public TextFormat getTextFormat() {
+		return textFormat;
+	}
+
+	public void setTextFormat(TextFormat textFormat) {
+		this.textFormat = textFormat;
 	}
 }

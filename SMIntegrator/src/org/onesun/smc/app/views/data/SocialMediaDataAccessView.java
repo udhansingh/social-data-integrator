@@ -174,10 +174,10 @@ public class SocialMediaDataAccessView extends AbstractDataAccessView {
 				if(resource == null) return;
 				RESTResource clone = (RESTResource) resource.clone();
 
-				ConnectionProperties connection = AppCommons.TASKLET.getConnection();
+				ConnectionProperties cp = AppCommons.TASKLET.getConnectionProperties();
 
 				if(AppCommons.AUTHENTICATOR == null && clone.isAccessTokenRequired() == true){
-					if(connection == null){
+					if(cp == null){
 						JOptionPane.showMessageDialog(rootPanel, AppMessages.ERROR_TOKEN_MISSING);
 						return;
 					}
@@ -243,27 +243,27 @@ public class SocialMediaDataAccessView extends AbstractDataAccessView {
 					resource.setPayload(payload);
 				}
 				
-				ServiceProvider provider = ProviderFactory.getProvider(connection.getIdentity().toLowerCase(), "SOCIAL_MEDIA");
+				ServiceProvider provider = ProviderFactory.getProvider(cp.getIdentity().toLowerCase(), "SOCIAL_MEDIA");
 				
-				RestListener executor = new RestListener(provider, clone, AppCommons.AUTHENTICATION, Authenticator.getCallbackurl());
+				RestListener listener = new RestListener(provider, clone, AppCommons.AUTHENTICATION, Authenticator.getCallbackurl());
 				
-				executor.setConnection(connection);
+				listener.setConnection(cp);
 				if(AppCommons.AUTHENTICATION.compareTo("OAUTH") == 0 && AppCommons.AUTHENTICATOR != null){
-					executor.setOauthService(AppCommons.AUTHENTICATOR.getService());
-					executor.setAccessToken(AppCommons.AUTHENTICATOR.getAccessToken());
+					listener.setOauthService(AppCommons.AUTHENTICATOR.getService());
+					listener.setAccessToken(AppCommons.AUTHENTICATOR.getAccessToken());
 				}
-				executor.execute();
+				listener.execute();
 				
 				// reset this
 				clone.setParameters(null);
 				
 
 				try{
-					clone.setObject(executor.getResponseBody());
+					clone.setObject(listener.getResponseBody());
 					clone.checkFormat();
 					TextFormat textFormat = clone.getTextFormat();
 
-					String statusText =  "Status: " + executor.getResponseCode() + "; Data Format: " + textFormat.name();
+					String statusText =  "Status: " + listener.getResponseCode() + "; Data Format: " + textFormat.name();
 					setStatus(statusText);
 					
 					final String response = clone.getFormattedText();

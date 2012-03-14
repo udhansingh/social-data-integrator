@@ -190,7 +190,7 @@ public class KapowDataAccessView extends AbstractDataAccessView {
 					
 					DefaultCusor.startWaitCursor(rootPanel);
 					
-					executor.setConnection((KapowConnectionProperties) AppCommons.TASKLET.getConnection());
+					executor.setConnectionProperties((KapowConnectionProperties) AppCommons.TASKLET.getConnectionProperties());
 					executor.setResource(resource);
 					
 					setStatus("");
@@ -218,7 +218,7 @@ public class KapowDataAccessView extends AbstractDataAccessView {
 		refreshButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				WebConnectionProperties c = (WebConnectionProperties)AppCommons.TASKLET.getConnection();
+				WebConnectionProperties c = (WebConnectionProperties)AppCommons.TASKLET.getConnectionProperties();
 
 				WebProvider provider = (WebProvider)ProviderFactory.getProvider(c.getIdentity(), "KAPOW");
 

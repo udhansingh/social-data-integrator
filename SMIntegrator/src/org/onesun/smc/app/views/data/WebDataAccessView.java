@@ -93,7 +93,7 @@ public class WebDataAccessView extends AbstractDataAccessView {
 		refreshButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				WebConnectionProperties c = (WebConnectionProperties)AppCommons.TASKLET.getConnection();
+				WebConnectionProperties c = (WebConnectionProperties)AppCommons.TASKLET.getConnectionProperties();
 
 				WebProvider provider = (WebProvider)ProviderFactory.getProvider(c.getIdentity(), "KAPOW");
 
@@ -167,7 +167,7 @@ public class WebDataAccessView extends AbstractDataAccessView {
 				WebResource resource = (WebResource)r.clone();
 				if(resource == null) return;
 
-				WebConnectionProperties c = (WebConnectionProperties)AppCommons.TASKLET.getConnection();
+				WebConnectionProperties c = (WebConnectionProperties)AppCommons.TASKLET.getConnectionProperties();
 				WebProvider provider = (WebProvider)ProviderFactory.getProvider(c.getIdentity(), "KAPOW");
 
 				// TODO Set Headers, Parameters, ...

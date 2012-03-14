@@ -48,17 +48,17 @@ public class TestAuthenticator {
 					"secret = " + secret + "\n" +
 					"timeout = " + timeout);
 
-			SocialMediaConnectionProperties connection = new SocialMediaConnectionProperties();
-			connection.setApiKey(key);
-			connection.setApiSecret(secret);
-			connection.setIdentity(providerName);
-			connection.toScopeList(scope);
+			SocialMediaConnectionProperties cp = new SocialMediaConnectionProperties();
+			cp.setApiKey(key);
+			cp.setApiSecret(secret);
+			cp.setIdentity(providerName);
+			cp.toScopeList(scope);
 			
 			SocialMediaProvider provider = (SocialMediaProvider)ProviderFactory.getProvider(providerName.toLowerCase());
 			
 			if(provider == null) return;
 			
-			Authenticator authenticator = new Authenticator(provider, connection, timeout);
+			Authenticator authenticator = new Authenticator(provider, cp, timeout);
 			authenticator.authorize();
 
 			Token accessToken = authenticator.getAccessToken();

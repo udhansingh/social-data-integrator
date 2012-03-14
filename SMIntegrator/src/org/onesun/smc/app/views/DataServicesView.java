@@ -200,7 +200,7 @@ public class DataServicesView extends JPanel {
 		executeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				if(AppCommons.TASKLET.getConnection() == null){
+				if(AppCommons.TASKLET.getConnectionProperties() == null){
 					JOptionPane.showMessageDialog(rootPanel, AppMessages.INFORMATION_CHOOSE_A_CONNECTION);
 					return;
 				}
@@ -227,14 +227,16 @@ public class DataServicesView extends JPanel {
 					if(service instanceof TextAnalysisService){
 						TextAnalysisService taService = (TextAnalysisService)service;
 						
-						taService.setData(data);
+						List<Object> objects = new ArrayList<Object>();
+						for(Map<String, String> datum : data){
+							objects.add(datum);
+						}
+						taService.setData(objects);
 						taService.setMetadata(metadata);
 						taService.setColumns(selectedColumnNames);
 						
-						service = taService;
+						taService.execute();
 					}
-					
-					service.execute();
 				}
 				
 				rowCountLabel.setText("Rows: " + data.size() + ", Columns: " + metadata.size());

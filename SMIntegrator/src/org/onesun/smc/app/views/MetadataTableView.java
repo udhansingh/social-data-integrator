@@ -247,7 +247,7 @@ public class MetadataTableView extends JPanel {
 		mergeSchemaButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String providerName = AppCommons.TASKLET.getConnection().getIdentity();
+				String providerName = AppCommons.TASKLET.getConnectionProperties().getIdentity();
 				String resourceName = AppCommons.TASKLET.getResource().getResourceName();
 
 				String folderName = null;
@@ -276,14 +276,14 @@ public class MetadataTableView extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				AppCommons.TASKLET.setMetadata(null);
 				
-				ConnectionProperties connection = AppCommons.TASKLET.getConnection();
+				ConnectionProperties cp = AppCommons.TASKLET.getConnectionProperties();
 
-				if(connection == null){
+				if(cp == null){
 					JOptionPane.showMessageDialog(rootPanel, AppMessages.INFORMATION_CHOOSE_A_CONNECTION);
 					return;
 				}
 
-				String providerName = connection.getIdentity();
+				String providerName = cp.getIdentity();
 				ServiceProvider providerInstance = null;
 				if(providerName != null){
 					providerInstance = ProviderFactory.getProvider(providerName);
@@ -301,7 +301,7 @@ public class MetadataTableView extends JPanel {
 				model = new MetadataTableModel();
 
 				MetadataReader metadataReader = null;
-				if(connection.getCategory().compareTo("KAPOW") == 0){
+				if(cp.getCategory().compareTo("KAPOW") == 0){
 					if(providerInstance != null && providerInstance.isResponseRequired() == false){
 						metadata = new Metadata();
 						metadata.setDiscovered(false);
@@ -338,7 +338,7 @@ public class MetadataTableView extends JPanel {
 						}
 					}
 				}
-				else if(connection.getCategory().compareTo("TWITTER_STREAMING") == 0) {
+				else if(cp.getCategory().compareTo("TWITTER_STREAMING") == 0) {
 					facetedMetadata = new FacetedMetadata();
 					facetedMetadata.setObject(AppCommons.RESPONSE_OBJECT);
 					facetedMetadata.analyze();

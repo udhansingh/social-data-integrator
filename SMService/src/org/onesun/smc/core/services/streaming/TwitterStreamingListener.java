@@ -57,7 +57,7 @@ public class TwitterStreamingListener {
 	private DefaultHttpClient client = null;
 
 	private StreamingResource resource = null;
-	private TwitterStreamingConnectionProperties connection = null;
+	private TwitterStreamingConnectionProperties connectionProperties = null;
 	private volatile boolean running = true;
 	private StreamProcessor processor = null;
 	
@@ -77,12 +77,12 @@ public class TwitterStreamingListener {
 		this.resource = resource;
 	}
 
-	public ConnectionProperties getConnection() {
-		return connection;
+	public ConnectionProperties getConnectionProperties() {
+		return connectionProperties;
 	}
 
-	public void setConnection(TwitterStreamingConnectionProperties connection) {
-		this.connection = connection;
+	public void setConnectionProperties(TwitterStreamingConnectionProperties connectionProperties) {
+		this.connectionProperties = connectionProperties;
 	}
 
 	public void start() {
@@ -137,7 +137,7 @@ public class TwitterStreamingListener {
 				client = new DefaultHttpClient(manager, params);
 
 				client.getCredentialsProvider().setCredentials(new AuthScope(uri.getHost(), port),
-						new UsernamePasswordCredentials(connection.getUsername(), connection.getPassword()));
+						new UsernamePasswordCredentials(connectionProperties.getUsername(), connectionProperties.getPassword()));
 
 				if(resource.getVerb().name().compareToIgnoreCase("post") == 0){
 					requestObject = new HttpPost(url);// + URLEncoder.encode("?" + paramsText, "UTF-8"));
