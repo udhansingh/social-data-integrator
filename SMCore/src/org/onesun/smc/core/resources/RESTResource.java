@@ -32,7 +32,6 @@ public class RESTResource extends AbstractResource implements Cloneable {
 	private boolean accessTokenRequired = true;
 	private Object additionalInformation = null;
 
-	private TextFormat textFormat = TextFormat.UNKNOWN;
 	private String url = null;
 	private String parameters = null;
 	private Map<String, String> headers = null;

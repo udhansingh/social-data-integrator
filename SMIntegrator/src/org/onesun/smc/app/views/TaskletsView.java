@@ -124,7 +124,6 @@ public class TaskletsView extends JPanel {
 			Taskator tr = new Taskator();
 			tr.setDataService(new HSQLDBService());
 			tr.setCached(true);
-			tr.setCallbackUrl(AppCommons.CALLBACK_URL);
 			tr.setTasklet(t);
 			
 			tr.execute();

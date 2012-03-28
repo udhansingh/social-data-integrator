@@ -17,6 +17,8 @@ import org.onesun.smc.core.connection.properties.KapowConnectionProperties;
 import org.onesun.smc.core.data.reader.FacetedDataReader;
 import org.onesun.smc.core.data.reader.JSONDataReader;
 import org.onesun.smc.core.data.reader.XMLDataReader;
+import org.onesun.smc.core.listeners.KapowStreamingListener;
+import org.onesun.smc.core.listeners.RestListener;
 import org.onesun.smc.core.metadata.FilterMetadata;
 import org.onesun.smc.core.metadata.Metadata;
 import org.onesun.smc.core.model.Parameter;
@@ -25,25 +27,14 @@ import org.onesun.smc.core.resources.RESTResource;
 import org.onesun.smc.core.resources.WebResource;
 import org.onesun.smc.core.services.handler.ConnectionHandler;
 import org.onesun.smc.core.services.handler.DataHandler;
-import org.onesun.smc.core.services.rest.RestListener;
-import org.onesun.smc.core.services.streaming.KapowStreamingListener;
 
 import com.kapowtech.robosuite.api.java.rql.construct.RQLObject;
 
 public class Taskator {
 	private boolean cached = false;
 	private	DataService service = null;
-	private String callbackUrl;
 	private Tasklet tasklet;
 	
-	public String getCallbackUrl() {
-		return callbackUrl;
-	}
-
-	public void setCallbackUrl(String callbackUrl) {
-		this.callbackUrl = callbackUrl;
-	}
-
 	public Tasklet getTasklet() {
 		return tasklet;
 	}
@@ -163,7 +154,7 @@ public class Taskator {
 				resource.setPayload(payload);
 			}
 			
-			RestListener listener = new RestListener(provider, resource, cp.getAuthentication(), callbackUrl);
+			RestListener listener = new RestListener(provider, resource, cp.getAuthentication());
 			listener.setConnection(cp);
 			
 			listener.execute();

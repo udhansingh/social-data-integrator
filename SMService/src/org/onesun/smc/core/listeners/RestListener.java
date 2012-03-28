@@ -14,7 +14,7 @@
    limitations under the License.
    
  */
-package org.onesun.smc.core.services.rest;
+package org.onesun.smc.core.listeners;
 
 import java.util.Map;
 
@@ -34,7 +34,6 @@ import org.scribe.oauth.OAuthService;
 public class RestListener {
 	private static Logger logger = Logger.getLogger(RestListener.class);
 	
-	private String callbackUrl = null;
 	private RESTResource resource = null;
 	private String authentication = "NONE";
 	
@@ -46,12 +45,11 @@ public class RestListener {
 	private String responseBody = null;
 	private ServiceProvider serviceProvider = null;
 	
-	public RestListener(ServiceProvider serviceProvider, RESTResource resource, String authentication, String callbackUrl){
+	public RestListener(ServiceProvider serviceProvider, RESTResource resource, String authentication){
 		// Generic
 		this.serviceProvider = serviceProvider;
 		this.resource = resource;
 		this.authentication = authentication;
-		this.callbackUrl = callbackUrl;
 	}
 	
 	public void execute(){
@@ -91,7 +89,6 @@ public class RestListener {
 						.provider(oauthServiceProvider.getApiClass())
 						.apiKey(oauthConnection.getApiKey())
 						.apiSecret(oauthConnection.getApiSecret())
-						.callback(callbackUrl)
 						.scope(scope)
 						.build();
 					}
@@ -100,7 +97,6 @@ public class RestListener {
 						.provider(oauthServiceProvider.getApiClass())
 						.apiKey(oauthConnection.getApiKey())
 						.apiSecret(oauthConnection.getApiSecret())
-						.callback(callbackUrl)
 						.build();
 					}
 				}

@@ -14,7 +14,7 @@
    limitations under the License.
    
  */
-package org.onesun.smc.core.services.streaming;
+package org.onesun.smc.core.listeners;
 
 import java.io.IOException;
 import java.io.InputStream;

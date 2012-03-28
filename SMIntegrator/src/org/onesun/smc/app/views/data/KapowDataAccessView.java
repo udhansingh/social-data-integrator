@@ -42,12 +42,12 @@ import org.onesun.smc.app.handlers.RequestUpdateHandler;
 import org.onesun.smc.app.views.dialogs.SetterDialog;
 import org.onesun.smc.core.connection.properties.KapowConnectionProperties;
 import org.onesun.smc.core.connection.properties.WebConnectionProperties;
+import org.onesun.smc.core.listeners.KapowStreamingListener;
 import org.onesun.smc.core.metadata.FilterMetadata;
 import org.onesun.smc.core.providers.web.kapow.KapowObject;
 import org.onesun.smc.core.resources.WebResource;
 import org.onesun.smc.core.services.handler.ConnectionHandler;
 import org.onesun.smc.core.services.handler.DataHandler;
-import org.onesun.smc.core.services.streaming.KapowStreamingListener;
 
 import com.kapowtech.robosuite.api.java.repository.construct.Attribute;
 import com.kapowtech.robosuite.api.java.repository.construct.Type;
