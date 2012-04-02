@@ -29,6 +29,19 @@ import org.onesun.smc.core.services.data.AbstractDataService;
 public abstract class AbstractTextAnalysisService extends AbstractDataService implements TextAnalysisService {
 	private static Logger logger = Logger.getLogger(AbstractTextAnalysisService.class);
 
+	protected Object data = null;
+	protected Object metadata = null;
+	
+	@Override
+	public final void setData(Object data){
+		this.data = data;
+	}
+	
+	@Override
+	public final void setMetadata(Object metadata){
+		this.metadata = metadata;
+	}
+	
 	protected String columnName = null;
 
 	@Override

@@ -20,7 +20,7 @@ import org.onesun.smc.app.AppCommons;
 import org.onesun.smc.app.AppCommonsUI;
 import org.onesun.smc.core.model.Tasklet;
 import org.onesun.smc.core.services.data.HSQLDBService;
-import org.onesun.smc.core.services.runtime.Taskator;
+import org.onesun.smc.core.services.runtime.DataExtractionAgent;
 
 public class TaskletsView extends JPanel {
 	private static final long serialVersionUID = 3550296359531493880L;
@@ -121,7 +121,7 @@ public class TaskletsView extends JPanel {
 		public void actionPerformed(ActionEvent event) {
 			Tasklet t = AppCommons.TASKLET;
 			
-			Taskator tr = new Taskator();
+			DataExtractionAgent tr = new DataExtractionAgent();
 			tr.setDataService(new HSQLDBService());
 			tr.setCached(true);
 			tr.setTasklet(t);

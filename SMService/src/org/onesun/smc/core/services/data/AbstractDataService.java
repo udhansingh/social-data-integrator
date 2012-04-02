@@ -19,19 +19,6 @@ package org.onesun.smc.core.services.data;
 import org.onesun.smc.api.DataService;
 
 public abstract class AbstractDataService implements DataService {
-	protected Object data = null;
-	protected Object metadata = null;
-	
-	@Override
-	public final void setData(Object data){
-		this.data = data;
-	}
-	
-	@Override
-	public final void setMetadata(Object metadata){
-		this.metadata = metadata;
-	}
-	
 	public AbstractDataService(){
 		super();
 	}

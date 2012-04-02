@@ -39,6 +39,11 @@ public class LinkedInFilter extends AbstractFilter {
 		this.put("People", fm);
 		
 		fm = new FilterMetadata();
+		o = new Parameter("$VALUES$", "param_values", "");
+		fm.putParamObject(o.getInternalName(), o);
+		this.put("People-Generic", fm);
+		
+		fm = new FilterMetadata();
 		o = new Parameter("$ID$", "param_id", "");
 		fm.putParamObject(o.getInternalName(), o);
 		this.put("People-ID", fm);

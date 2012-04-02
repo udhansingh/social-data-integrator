@@ -1,6 +1,5 @@
 package org.onesun.smc.core.services.runtime;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +20,7 @@ import org.onesun.smc.core.listeners.KapowStreamingListener;
 import org.onesun.smc.core.listeners.RestListener;
 import org.onesun.smc.core.metadata.FilterMetadata;
 import org.onesun.smc.core.metadata.Metadata;
+import org.onesun.smc.core.model.DataObject;
 import org.onesun.smc.core.model.Parameter;
 import org.onesun.smc.core.model.Tasklet;
 import org.onesun.smc.core.resources.RESTResource;
@@ -30,10 +30,17 @@ import org.onesun.smc.core.services.handler.DataHandler;
 
 import com.kapowtech.robosuite.api.java.rql.construct.RQLObject;
 
-public class Taskator {
+public class DataExtractionAgent {
 	private boolean cached = false;
 	private	DataService service = null;
 	private Tasklet tasklet;
+	
+	public DataExtractionAgent(){
+		if(service instanceof DBService){
+			DBService dbs = (DBService)service;
+			dbs.init();
+		}
+	}
 	
 	public Tasklet getTasklet() {
 		return tasklet;
@@ -58,20 +65,16 @@ public class Taskator {
 						public void flush(Object object) {
 							if(object != null && object instanceof RQLObject){
 								RQLObject rqlObject = (RQLObject)object;
-								// results.add(rqlObject);
 								
 								if(isCached() == true && service != null){
 									if(service instanceof DBService){
 										DBService dbs = (DBService)service;
 										
-										dbs.setMetadata(null);
-										dbs.setData(rqlObject);
-
-										dbs.init();
-										dbs.write();
-										// dbs.read(0, 1);
-
-										// dbs.close();
+										DataObject dataObject = new DataObject();
+										dataObject.setType("RQLOBJECT");
+										dataObject.setObject(rqlObject);
+										
+										dbs.write(dataObject);
 									}
 								}
 							}
@@ -198,23 +201,17 @@ public class Taskator {
 					
 					List<Map<String, String>> list = reader.getData();
 					
-					List<Object> data = new ArrayList<Object>();
 					for(Map<String, String> item : list){
-						data.add(item);
-					}
-					
-					if(isCached() == true && service != null){
-						if(service instanceof DBService){
-							DBService dbs = (DBService)service;
-							
-							dbs.setMetadata(metadata);
-							dbs.setData(data);
-
-							dbs.init();
-							dbs.write();
-							dbs.read(0, 1);
-
-							dbs.close();
+						DataObject dataObject = new DataObject();
+						
+						dataObject.setType("MAP");
+						dataObject.setObject(item);
+						
+						if(isCached() == true && service != null){
+							if(service instanceof DBService){
+								DBService dbs = (DBService)service;
+								dbs.write(dataObject);
+							}
 						}
 					}
 				}

@@ -29,7 +29,9 @@ public class LinkedInProvider extends AbstractSocialMediaProvider {
 		//				http://developer.linkedinlabs.com/rest-console/
 		RESTResource[] resourceArray = {
 			// Profile
-			new RESTResource("People", 											"http://api.linkedin.com/v1/people/~"), 
+			new RESTResource("People", 											"http://api.linkedin.com/v1/people/~"),
+			new RESTResource("People-Generic", 									"http://api.linkedin.com/v1/people/$VALUES$"),
+			
 			new RESTResource("People-ID", 										"http://api.linkedin.com/v1/people/id=$ID$"),
 			new RESTResource("People-URL",										"http://api.linkedin.com/v1/people/url=$URL$"),
 			//Bulk Profile URL
