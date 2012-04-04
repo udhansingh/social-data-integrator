@@ -121,12 +121,14 @@ public class TaskletsView extends JPanel {
 		public void actionPerformed(ActionEvent event) {
 			Tasklet t = AppCommons.TASKLET;
 			
-			DataExtractionAgent tr = new DataExtractionAgent();
-			tr.setDataService(new HSQLDBService());
-			tr.setCached(true);
-			tr.setTasklet(t);
+			DataExtractionAgent dea = new DataExtractionAgent();
+			dea.setDataService(new HSQLDBService());
+			dea.setCached(true);
+			dea.setTasklet(t);
 			
-			tr.execute();
+			dea.init();
+			dea.execute();
+			dea.deinit();
 		}
 	}
 }

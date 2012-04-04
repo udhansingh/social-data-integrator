@@ -13,7 +13,7 @@ import org.onesun.smc.core.model.DataObject;
 
 public class HSQLDBService extends AbstractDBService {
 	private static Logger logger = Logger.getLogger(HSQLDBService.class);
-
+	
 	public HSQLDBService(){
 		super();
 	}
@@ -23,15 +23,9 @@ public class HSQLDBService extends AbstractDBService {
 		try {
 			// Do not init if a connection is already obtained
 			if(connection == null){
-				location = System.getProperty("java.io.tmpdir");
-				
-				if(location != null && location.length() > 0){
-					location += File.separator + "imdb" + File.separator + id;
-				}
-				
 				Class.forName("org.hsqldb.jdbcDriver");
 				
-				connection = DriverManager.getConnection("jdbc:hsqldb:file:" + location + ";create=true;shutdown=true", "SA", "");
+				connection = DriverManager.getConnection("jdbc:hsqldb:file:" + (location + File.separator + "database") + ";create=true;shutdown=true", "SA", "");
 
 				String sql = "CREATE TABLE " + tableName + " (internal_id INTEGER IDENTITY PRIMARY KEY, java_type VARCHAR(32), java_object OBJECT)";
 				logger.info("CREATE SQL: " + sql);
@@ -118,6 +112,45 @@ public class HSQLDBService extends AbstractDBService {
 		} catch (SQLException e) {
 			logger.info("Exception while closing IMDB: " + e.getMessage());
 		}finally {
+		}
+	}
+
+	@Override
+	public int getCount(String column) {
+		String sql = "SELECT count(" + column + ")";
+
+		sql += " FROM " + tableName;
+		try {
+			PreparedStatement statement = connection.prepareStatement(sql);
+			ResultSet rs = statement.executeQuery();
+			
+			while(rs.next()){
+				return rs.getInt(1);
+			}
+			
+			statement.close();
+		} catch (Exception e) {
+			logger.info("Exception while executing statement: " + e.getMessage());
+			e.printStackTrace();
+		} finally {
+		}
+
+		return 0;
+	}
+
+	@Override
+	public void delete(int begin, int end) {
+		String sql = "DELETE FROM " + tableName + " WHERE internal_id in (SELECT TOP " + end + " internal_id from " + tableName + ")";
+
+		try {
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.executeUpdate(sql);
+			
+			statement.close();
+		} catch (Exception e) {
+			logger.info("Exception while executing statement: " + e.getMessage());
+			e.printStackTrace();
+		} finally {
 		}
 	}
 

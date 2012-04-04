@@ -36,10 +36,6 @@ public class DataExtractionAgent {
 	private Tasklet tasklet;
 	
 	public DataExtractionAgent(){
-		if(service instanceof DBService){
-			DBService dbs = (DBService)service;
-			dbs.init();
-		}
 	}
 	
 	public Tasklet getTasklet() {
@@ -237,5 +233,19 @@ public class DataExtractionAgent {
 
 	public void setDataService(DataService service) {
 		this.service = service;
+	}
+	
+	public void init(){
+		if(service instanceof DBService){
+			DBService dbs = (DBService)service;
+			dbs.init();
+		}
+	}
+
+	public void deinit() {
+		if(service instanceof DBService){
+			DBService dbs = (DBService)service;
+			dbs.shutdown();
+		}
 	}
 }

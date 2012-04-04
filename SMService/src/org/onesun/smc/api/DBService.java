@@ -11,4 +11,6 @@ public interface DBService extends DataService {
 	List<DataObject> read();
 	List<DataObject> read(int offset, int limit);
 	void shutdown();
+	int getCount(String column);
+	void delete(int begin, int end);
 }

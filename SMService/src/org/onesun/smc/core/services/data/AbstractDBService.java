@@ -14,13 +14,31 @@ public abstract class AbstractDBService implements DBService {
 	private static Logger logger = Logger.getLogger(AbstractDBService.class);
 	
 	protected Connection connection = null;
-	protected String id = UUID.randomUUID().toString();
-	protected final String tableName = "t" + id.replaceAll("-", "");
+	protected String id = null;
+	protected String tableName = null;
 	protected String location = null;
 
 	public AbstractDBService(){
 		super();
 
+		id = UUID.randomUUID().toString();
+		tableName = "t" + id.replaceAll("-", "");
+		
+		location = System.getProperty("java.io.tmpdir");
+		if(location != null && location.length() > 0){
+			if(location.endsWith(File.separator)){
+				location += "imdb" + File.separator + id;
+			}
+			else {
+				location += File.separator + "imdb" + File.separator + id;
+			}
+			
+			File file = new File(location);
+			file.mkdirs();
+		}
+		
+		logger.info("IMDB Location: " + location);
+		
 		Runtime.getRuntime().addShutdownHook(new ShutdownHook());
 	}
 
@@ -31,6 +49,7 @@ public abstract class AbstractDBService implements DBService {
 		}
 	}
 	
+	@Override
 	public void shutdown(){
 		if(connection != null){
 			String sql = "SHUTDOWN";
