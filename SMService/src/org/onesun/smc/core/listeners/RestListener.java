@@ -161,7 +161,7 @@ public class RestListener {
 		this.connection = connection;
 	}
 
-	public void setOauthService(OAuthService oauthService) {
+	public void setOAuthService(OAuthService oauthService) {
 		this.service = oauthService;
 	}
 

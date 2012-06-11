@@ -199,7 +199,7 @@ public class RESTDataAccessView extends AbstractDataAccessView {
 				listener.setConnection(cp);
 				if(AppCommons.AUTHENTICATION.compareTo("OAUTH") == 0) {
 					if(AppCommons.AUTHENTICATOR != null){
-						listener.setOauthService(AppCommons.AUTHENTICATOR.getService());
+						listener.setOAuthService(AppCommons.AUTHENTICATOR.getService());
 						listener.setAccessToken(AppCommons.AUTHENTICATOR.getAccessToken());
 					}
 				}

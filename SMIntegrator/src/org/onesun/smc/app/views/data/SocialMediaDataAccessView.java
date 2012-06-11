@@ -47,11 +47,14 @@ import org.onesun.smc.app.AppCommonsUI;
 import org.onesun.smc.app.AppMessages;
 import org.onesun.smc.app.handlers.RequestUpdateHandler;
 import org.onesun.smc.app.views.dialogs.SetterDialog;
+import org.onesun.smc.core.connection.properties.SocialMediaConnectionProperties;
 import org.onesun.smc.core.listeners.RestListener;
 import org.onesun.smc.core.metadata.FilterMetadata;
 import org.onesun.smc.core.model.Parameter;
 import org.onesun.smc.core.resources.RESTResource;
+import org.scribe.model.Token;
 import org.scribe.model.Verb;
+import org.scribe.oauth.OAuthService;
 
 public class SocialMediaDataAccessView extends AbstractDataAccessView {
 	/**
@@ -248,7 +251,7 @@ public class SocialMediaDataAccessView extends AbstractDataAccessView {
 				
 				listener.setConnection(cp);
 				if(AppCommons.AUTHENTICATION.compareTo("OAUTH") == 0 && AppCommons.AUTHENTICATOR != null){
-					listener.setOauthService(AppCommons.AUTHENTICATOR.getService());
+					listener.setOAuthService(AppCommons.AUTHENTICATOR.getService());
 					listener.setAccessToken(AppCommons.AUTHENTICATOR.getAccessToken());
 				}
 				listener.execute();

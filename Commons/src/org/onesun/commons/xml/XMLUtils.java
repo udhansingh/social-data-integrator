@@ -47,12 +47,12 @@ public class XMLUtils {	public static String getAttributeValue(Element element,
 			for(int index = 0; index < nodes.getLength(); index++){				Element childElement = (Element)nodes.item(index);				Node node = childElement.getFirstChild();				if(node != null) {					values.add(node.getNodeValue());				}			}		}
 		return values;	}
 	public static Element getElement(Element element, String tag){		NodeList nodes = element.getElementsByTagName(tag);		if(nodes != null && nodes.getLength() > 0){			Element childElement = (Element)nodes.item(0);			String nodeName = null; 			if(childElement != null) {				nodeName = childElement.getNodeName();			}			if(nodeName != null && nodeName.compareTo(tag) == 0){				return childElement;			}		}
-		return null;	}
+		return null;	}		public static List<Element> getElements(Element element, String tag){		List<Element> list = null;				NodeList nodes = element.getElementsByTagName(tag);				if(nodes != null && nodes.getLength() > 0){			list = new ArrayList<Element>();						for(int index = 0; index < nodes.getLength(); index++){				Element childElement = (Element)nodes.item(index);								String nodeName = null; 				if(childElement != null) {					nodeName = childElement.getNodeName();				}								if(nodeName != null && nodeName.compareTo(tag) == 0){					list.add(childElement);				}			}		}		return list;	}
 	public static boolean exists(Element element, String tag) {		NodeList nodes = element.getElementsByTagName(tag);				if(nodes != null && nodes.getLength() > 0){			return true;		}
 		return false;	}
 	
 	public static Document toDocument(String input) throws SAXException, IOException, ParserConfigurationException{
-		InputStream is = new ByteArrayInputStream(input.getBytes());
+		InputStream is = new ByteArrayInputStream(input.getBytes("UTF-8"));
 		return toDocument(is);
 	}
 

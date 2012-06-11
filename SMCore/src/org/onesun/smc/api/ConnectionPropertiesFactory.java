@@ -35,6 +35,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.log4j.Logger;
 import org.onesun.commons.xml.XMLUtils;
 import org.onesun.smc.core.connection.properties.ConnotateConnectionProperties;
+import org.onesun.smc.core.connection.properties.DataSiftConnectionProperties;
 import org.onesun.smc.core.connection.properties.FacebookStreamingConnectionProperties;
 import org.onesun.smc.core.connection.properties.FileSystemConnectionProperties;
 import org.onesun.smc.core.connection.properties.KapowConnectionProperties;
@@ -182,6 +183,14 @@ public class ConnectionPropertiesFactory {
 		item.setCategory("TWITTER_STREAMING");
 		item.setAuthentication("TWITTER_STREAMING");
 		item.setClazz(TwitterStreamingConnectionProperties.class.getCanonicalName());
+		connectionPropertiesByCategory.put(item.getAuthentication(), item);
+		items.add(item);
+
+		item = new Item();
+		item.setName("DataSift");
+		item.setCategory("DATASIFT");
+		item.setAuthentication("DATASIFT");
+		item.setClazz(DataSiftConnectionProperties.class.getCanonicalName());
 		connectionPropertiesByCategory.put(item.getAuthentication(), item);
 		items.add(item);
 		
