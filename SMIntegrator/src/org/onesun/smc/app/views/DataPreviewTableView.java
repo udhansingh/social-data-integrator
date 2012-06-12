@@ -147,9 +147,6 @@ public class DataPreviewTableView extends JPanel {
 				}
 			}
 			else if(providerInstance.getCategory().compareToIgnoreCase("TWITTER_STREAMING") == 0){
-				WebResource webResource = (WebResource)resource;
-				WebResource clone = (WebResource)webResource.clone();
-
 				Object returnObject = AppCommons.RESPONSE_OBJECT;
 
 				if(returnObject instanceof List){

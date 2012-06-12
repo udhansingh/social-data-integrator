@@ -27,7 +27,7 @@ import org.onesun.commons.text.classification.opencalais.OpenCalaisClient;
 import org.onesun.commons.text.classification.uclassify.UClassifyClient;
 import org.onesun.commons.webbrowser.LocationChangeHandler;
 import org.onesun.commons.webbrowser.EmbeddedWebBrowser;
-import org.onesun.commons.webbrowser.SystemWebBrowser;
+//import org.onesun.commons.webbrowser.SystemWebBrowser;
 import org.onesun.commons.webbrowser.WebBrowser;
 import org.onesun.smc.api.ConfigurationHelper;
 import org.onesun.smc.api.ConnectionPropertiesFactory;
