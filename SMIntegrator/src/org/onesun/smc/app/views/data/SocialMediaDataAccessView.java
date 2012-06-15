@@ -47,14 +47,11 @@ import org.onesun.smc.app.AppCommonsUI;
 import org.onesun.smc.app.AppMessages;
 import org.onesun.smc.app.handlers.RequestUpdateHandler;
 import org.onesun.smc.app.views.dialogs.SetterDialog;
-import org.onesun.smc.core.connection.properties.SocialMediaConnectionProperties;
 import org.onesun.smc.core.listeners.RestListener;
 import org.onesun.smc.core.metadata.FilterMetadata;
 import org.onesun.smc.core.model.Parameter;
 import org.onesun.smc.core.resources.RESTResource;
-import org.scribe.model.Token;
 import org.scribe.model.Verb;
-import org.scribe.oauth.OAuthService;
 
 public class SocialMediaDataAccessView extends AbstractDataAccessView {
 	/**
@@ -76,6 +73,11 @@ public class SocialMediaDataAccessView extends AbstractDataAccessView {
 	protected void preInit(){
 	}
 	
+	@Override
+	public JPanel getViewPanel(){
+		return this;
+	}
+
 	@Override
 	protected void init(){
 		// UI Object Initialization

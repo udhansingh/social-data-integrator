@@ -67,6 +67,11 @@ public class GnipDataAccessView extends AbstractDataAccessView {
 	private List<String>					results					= Collections.synchronizedList(new ArrayList<String>());
 	private StreamConsumer 					consumer				= null;
 	
+	@Override
+	public JPanel getViewPanel(){
+		return this;
+	}
+
 	private class StreamConsumerEventHandler implements IStreamConsumerEvents {
 		// DataSift handlers
 		@Override
@@ -214,8 +219,6 @@ public class GnipDataAccessView extends AbstractDataAccessView {
 	
 	public GnipDataAccessView(){
 		super();
-		
-		validateButton.setText(START_SAMPLING_LABEL);
 	}
 	
 	@Override
@@ -269,6 +272,8 @@ public class GnipDataAccessView extends AbstractDataAccessView {
 				setterDialog.setVisible(true);
 			}
 		});
+		
+		validateButton.setText(START_SAMPLING_LABEL);
 		
 		validateButton.addActionListener(new ActionListener() {
 			@Override

@@ -25,9 +25,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import org.onesun.smc.api.DataAccessView;
 import org.onesun.smc.core.metadata.FilterMetadata;
 
-public abstract class AbstractDataAccessView extends JPanel {
+public abstract class AbstractDataAccessView extends JPanel implements DataAccessView {
 	/**
 	 * 
 	 */
@@ -43,7 +44,15 @@ public abstract class AbstractDataAccessView extends JPanel {
 	
 	protected FilterMetadata			filterMetadata		= null;
 	
+	@Override
+	public abstract JPanel getViewPanel();
+	
 	public AbstractDataAccessView(){
+		super();
+	}
+
+	@Override
+	public final void initialize(){
 		this.setLayout(new BorderLayout(5, 5));
 		
 		JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));

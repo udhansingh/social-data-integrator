@@ -75,6 +75,11 @@ public class WebDataAccessView extends AbstractDataAccessView {
 	}
 
 	@Override
+	public JPanel getViewPanel(){
+		return this;
+	}
+
+	@Override
 	protected void preInit(){
 	}
 

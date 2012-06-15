@@ -72,10 +72,13 @@ public class KapowDataAccessView extends AbstractDataAccessView {
 	
 	public KapowDataAccessView(){
 		super();
-		
-		validateButton.setText(START_SAMPLING_LABEL);
 	}
 	
+	@Override
+	public JPanel getViewPanel(){
+		return this;
+	}
+
 	private KapowStreamingListener executor = new KapowStreamingListener(
 			new DataHandler() {
 				@Override
@@ -173,6 +176,8 @@ public class KapowDataAccessView extends AbstractDataAccessView {
 				setterDialog.setVisible(true);
 			}
 		});
+		
+		validateButton.setText(START_SAMPLING_LABEL);
 		
 		validateButton.addActionListener(new ActionListener() {
 			@Override

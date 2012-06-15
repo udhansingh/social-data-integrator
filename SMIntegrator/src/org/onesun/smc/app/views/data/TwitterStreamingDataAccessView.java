@@ -67,10 +67,13 @@ public class TwitterStreamingDataAccessView extends AbstractDataAccessView {
 	
 	public TwitterStreamingDataAccessView(){
 		super();
-		
-		validateButton.setText(START_SAMPLING_LABEL);
 	}
 	
+	@Override
+	public JPanel getViewPanel(){
+		return this;
+	}
+
 	private TwitterStreamingListener executor = new TwitterStreamingListener(
 			new DataHandler() {
 				@Override
@@ -144,6 +147,7 @@ public class TwitterStreamingDataAccessView extends AbstractDataAccessView {
 			}
 		});
 		
+		validateButton.setText(START_SAMPLING_LABEL);
 		validateButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {

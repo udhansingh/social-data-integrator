@@ -73,6 +73,11 @@ public class RESTDataAccessView extends AbstractDataAccessView {
 	}
 	
 	@Override
+	public JPanel getViewPanel(){
+		return this;
+	}
+
+	@Override
 	protected void init(){
 		dataTextArea.setWrapStyleWord(true);
 		dataTextArea.setEditable(false);

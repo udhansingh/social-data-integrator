@@ -24,9 +24,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.onesun.smc.api.ConnectionProperties;
+import org.onesun.smc.api.DataAccessView;
+import org.onesun.smc.api.DataAccessViewsFactory;
 import org.onesun.smc.app.AppCommons;
 import org.onesun.smc.app.AppCommonsUI;
-import org.onesun.smc.app.views.data.DataAccessViews;
 import org.onesun.smc.core.model.Tasklet;
 
 public class AppMainView extends JPanel{
@@ -56,45 +57,25 @@ public class AppMainView extends JPanel{
 					
 					if(bobj != null){
 						ConnectionProperties cp = bobj.getConnectionProperties();
+						
 						if(cp != null){
 							String category = cp.getCategory();
-
-							if(category.compareTo("GENERAL") == 0){
-								pane.setComponentAt(index, DataAccessViews.RESTFUL_DATA_ACCESS_INPUT_VIEW);
-								displayed = true;
+							
+							if(category != null){
+								DataAccessView dataAccessView = DataAccessViewsFactory.getViewByCategory(category);
+								
+								if(dataAccessView != null){
+									JPanel panel = dataAccessView.getViewPanel();
+									
+									pane.setComponentAt(index, panel);
+									displayed = true;
+								}
 							}
-							else if(category.compareTo("FILE_SYSTEM") == 0){
-								pane.setComponentAt(index, DataAccessViews.FILE_DATA_ACCESS_VIEW);
-								displayed = true;
-							}
-							else if(category.compareTo("SOCIAL_MEDIA") == 0){
-								pane.setComponentAt(index, DataAccessViews.SOCIAL_DATA_ACCESS_LIST_VIEW);
-								displayed = true;
-							}
-							else if(category.compareTo("TWITTER_STREAMING") == 0){
-								pane.setComponentAt(index, DataAccessViews.TWITTER_STREAMING_DATA_ACCESS_VIEW);
-								displayed = true;
-							} 
-							else if(category.compareTo("KAPOW") == 0){
-								pane.setComponentAt(index, DataAccessViews.KAPOW_DATA_ACCESS_VIEW);
-								displayed = true;
-							}
-							else if(category.compareTo("DATASIFT") == 0){
-								pane.setComponentAt(index, DataAccessViews.DATASIFT_DATA_ACCESS_VIEW);
-								displayed = true;
-							}
-							else if(category.compareTo("GNIP") == 0){
-								pane.setComponentAt(index, DataAccessViews.GNIP_DATA_ACCESS_VIEW);
-								displayed = true;
-							}
-//							else if(category.compareTo("CONNOTATE") == 0){
-//								pane.setComponentAt(index, DataAccessViews.WEB_DATA_ACCESS_VIEW);
-//							}
 						}
 					}
 
 					if(displayed == false){
-						pane.setComponentAt(index, DataAccessViews.DEFAULT_DATA_ACCESS_VIEW);
+						pane.setComponentAt(index, DataAccessViewsFactory.DEFAULT_DATA_ACCESS_VIEW);
 					}
 				}
 

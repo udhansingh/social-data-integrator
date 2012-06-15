@@ -32,6 +32,7 @@ import org.onesun.commons.webbrowser.WebBrowser;
 import org.onesun.smc.api.ConfigurationHelper;
 import org.onesun.smc.api.ConnectionPropertiesFactory;
 import org.onesun.smc.api.ConnectionPropertiesViewsFactory;
+import org.onesun.smc.api.DataAccessViewsFactory;
 import org.onesun.smc.api.DataServicesFactory;
 import org.onesun.smc.api.DataTypeFactory;
 import org.onesun.smc.api.FilterFactory;
@@ -209,6 +210,7 @@ public class AppCommons {
 		ConnectionPropertiesFactory.loadConnectionProperties(PATH_TO_CONNECTIONS);
 		
 		ConnectionPropertiesViewsFactory.load(PATH_TO_CORE + "connection-properties-views.xml");
+		DataAccessViewsFactory.load(PATH_TO_CORE + "data-access-views.xml");
 		
 		DataServicesFactory.load(PATH_TO_CORE + "data-services.xml");
 		ProviderFactory.load(PATH_TO_CORE + "data-providers.xml", PATH_TO_DATA_ACCESS);

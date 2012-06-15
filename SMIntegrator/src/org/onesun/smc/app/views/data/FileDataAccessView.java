@@ -55,6 +55,11 @@ public class FileDataAccessView extends AbstractDataAccessView {
 	private JTextArea				dataTextArea		= new JTextArea();
 	private JScrollPane				scrollPane			= new JScrollPane(dataTextArea);
 	
+	@Override
+	public JPanel getViewPanel(){
+		return this;
+	}
+
 	public FileDataAccessView(){
 		super();
 	}
