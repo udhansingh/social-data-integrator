@@ -83,6 +83,10 @@ public class AppMainView extends JPanel{
 								pane.setComponentAt(index, DataAccessViews.DATASIFT_DATA_ACCESS_VIEW);
 								displayed = true;
 							}
+							else if(category.compareTo("GNIP") == 0){
+								pane.setComponentAt(index, DataAccessViews.GNIP_DATA_ACCESS_VIEW);
+								displayed = true;
+							}
 //							else if(category.compareTo("CONNOTATE") == 0){
 //								pane.setComponentAt(index, DataAccessViews.WEB_DATA_ACCESS_VIEW);
 //							}

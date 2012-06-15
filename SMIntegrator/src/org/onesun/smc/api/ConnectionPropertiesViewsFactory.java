@@ -38,6 +38,7 @@ import org.onesun.smc.app.views.connection.properties.ConnotateConnectionPropert
 import org.onesun.smc.app.views.connection.properties.DataSiftConnectionPropertiesView;
 import org.onesun.smc.app.views.connection.properties.FacebookStreamingConnectionPropertiesView;
 import org.onesun.smc.app.views.connection.properties.FileConnectionPropertiesView;
+import org.onesun.smc.app.views.connection.properties.GnipConnectionPropertiesView;
 import org.onesun.smc.app.views.connection.properties.KapowConnectionPropertiesView;
 import org.onesun.smc.app.views.connection.properties.RESTConnectionPropertiesView;
 import org.onesun.smc.app.views.connection.properties.SocialMediaConnectionPropertiesView;
@@ -115,6 +116,12 @@ public class ConnectionPropertiesViewsFactory {
 		item.setName("DataSift");
 		item.setCategory("DATASIFT");
 		item.setClazz(DataSiftConnectionPropertiesView.class.getCanonicalName());
+		items.add(item);
+
+		item = new Item();
+		item.setName("Gnip");
+		item.setCategory("GNIP");
+		item.setClazz(GnipConnectionPropertiesView.class.getCanonicalName());
 		items.add(item);
 
 		item = new Item();

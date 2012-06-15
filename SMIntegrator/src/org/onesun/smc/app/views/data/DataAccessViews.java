@@ -31,6 +31,7 @@ public final class DataAccessViews {
 	public static final TwitterStreamingDataAccessView 	TWITTER_STREAMING_DATA_ACCESS_VIEW	= new TwitterStreamingDataAccessView();
 	public static final KapowDataAccessView 			KAPOW_DATA_ACCESS_VIEW				= new KapowDataAccessView();
 	public static final DataSiftDataAccessView 			DATASIFT_DATA_ACCESS_VIEW			= new DataSiftDataAccessView();
+	public static final GnipDataAccessView 				GNIP_DATA_ACCESS_VIEW				= new GnipDataAccessView();
 	
 	public static final JPanel 							DEFAULT_DATA_ACCESS_VIEW		= new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
 	

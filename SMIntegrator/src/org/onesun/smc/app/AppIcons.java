@@ -61,6 +61,7 @@ public class AppIcons {
 		icons.put("yahoo", 				IconUtils.createImageIcon("/icons/yahooIcon.png"));
 		icons.put("yammer", 			IconUtils.createImageIcon("/icons/yammerIcon.png"));
 		icons.put("datasift", 			IconUtils.createImageIcon("/icons/datasiftIcon.png"));
+		icons.put("gnip", 				IconUtils.createImageIcon("/icons/gnipIcon.png"));
 		
 		icons.put("twitter streaming", 	IconUtils.createImageIcon("/icons/streamIcon.png"));
 		icons.put("facebook streaming", IconUtils.createImageIcon("/icons/streamIcon.png"));
