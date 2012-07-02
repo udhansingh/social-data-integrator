@@ -250,6 +250,10 @@ public class SocialMediaDataAccessView extends AbstractDataAccessView {
 				ServiceProvider provider = ProviderFactory.getProvider(cp.getIdentity().toLowerCase(), "SOCIAL_MEDIA");
 				
 				RestListener listener = new RestListener(provider, clone, AppCommons.AUTHENTICATION);
+				listener.setHttpProxyEnabled(AppCommons.IS_HTTP_PROXY_ENABLED);
+				if(listener.isHttpProxyEnabled() == true){
+					listener.setHttpProxyProperties(AppCommons.HTTP_PROXY_HOST, AppCommons.HTTP_PROXY_PORT, AppCommons.HTTP_PROXY_USERNAME, AppCommons.HTTP_PROXY_PASSWORD);
+				}
 				
 				listener.setConnection(cp);
 				if(AppCommons.AUTHENTICATION.compareTo("OAUTH") == 0 && AppCommons.AUTHENTICATOR != null){

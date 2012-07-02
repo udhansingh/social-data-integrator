@@ -295,7 +295,7 @@ public class DataSiftDataAccessView extends AbstractDataAccessView {
 					try {
 						DataSiftConnectionProperties cp = (DataSiftConnectionProperties)AppCommons.TASKLET.getConnectionProperties();
 						
-						User user = new User(cp.getUserId(), cp.getApiKey());
+						User user = new User(cp.getUsername(), cp.getApiKey());
 						consumer = user.getConsumer(StreamConsumer.TYPE_HTTP, cp.getStreamHash(), new StreamConsumerEventHandler());
 						consumer.consume();
 					} catch (Exception e) {

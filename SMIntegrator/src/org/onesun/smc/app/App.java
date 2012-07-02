@@ -33,6 +33,30 @@ public class App {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		for(String arg : args){
+			String key = "featuresEnabled";
+			
+			if(arg.startsWith(key)){
+				String[] tokens = arg.split(key + "=");
+
+				if(tokens.length >= 2){
+					if(tokens[1].compareToIgnoreCase("full") == 0){
+						AppCommons.ALL_FEATURES_ENABLED = true;
+					}
+					else {
+						String[] featuresToEnable = tokens[1].split(",");
+						
+						for(String featureToEnable : featuresToEnable){
+							AppCommons.setFeatureEnabled(featureToEnable, true);
+						}
+					}
+				}
+			}
+		}
+		
+		// Must be invoked
+		AppCommons.init();
+		
 		File file = new File(AppCommons.PATH_TO_WORK);
 		if(file.exists() == false){
 			file.mkdirs();

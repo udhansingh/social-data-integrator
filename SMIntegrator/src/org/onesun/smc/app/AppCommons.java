@@ -19,15 +19,15 @@ package org.onesun.smc.app;
 import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
-import org.onesun.commons.swing.IconUtils;
 import org.onesun.commons.text.classification.opencalais.OpenCalaisClient;
 import org.onesun.commons.text.classification.uclassify.UClassifyClient;
-import org.onesun.commons.webbrowser.LocationChangeHandler;
 import org.onesun.commons.webbrowser.EmbeddedWebBrowser;
-//import org.onesun.commons.webbrowser.SystemWebBrowser;
+import org.onesun.commons.webbrowser.LocationChangeHandler;
 import org.onesun.commons.webbrowser.WebBrowser;
 import org.onesun.smc.api.ConfigurationHelper;
 import org.onesun.smc.api.ConnectionPropertiesFactory;
@@ -42,54 +42,53 @@ import org.onesun.smc.core.model.Tasklet;
 import org.onesun.smc.core.services.auth.Authenticator;
 
 public class AppCommons {
-	private static Logger logger = Logger.getLogger(IconUtils.class);
+	private static Logger 								logger 								= Logger.getLogger(AppCommons.class);
 	
-	public static Tasklet 								TASKLET							= new Tasklet();
+	public static final String 							FEATURE_CONNECTIVITY 				= "Connectivity";
+	public static final String 							FEATURE_DATA_SERVICES 				= "DataServices";
+	public static final String 							FEATURE_DATA_ACCESS 				= "DataAccess";
+	public static final String 							FEATURE_METADATA_DISCOVERY 			= "MetadataDiscovery";	
+	public static final String 							FEATURE_TASKLETS 					= "Tasklets";
+	public static final String 							FEATURE_WORKFLOW 					= "Workflow";
+	public static final String 							FEATURE_SCHEDULING 					= "Scheduling";
+	
+	public static boolean 								ALL_FEATURES_ENABLED				= false;
 
-	public static String 								APPLICATION_TITLE				= "Social Data Integrator";
+	public static Tasklet 								TASKLET								= new Tasklet();
+	public static String 								APPLICATION_TITLE					= "Social Data Integrator";
+	public static String 								AUTHENTICATION						= "NONE";
+	public static int 									HTTP_CONNECTION_TIMEOUT				= 1000 * 25;
+	public static Authenticator 						AUTHENTICATOR						= null;
+	public static Object 								RESPONSE_OBJECT						= null;
+	public static String								PATH_TO_APP_HOME					= null;
+	public static String 								PATH_TO_WORK						= null;
+	public static String								PATH_TO_APP_CONFIG					= null;
+	public static String								PATH_TO_CORE						= null;
+	public static String								PATH_TO_DATA_ACCESS					= null;
+	public static String								PATH_TO_TASKLETS					= null;
+	public static String								PATH_TO_MASTER_METADATA				= null;
+	public static String								CONFIG_FILE_PATH					= null;
+	public static String								PATH_TO_CONNECTIONS					= null;
+	public static String 								OAUTH_CALLBACK_SERVER_PROTOCOL		= "http";
+	public static String 								OAUTH_CALLBACK_SERVER_NAME			= null;
+	public static String 								OAUTH_CALLBACK_SERVER_CONTEXT		= "/OAuthApp/jrs/callback";
+	public static int	 								OAUTH_CALLBACK_SERVER_PORT			= 7080;
+	public static String 								UCLASSIFY_READ_ACCESS_KEY			= null;
+	public static String 								OPENCALAIS_LICENSE_KEY				= null;
+	public static WebBrowser							WEB_BROWSER							= null;
+	public static String								CALLBACK_URL						= null;
+	public static Boolean								IS_HTTP_PROXY_ENABLED				= false;
+	public static String								HTTP_PROXY_HOST						= "";
+	public static Integer								HTTP_PROXY_PORT						= 80;
+	public static String								HTTP_PROXY_USERNAME					= "";
+	public static String								HTTP_PROXY_PASSWORD					= "";
+	public static ConfigurationHelper					CONFIGURATION_HELPER				= new ConfigurationHelper();
+	private static Map<String, Boolean> 				enabledFeaturesMap					= new HashMap<String, Boolean>();
 	
-	public static String 								AUTHENTICATION					= "NONE";
-
-	public static int 									HTTP_CONNECTION_TIMEOUT			= 1000 * 25;
-	
-	public static Authenticator 						AUTHENTICATOR					= null;
-	
-	public static Object 								RESPONSE_OBJECT					= null;
-	
-	public static String								PATH_TO_APP_HOME				= null;
-	
-	public static String 								PATH_TO_WORK					= null;
-	
-	public static String								PATH_TO_APP_CONFIG				= null;
-	
-	public static String								PATH_TO_CORE					= null;
-	
-	public static String								PATH_TO_DATA_ACCESS				= null;
-	
-	public static String								PATH_TO_TASKLETS				= null;
-	
-	public static String								PATH_TO_MASTER_METADATA			= null;
-
-	public static String								CONFIG_FILE_PATH				= null;
-	
-	public static String								PATH_TO_CONNECTIONS				= null;
-
-	public static String 								OAUTH_CALLBACK_SERVER_PROTOCOL	= "http";
-
-	public static String 								OAUTH_CALLBACK_SERVER_NAME		= null;
-	
-	public static String 								OAUTH_CALLBACK_SERVER_CONTEXT	= "/OAuthApp/jrs/callback";
-	
-	public static int	 								OAUTH_CALLBACK_SERVER_PORT		= 7080;
-
-	public static String 								UCLASSIFY_READ_ACCESS_KEY		= null;
-
-	public static String 								OPENCALAIS_LICENSE_KEY			= null;
-
-	public static WebBrowser							WEB_BROWSER						= null;
-
-	public static String								CALLBACK_URL					= null;
-	static {
+	public static void init() {
+		// Free features
+		enabledFeaturesMap.put(FEATURE_CONNECTIVITY, true);
+		
 		try {
 			InetAddress addr = InetAddress.getLocalHost();
 			OAUTH_CALLBACK_SERVER_NAME = addr.getCanonicalHostName();
@@ -106,64 +105,83 @@ public class AppCommons {
 			
 			logger.info("OS: " + os);
 			
+			String homeDirectory = null;
 			if(os.toLowerCase().startsWith("windows")){
 				// Windows
-				PATH_TO_APP_HOME = "/sdi/workspace";
+				homeDirectory = System.getProperty("USERPROFILE");
 			} else {
 				// *NIX
-				PATH_TO_APP_HOME = "/home/sdi/workspace";
+				homeDirectory = System.getProperty("HOME");
+			}
+			
+			if(homeDirectory != null && homeDirectory.length() > 0){
+				PATH_TO_APP_HOME = homeDirectory + File.separator + "apps" + File.separator + "sdi";
+			} else {
+				PATH_TO_APP_HOME = File.separator + "apps" + File.separator + "sdi";
 			}
 		}
 		
-		if(PATH_TO_APP_HOME.endsWith("/") == false){
-			PATH_TO_APP_HOME += "/";
+		// Pad File.separator iff, it is not existing already
+		if(PATH_TO_APP_HOME.endsWith(File.separator) == false){
+			PATH_TO_APP_HOME += File.separator;
 		}
 		
 		logger.info("HOME=" + PATH_TO_APP_HOME);
 		
 		// Initialize
-		PATH_TO_WORK				= PATH_TO_APP_HOME		+ "work/";
-		PATH_TO_APP_CONFIG			= PATH_TO_APP_HOME		+ "etc/conf/";
-		PATH_TO_MASTER_METADATA		= PATH_TO_APP_HOME		+ "etc/master-metadata/";
-		PATH_TO_DATA_ACCESS			= PATH_TO_APP_CONFIG	+ "data-access/";
-		PATH_TO_CORE				= PATH_TO_APP_CONFIG	+ "core/";
-		PATH_TO_CONNECTIONS			= PATH_TO_APP_CONFIG	+ "connections/";
-		PATH_TO_TASKLETS			= PATH_TO_APP_CONFIG	+ "tasklets/";
+		PATH_TO_WORK				= PATH_TO_APP_HOME		+ "work" + File.separator;
+		PATH_TO_APP_CONFIG			= PATH_TO_APP_HOME		+ "etc" + File.separator + "conf" + File.separator;
+		PATH_TO_MASTER_METADATA		= PATH_TO_APP_HOME		+ "etc" + File.separator + "master-metadata" + File.separator;
+		PATH_TO_DATA_ACCESS			= PATH_TO_APP_CONFIG	+ "data-access" + File.separator;
+		PATH_TO_CORE				= PATH_TO_APP_CONFIG	+ "core" + File.separator;
+		PATH_TO_CONNECTIONS			= PATH_TO_APP_CONFIG	+ "connections" + File.separator;
+		PATH_TO_TASKLETS			= PATH_TO_APP_CONFIG	+ "tasklets" + File.separator;
 		CONFIG_FILE_PATH			= PATH_TO_APP_CONFIG	+ "core.properties";
 		
-		File dir = new File(PATH_TO_APP_CONFIG);
-		if(dir.exists() == false){
-			dir.mkdirs();
+		File dir = null;
+		
+		if(ALL_FEATURES_ENABLED || isFeatureEnabled(FEATURE_CONNECTIVITY)){
+			dir = new File(PATH_TO_APP_CONFIG);
+			if(dir.exists() == false){
+				dir.mkdirs();
+			}
+			dir = new File(PATH_TO_CONNECTIONS);
+			if(dir.exists() == false){
+				dir.mkdirs();
+			}
+			dir = new File(AppCommons.PATH_TO_CORE);
+			if(dir.exists() == false){
+				dir.mkdirs();
+			}
+
+			dir = new File(AppCommons.PATH_TO_DATA_ACCESS);
+			if(dir.exists() == false){
+				dir.mkdirs();
+			}
 		}
-		dir = new File(PATH_TO_CONNECTIONS);
-		if(dir.exists() == false){
-			dir.mkdirs();
+		
+		if(ALL_FEATURES_ENABLED || isFeatureEnabled(FEATURE_METADATA_DISCOVERY)){
+			dir = new File(PATH_TO_MASTER_METADATA);
+			if(dir.exists() == false){
+				dir.mkdirs();
+			}
 		}
-		dir = new File(AppCommons.PATH_TO_CORE);
-		if(dir.exists() == false){
-			dir.mkdirs();
-		}
-		dir = new File(AppCommons.PATH_TO_DATA_ACCESS);
-		if(dir.exists() == false){
-			dir.mkdirs();
-		}
-		dir = new File(PATH_TO_MASTER_METADATA);
-		if(dir.exists() == false){
-			dir.mkdirs();
-		}
-		dir = new File(PATH_TO_TASKLETS);
-		if(dir.exists() == false){
-			dir.mkdirs();
+		
+		if(ALL_FEATURES_ENABLED || isFeatureEnabled(FEATURE_TASKLETS)){
+			dir = new File(PATH_TO_TASKLETS);
+			if(dir.exists() == false){
+				dir.mkdirs();
+			}
 		}
 		
 		// Setup configuration items
-		File configFile = new File(CONFIG_FILE_PATH);
-		ConfigurationHelper.loadConfiguration(configFile);
-		Properties properties = ConfigurationHelper.getProperties();
+		CONFIGURATION_HELPER.loadConfiguration(CONFIG_FILE_PATH);
+		Properties properties = CONFIGURATION_HELPER.getProperties();
 		
 		if(properties != null && properties.size() > 0){
 			String propertyValue = null;
 			
+			// Generic Settings
 			propertyValue = (String)properties.get("http.timeout");
 			HTTP_CONNECTION_TIMEOUT = (propertyValue != null && propertyValue.trim().length() > 0) ? Integer.parseInt(propertyValue) : HTTP_CONNECTION_TIMEOUT;
 			
@@ -178,7 +196,24 @@ public class AppCommons {
 			
 			propertyValue = (String)properties.get("oauth.callback.server.context");
 			OAUTH_CALLBACK_SERVER_CONTEXT = (propertyValue != null && propertyValue.trim().length() > 0) ? propertyValue : OAUTH_CALLBACK_SERVER_CONTEXT;
+
+			// Proxy Settings
+			propertyValue = (String)properties.get("http.proxy.enabled");
+			IS_HTTP_PROXY_ENABLED = (propertyValue != null && propertyValue.trim().length() > 0) ? Boolean.parseBoolean(propertyValue) : IS_HTTP_PROXY_ENABLED;
 			
+			propertyValue = (String)properties.get("http.proxy.host");
+			HTTP_PROXY_HOST = (propertyValue != null && propertyValue.trim().length() > 0) ? propertyValue : HTTP_PROXY_HOST;
+
+			propertyValue = (String)properties.get("http.proxy.port");
+			HTTP_PROXY_PORT = (propertyValue != null && propertyValue.trim().length() > 0) ? Integer.parseInt(propertyValue) : HTTP_PROXY_PORT;
+			
+			propertyValue = (String)properties.get("http.proxy.username");
+			HTTP_PROXY_USERNAME = (propertyValue != null && propertyValue.trim().length() > 0) ? propertyValue : HTTP_PROXY_USERNAME;
+			
+			propertyValue = (String)properties.get("http.proxy.password");
+			HTTP_PROXY_PASSWORD = (propertyValue != null && propertyValue.trim().length() > 0) ? propertyValue : HTTP_PROXY_PASSWORD;
+
+			// License Settings
 			propertyValue = (String)properties.get("text.analysis.license.uclassify");
 			UCLASSIFY_READ_ACCESS_KEY = (propertyValue != null && propertyValue.trim().length() > 0) ? propertyValue : UCLASSIFY_READ_ACCESS_KEY;
 			
@@ -192,33 +227,42 @@ public class AppCommons {
 		// Initialize which browser to use
 		// Authenticator.setWebBrowser(new SystemWebBrowser());
 		
-//*		
+// /*		
 		Authenticator.setWebBrowser(new EmbeddedWebBrowser("Authorize Application", new LocationChangeHandler() {
 			@Override
 			public boolean execute(String url) {
 					return AUTHENTICATOR.getAccessKeys(url);
 			}
 		}));
-//*/		
+// */		
 		// Setup Configuration
 		setup();
 		
 		// Load Data
 		DataTypeFactory.load(PATH_TO_CORE + "core-data-types.xml");
+		if(ALL_FEATURES_ENABLED || isFeatureEnabled(FEATURE_CONNECTIVITY)){
+			ConnectionPropertiesFactory.load(PATH_TO_CORE + "connection-properties.xml");
+			ConnectionPropertiesFactory.loadConnectionProperties(PATH_TO_CONNECTIONS);
+			ConnectionPropertiesViewsFactory.load(PATH_TO_CORE + "connection-properties-views.xml");
+
+			ProviderFactory.load(PATH_TO_CORE + "data-providers.xml", PATH_TO_DATA_ACCESS);
+			FilterFactory.load(PATH_TO_CORE + "data-filters.xml", PATH_TO_DATA_ACCESS);
+		}
 		
-		ConnectionPropertiesFactory.load(PATH_TO_CORE + "connection-properties.xml");
-		ConnectionPropertiesFactory.loadConnectionProperties(PATH_TO_CONNECTIONS);
-		
-		ConnectionPropertiesViewsFactory.load(PATH_TO_CORE + "connection-properties-views.xml");
-		DataAccessViewsFactory.load(PATH_TO_CORE + "data-access-views.xml");
-		
-		DataServicesFactory.load(PATH_TO_CORE + "data-services.xml");
-		ProviderFactory.load(PATH_TO_CORE + "data-providers.xml", PATH_TO_DATA_ACCESS);
-		FilterFactory.load(PATH_TO_CORE + "data-filters.xml", PATH_TO_DATA_ACCESS);
-		
-		TaskletsFactory.load(PATH_TO_TASKLETS);
-		for(Tasklet tasklet : TaskletsFactory.getTasklets()){
-			AppCommonsUI.TASKLETS_MODEL.addElement(tasklet);
+		if(ALL_FEATURES_ENABLED || isFeatureEnabled(FEATURE_DATA_SERVICES)){
+			DataServicesFactory.load(PATH_TO_CORE + "data-services.xml");
+		}
+
+		if(ALL_FEATURES_ENABLED || isFeatureEnabled(FEATURE_DATA_ACCESS)){
+			DataAccessViewsFactory.load(PATH_TO_CORE + "data-access-views.xml");
+		}
+
+		if(ALL_FEATURES_ENABLED || isFeatureEnabled(FEATURE_TASKLETS)){
+			TaskletsFactory.load(PATH_TO_TASKLETS);
+			
+			for(Tasklet tasklet : TaskletsFactory.getTasklets()){
+				AppCommonsUI.TASKLETS_MODEL.addElement(tasklet);
+			}
 		}
 	}
 	
@@ -231,15 +275,34 @@ public class AppCommons {
 		properties.put("oauth.callback.server.port",		Integer.toString(OAUTH_CALLBACK_SERVER_PORT));
 		properties.put("oauth.callback.server.context",		OAUTH_CALLBACK_SERVER_CONTEXT);
 		
-		properties.put("text.analysis.license.uclassify",	(UCLASSIFY_READ_ACCESS_KEY == null) ? "" : UCLASSIFY_READ_ACCESS_KEY);
-		properties.put("text.analysis.license.opencalais",	(OPENCALAIS_LICENSE_KEY == null) ? "" : OPENCALAIS_LICENSE_KEY);
+		properties.put("http.proxy.enabled",				Boolean.toString(IS_HTTP_PROXY_ENABLED));
+		properties.put("http.proxy.host",					HTTP_PROXY_HOST);
+		properties.put("http.proxy.port",					Integer.toString(HTTP_PROXY_PORT));
+		properties.put("http.proxy.username",				HTTP_PROXY_USERNAME);
+		properties.put("http.proxy.password",				HTTP_PROXY_PASSWORD);
 		
-		ConfigurationHelper.setProperties(properties);
-		File configFile = new File(CONFIG_FILE_PATH);
-		ConfigurationHelper.saveConfiguration(configFile);
+		if(ALL_FEATURES_ENABLED == true || isFeatureEnabled(FEATURE_DATA_SERVICES) ){
+			properties.put("text.analysis.license.uclassify",	(UCLASSIFY_READ_ACCESS_KEY == null) ? "" : UCLASSIFY_READ_ACCESS_KEY);
+			properties.put("text.analysis.license.opencalais",	(OPENCALAIS_LICENSE_KEY == null) ? "" : OPENCALAIS_LICENSE_KEY);
+		}
+		
+		CONFIGURATION_HELPER.setProperties(properties);
+		CONFIGURATION_HELPER.saveConfiguration(CONFIG_FILE_PATH);
 	}
 	
 	public static void setup() {
+/*		if(IS_HTTP_PROXY_ENABLED == true){
+			// HTTP Proxy
+			System.setProperty("http.proxySet", "true");
+			System.getProperties().put("http.proxyHost", HTTP_PROXY_HOST);
+			System.getProperties().put("http.proxyPort", HTTP_PROXY_PORT);
+			
+			// HTTPS Proxy
+			System.setProperty("https.proxySet", "true");
+			System.getProperties().put("https.proxyHost", HTTP_PROXY_HOST);
+			System.getProperties().put("https.proxyPort", HTTP_PROXY_PORT);
+		}*/
+		
 		CALLBACK_URL = Authenticator.initialize(
 			OAUTH_CALLBACK_SERVER_PROTOCOL, 
 			OAUTH_CALLBACK_SERVER_NAME, 
@@ -247,8 +310,23 @@ public class AppCommons {
 			OAUTH_CALLBACK_SERVER_CONTEXT,
 			HTTP_CONNECTION_TIMEOUT
 		);
-			
-		UClassifyClient.setReadAccessKey(UCLASSIFY_READ_ACCESS_KEY);
-		OpenCalaisClient.setLicenseKey(OPENCALAIS_LICENSE_KEY);
+
+		if(ALL_FEATURES_ENABLED == true || isFeatureEnabled(FEATURE_DATA_SERVICES)){
+			UClassifyClient.setReadAccessKey(UCLASSIFY_READ_ACCESS_KEY);
+			OpenCalaisClient.setLicenseKey(OPENCALAIS_LICENSE_KEY);
+		}
+	}
+
+	public static void setFeatureEnabled(String featureName, Boolean status) {
+		enabledFeaturesMap.put(featureName, status);
+	}
+	
+	public static Boolean isFeatureEnabled(String featureName) {
+		Boolean flag = enabledFeaturesMap.get(featureName);
+		if(flag == null || flag == false){
+			return false;
+		}
+
+		return flag;
 	}
 }

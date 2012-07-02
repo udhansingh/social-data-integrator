@@ -33,7 +33,7 @@ import org.w3c.dom.Element;
 public class DataSiftConnectionProperties extends AbstractConnectionProperties {
 	private static Logger logger = Logger.getLogger(DataSiftConnectionProperties.class);
 
-	private String userId = null;
+	private String username = null;
 	private String apiKey = null;
 	private String streamHash = null;
 	private String streamConsumerType = null;
@@ -48,7 +48,7 @@ public class DataSiftConnectionProperties extends AbstractConnectionProperties {
 		setName(properties.getProperty("connectionName"));
 		setIdentity(properties.getProperty("identity"));
 		
-		setUserId(properties.getProperty("userId"));
+		setUsername(properties.getProperty("username"));
 		setApiKey(properties.getProperty("apiKey"));
 		setStreamHash(properties.getProperty("streamHash"));
 		setStreamConsumerType(properties.getProperty("streamConsumerType"));
@@ -67,7 +67,7 @@ public class DataSiftConnectionProperties extends AbstractConnectionProperties {
 		properties.put("connectionName", getName().trim());
 		properties.put("identity", getIdentity().trim());
 		
-		properties.put("userId", getUserId().trim());
+		properties.put("username", getUsername().trim());
 		properties.put("apiKey", getApiKey().trim());
 		properties.put("streamHash", getStreamHash().trim());
 		properties.put("streamConsumerType", getStreamConsumerType());
@@ -83,8 +83,8 @@ public class DataSiftConnectionProperties extends AbstractConnectionProperties {
 	public Element toElement(Document document) throws ParserConfigurationException {
 		Element parent = super.toElement(document);
 		
-		Element child = document.createElement("usreId");
-		child.setTextContent(getUserId());
+		Element child = document.createElement("username");
+		child.setTextContent(getUsername());
 		parent.appendChild(child);
 		
 		child = document.createElement("apiKey");
@@ -106,7 +106,7 @@ public class DataSiftConnectionProperties extends AbstractConnectionProperties {
 	public ConnectionProperties toConnectionProperties(Element element) throws ParserConfigurationException {
 		super.toConnectionProperties(element);
 		
-		setUserId(XMLUtils.getValue(element, "userId"));
+		setUsername(XMLUtils.getValue(element, "username"));
 		setApiKey(XMLUtils.getValue(element, "apiKey"));
 		setStreamHash(XMLUtils.getValue(element, "streamHash"));
 		setStreamConsumerType(XMLUtils.getValue(element, "streamConsumerType"));
@@ -115,12 +115,12 @@ public class DataSiftConnectionProperties extends AbstractConnectionProperties {
 		return this;
 	}
 
-	public String getUserId() {
-		return userId;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public String getApiKey() {

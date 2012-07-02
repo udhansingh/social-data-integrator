@@ -45,7 +45,10 @@ public class GnipConnectionPropertiesView extends ConnectionPropertiesPanel {
 	 */
 	private static final long serialVersionUID = 8926936146403943618L;
 
-	private JTextField userIdTextField = new JTextField();
+	private JTextField usernameTextField = new JTextField();
+	private JTextField passwordTextField = new JTextField();
+	private JTextField urlTextField = new JTextField();
+	private JTextField compressionEnabledTextField = new JTextField();
 
 	public GnipConnectionPropertiesView(){
 		super();
@@ -83,20 +86,29 @@ public class GnipConnectionPropertiesView extends ConnectionPropertiesPanel {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					String connectionName = connectionNameTextField.getText();
-					
-					String userId = null;
+					String username = usernameTextField.getText();
+					String password = passwordTextField.getText();
+					String url = urlTextField.getText();
+					String ceStatus = compressionEnabledTextField.getText();
 
-					// TODO: Gnip Properties
-					
 					try {
-						if((connectionName == null && userId == null) || connectionName.isEmpty()){
+						if((connectionName == null && username == null && url == null) || connectionName.isEmpty() || url.isEmpty()) {
 							JOptionPane.showMessageDialog(rootPanel, AppMessages.ERROR_INVALID_CONNECTION);
 							return;
 						}
 						else {
 							GnipConnectionProperties connection = new GnipConnectionProperties();
 							connection.setName(connectionName);
-							connection.setUserId(userId);
+							connection.setUsername(username);
+							connection.setPassword(password);
+							connection.setUrl(url);
+							
+							if(ceStatus.compareToIgnoreCase("true") == 0 || ceStatus.compareToIgnoreCase("yes") == 0){
+								connection.setCompressionEnabled(true);
+							} else {
+								connection.setCompressionEnabled(false);
+							}
+							
 							connection.setIdentity("Gnip");
 
 							connectionWriter.saveToFile(connection);
@@ -127,20 +139,41 @@ public class GnipConnectionPropertiesView extends ConnectionPropertiesPanel {
 		label.setLabelFor(identityComboBox);
 		panel.add(identityComboBox);
 
-		label = new JLabel("User Id", JLabel.LEADING);
+		label = new JLabel("Username", JLabel.LEADING);
 		label.setPreferredSize(new Dimension(150, 24));
 		panel.add(label);
-		userIdTextField.setPreferredSize(new Dimension(300, 24));
-		label.setLabelFor(userIdTextField);
-		panel.add(userIdTextField);
+		usernameTextField.setPreferredSize(new Dimension(300, 24));
+		label.setLabelFor(usernameTextField);
+		panel.add(usernameTextField);
 
-		int rows = 6;
+		label = new JLabel("Password", JLabel.LEADING);
+		label.setPreferredSize(new Dimension(150, 24));
+		panel.add(label);
+		passwordTextField.setPreferredSize(new Dimension(300, 24));
+		label.setLabelFor(passwordTextField);
+		panel.add(passwordTextField);
+
+		label = new JLabel("Url", JLabel.LEADING);
+		label.setPreferredSize(new Dimension(150, 24));
+		panel.add(label);
+		urlTextField.setPreferredSize(new Dimension(300, 24));
+		label.setLabelFor(urlTextField);
+		panel.add(urlTextField);
+
+		label = new JLabel("Is data compressed ", JLabel.LEADING);
+		label.setPreferredSize(new Dimension(150, 24));
+		panel.add(label);
+		compressionEnabledTextField.setPreferredSize(new Dimension(300, 24));
+		label.setLabelFor(compressionEnabledTextField);
+		panel.add(compressionEnabledTextField);
+		
+		int rows = 12;
 		if(overrideSaveButton == true){
 			JPanel buttonPanel = new JPanel(new BorderLayout(15, 15));
 			buttonPanel.add(saveButton, BorderLayout.EAST);
 			panel.add(buttonPanel);
 
-			rows = 7;
+			rows = 13;
 		}
 
 		SpringLayoutUtils.makeCompactGrid(panel, rows, 1, 5, 5,	5, 5);
@@ -160,12 +193,18 @@ public class GnipConnectionPropertiesView extends ConnectionPropertiesPanel {
 			if(identityComboBox != null)			identityComboBox.setSelectedItem(provider);
 
 			connectionNameTextField.setText(connection.getName());
-			userIdTextField.setText(connection.getUserId());
+			usernameTextField.setText(connection.getUsername());
+			passwordTextField.setText(connection.getPassword());
+			urlTextField.setText(connection.getUrl());
+			compressionEnabledTextField.setText(Boolean.toString(connection.isCompressionEnabled()));
 		}
 	}
 
 	public void resetFields() {
 		connectionNameTextField.setText("");
-		userIdTextField.setText("");
+		usernameTextField.setText("");
+		passwordTextField.setText("");
+		urlTextField.setText("");
+		compressionEnabledTextField.setText("");
 	}
 }

@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -49,6 +50,7 @@ public class PreferencesDialog extends AbstractDialog {
 		JTabbedPane tabbedPane = new JTabbedPane();
 		tabbedPane.add("General", createGeneralPage());
 		tabbedPane.add("OAuth Handler", createOAuthCallbackServerPage());
+		tabbedPane.add("Proxy Settings", createProxySettingsPage());
 		tabbedPane.add("Thirdparty License", createThirdpartyLicensePage());
 		contentContainer.add(tabbedPane, BorderLayout.CENTER);
 		
@@ -145,7 +147,7 @@ public class PreferencesDialog extends AbstractDialog {
 	private JTextField hostnameTextField = new JTextField();
 	private JTextField portTextField = new JTextField();
 	private JTextField callbackContextTextField = new JTextField();
-
+	
 	public JPanel createOAuthCallbackServerPage(){
 		JPanel panel = null;
 		JLabel label = null;
@@ -213,7 +215,67 @@ public class PreferencesDialog extends AbstractDialog {
 		return containerPanel;
 	}
 
+	private JCheckBox enableProxyCheckBox = new JCheckBox();
+	private JTextField httpProxyHostnameTextField = new JTextField();
+	private JTextField httpProxyPortTextField = new JTextField();
+	private JTextField httpProxyUsernameTextField = new JTextField();
+	private JTextField httpProxyPasswordTextField = new JTextField();
+
+	public JPanel createProxySettingsPage(){
+		JPanel panel = null;
+		JLabel label = null;
+		
+		panel = new JPanel(new SpringLayout());
+		label = new JLabel("Enable Proxy", JLabel.LEADING);
+		label.setPreferredSize(new Dimension(150, 24));
+		panel.add(label);
+		enableProxyCheckBox.setSelected(AppCommons.IS_HTTP_PROXY_ENABLED);
+		enableProxyCheckBox.setPreferredSize(new Dimension(250, 24));
+		label.setLabelFor(enableProxyCheckBox);
+		panel.add(enableProxyCheckBox);
+
+		label = new JLabel("Hostname", JLabel.LEADING);
+		label.setPreferredSize(new Dimension(150, 24));
+		panel.add(label);
+		httpProxyHostnameTextField.setText(AppCommons.HTTP_PROXY_HOST);
+		httpProxyHostnameTextField.setPreferredSize(new Dimension(250, 24));
+		label.setLabelFor(httpProxyHostnameTextField);
+		panel.add(httpProxyHostnameTextField);
+		
+		label = new JLabel("Port Number", JLabel.LEADING);
+		label.setPreferredSize(new Dimension(150, 24));
+		panel.add(label);
+		httpProxyPortTextField.setText(Integer.toString(AppCommons.HTTP_PROXY_PORT));
+		httpProxyPortTextField.setPreferredSize(new Dimension(250, 24));
+		label.setLabelFor(httpProxyPortTextField);
+		panel.add(httpProxyPortTextField);
+		
+		label = new JLabel("Username", JLabel.LEADING);
+		label.setPreferredSize(new Dimension(150, 24));
+		panel.add(label);
+		httpProxyUsernameTextField.setText(AppCommons.HTTP_PROXY_USERNAME);
+		httpProxyUsernameTextField.setPreferredSize(new Dimension(250, 24));
+		label.setLabelFor(httpProxyUsernameTextField);
+		panel.add(httpProxyUsernameTextField);
+		
+		label = new JLabel("Pasword", JLabel.LEADING);
+		label.setPreferredSize(new Dimension(150, 24));
+		panel.add(label);
+		httpProxyPasswordTextField.setText(AppCommons.HTTP_PROXY_PASSWORD);
+		httpProxyPasswordTextField.setPreferredSize(new Dimension(250, 24));
+		label.setLabelFor(httpProxyPasswordTextField);
+		panel.add(httpProxyPasswordTextField);
+		
+		SpringLayoutUtils.makeCompactGrid(panel, 10, 1, 5, 5,	5, 5);
+		
+		JPanel containerPanel = new JPanel(new BorderLayout(5, 5));
+		containerPanel.add(panel, BorderLayout.CENTER);
+		
+		return containerPanel;
+	}
+	
 	void onOkButtonClicked(ActionEvent event) {
+		// Generic Settings
 		int timeout = Integer.parseInt(httpTimeoutTextField.getText().trim());
 		if(timeout <= 10000){
 			timeout = AppCommons.HTTP_CONNECTION_TIMEOUT;
@@ -233,11 +295,29 @@ public class PreferencesDialog extends AbstractDialog {
 		String context = callbackContextTextField.getText().trim();
 		context = (context != null && context.length() > 0) ? context : AppCommons.OAUTH_CALLBACK_SERVER_CONTEXT;
 		
+		// License Strings
 		String uclassifyLicense = uclassifyLicenseKeyTextField.getText().trim();
 		uclassifyLicense = (uclassifyLicense != null && uclassifyLicense.length() > 0) ? uclassifyLicense : AppCommons.UCLASSIFY_READ_ACCESS_KEY;
 		
 		String openCalaisLicense = openCalasisLicenseKeyTextField.getText().trim();
 		openCalaisLicense = (openCalaisLicense != null && openCalaisLicense.length() > 0) ? openCalaisLicense : AppCommons.OPENCALAIS_LICENSE_KEY;
+		
+		// Proxy Server Settings
+		String httpProxyEnabled = enableProxyCheckBox.getText().trim();
+		httpProxyEnabled = (httpProxyEnabled != null && httpProxyEnabled.length() > 0) ? httpProxyEnabled : Boolean.toString(AppCommons.IS_HTTP_PROXY_ENABLED);
+		
+		String httpProxyHostname = httpProxyHostnameTextField.getText().trim();
+		httpProxyHostname = (httpProxyHostname != null && httpProxyHostname.length() > 0) ? httpProxyHostname : AppCommons.HTTP_PROXY_HOST;
+		
+		String httpProxyPort = httpProxyPortTextField.getText().trim();
+		httpProxyPort = (httpProxyPort != null && httpProxyPort.length() > 0) ? httpProxyPort : Integer.toString(AppCommons.HTTP_PROXY_PORT);
+		
+		String httpProxyUsername = httpProxyUsernameTextField.getText().trim();
+		httpProxyUsername = (httpProxyUsername != null && httpProxyUsername.length() > 0) ? httpProxyUsername : AppCommons.HTTP_PROXY_USERNAME;
+		
+		String httpProxyPassword = httpProxyPasswordTextField.getText().trim();
+		httpProxyPassword = (httpProxyPassword != null && httpProxyPassword.length() > 0) ? httpProxyPassword : AppCommons.HTTP_PROXY_PASSWORD;
+
 		
 		AppCommons.HTTP_CONNECTION_TIMEOUT				= timeout;
 		AppCommons.OAUTH_CALLBACK_SERVER_PORT			= port;
@@ -246,6 +326,12 @@ public class PreferencesDialog extends AbstractDialog {
 		AppCommons.OAUTH_CALLBACK_SERVER_CONTEXT		= context;
 		AppCommons.UCLASSIFY_READ_ACCESS_KEY			= uclassifyLicense;
 		AppCommons.OPENCALAIS_LICENSE_KEY				= openCalaisLicense;
+		
+		AppCommons.IS_HTTP_PROXY_ENABLED				= Boolean.parseBoolean(httpProxyEnabled);
+		AppCommons.HTTP_PROXY_HOST					= httpProxyHostname;
+		AppCommons.HTTP_PROXY_PORT						= Integer.parseInt(httpProxyPort);
+		AppCommons.HTTP_PROXY_USERNAME					= httpProxyUsername;
+		AppCommons.HTTP_PROXY_PASSWORD					= httpProxyPassword;
 		 
 		AppCommons.saveConfiguration();
 		

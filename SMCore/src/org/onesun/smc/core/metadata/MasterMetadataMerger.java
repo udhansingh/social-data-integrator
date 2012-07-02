@@ -114,9 +114,11 @@ public class MasterMetadataMerger {
 			OutputFormat format = new OutputFormat(document);
 			format.setIndenting(true);
 
-			XMLSerializer serializer = new XMLSerializer(new FileOutputStream(file), format);
+			FileOutputStream fos = new FileOutputStream(file);
+			XMLSerializer serializer = new XMLSerializer(fos, format);
 			logger.info("Serializing completed for: " + file.getAbsolutePath());
 			serializer.serialize(document);
+			fos.close();
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}

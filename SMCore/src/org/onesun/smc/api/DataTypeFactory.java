@@ -29,48 +29,52 @@ public class DataTypeFactory {
 	
 	private static Map<String, DataType> dataTypes = new TreeMap<String, DataType>();
 	
-	private static List<DataType> init() {
-		List<DataType> items = new ArrayList<DataType>();
-		DataType item = null;
+	public static List<DataType> init() {
+		List<DataType> dataTypeList = new ArrayList<DataType>();
+		DataType dataType = null;
 		Class<?> clazz = null;
 		
-		item = new DataType();
+		dataType = new DataType();
 		clazz = java.lang.String.class;
-		item.setName(clazz.getSimpleName());
-		item.setClazz(clazz);
-		items.add(item);
+		dataType.setName(clazz.getSimpleName());
+		dataType.setClazz(clazz);
+		dataTypeList.add(dataType);
 		
-		item = new DataType();
+		dataType = new DataType();
 		clazz = java.lang.Integer.class;
-		item.setName(clazz.getSimpleName());
-		item.setClazz(clazz);
-		items.add(item);
+		dataType.setName(clazz.getSimpleName());
+		dataType.setClazz(clazz);
+		dataTypeList.add(dataType);
 
-		item = new DataType();
+		dataType = new DataType();
 		clazz = java.lang.Double.class;
-		item.setName(clazz.getSimpleName());
-		item.setClazz(clazz);
-		items.add(item);
+		dataType.setName(clazz.getSimpleName());
+		dataType.setClazz(clazz);
+		dataTypeList.add(dataType);
 		
-		item = new DataType();
+		dataType = new DataType();
 		clazz = java.lang.Long.class;
-		item.setName(clazz.getSimpleName());
-		item.setClazz(clazz);
-		items.add(item);
+		dataType.setName(clazz.getSimpleName());
+		dataType.setClazz(clazz);
+		dataTypeList.add(dataType);
 		
-		item = new DataType();
+		dataType = new DataType();
 		clazz = java.lang.Boolean.class;
-		item.setName(clazz.getSimpleName());
-		item.setClazz(clazz);
-		items.add(item);
+		dataType.setName(clazz.getSimpleName());
+		dataType.setClazz(clazz);
+		dataTypeList.add(dataType);
 
-		item = new DataType();
+		dataType = new DataType();
 		clazz = java.util.Date.class;
-		item.setName(clazz.getSimpleName());
-		item.setClazz(clazz);
-		items.add(item);
+		dataType.setName(clazz.getSimpleName());
+		dataType.setClazz(clazz);
+		dataTypeList.add(dataType);
 		
-		return items;
+		for(DataType dtItem : dataTypeList){
+			dataTypes.put(dtItem.getName(), dtItem);
+		}
+		
+		return dataTypeList;
 	}
 	
 	public static void load(String pathToServicesFile){

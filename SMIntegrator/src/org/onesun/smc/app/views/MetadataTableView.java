@@ -64,6 +64,7 @@ import org.onesun.smc.app.AppCommons;
 import org.onesun.smc.app.AppCommonsUI;
 import org.onesun.smc.app.AppMessages;
 import org.onesun.smc.app.model.MetadataTableModel;
+import org.onesun.smc.core.connection.properties.GnipConnectionProperties;
 import org.onesun.smc.core.metadata.FacetedMetadata;
 import org.onesun.smc.core.metadata.FilterMetadata;
 import org.onesun.smc.core.metadata.JSONMetadataReader;
@@ -354,6 +355,27 @@ public class MetadataTableView extends JPanel {
 						m.setUrl(AppCommons.TASKLET.getResource().getUrl());
 						m.setVerb(AppCommons.TASKLET.getResource().getVerb().name());
 						AppCommons.TASKLET.getResource().setTextFormat(TextFormat.FACETED_JSON);
+					}
+
+					ComboBoxModel<String> model = new DefaultComboBoxModel<String>(facetsArray);
+					schemaFacets.setModel(model);
+				}
+				else if(cp.getCategory().compareTo("GNIP") == 0) {
+					facetedMetadata = new FacetedMetadata();
+					facetedMetadata.setObject(AppCommons.RESPONSE_OBJECT);
+					facetedMetadata.analyze();
+
+					Set<String> facets = facetedMetadata.getFacets();
+					String[] facetsArray = new String[facets.size()];
+					int index = 0;
+					for(String facet : facets){
+						facetsArray[index] = facet;
+						index++;
+
+						Metadata m = facetedMetadata.getMetadata(facet);
+						GnipConnectionProperties gcp = (GnipConnectionProperties)cp;
+						m.setUrl(gcp.getUrl());
+						m.setVerb("GET");
 					}
 
 					ComboBoxModel<String> model = new DefaultComboBoxModel<String>(facetsArray);

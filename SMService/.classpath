@@ -9,8 +9,12 @@
 	<classpathentry kind="lib" path="lib/httpclient-4.1.2.jar"/>
 	<classpathentry kind="lib" path="lib/httpcore-4.1.2.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.15.jar"/>
-	<classpathentry kind="lib" path="lib/robosuite-api.jar"/>
 	<classpathentry kind="lib" path="lib/hsqldb.jar"/>
+	<classpathentry kind="lib" path="lib/commons-codec-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-ssl-0.3.8.jar"/>
+	<classpathentry kind="lib" path="lib/robosuite-api.jar"/>
+	<classpathentry kind="lib" path="lib/mysql-connector-java-5.0.8-bin.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Commons"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SMProviders"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/JSON.org"/>

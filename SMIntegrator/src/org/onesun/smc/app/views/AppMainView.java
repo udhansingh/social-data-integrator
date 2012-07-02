@@ -85,18 +85,30 @@ public class AppMainView extends JPanel{
 			}
 		});
 
-		AppCommonsUI.CONNECTION_MANAGER_TREE_VIEW = new ConnectionsView();
-		tab.add("Connectivity", AppCommonsUI.CONNECTION_MANAGER_TREE_VIEW);
+		if(AppCommons.ALL_FEATURES_ENABLED || AppCommons.isFeatureEnabled(AppCommons.FEATURE_CONNECTIVITY)){
+			AppCommonsUI.CONNECTION_MANAGER_TREE_VIEW = new ConnectionsView();
+			tab.add("Connectivity", AppCommonsUI.CONNECTION_MANAGER_TREE_VIEW);
+		}
 		
-		tab.add("Data Access", null);
+		if(AppCommons.ALL_FEATURES_ENABLED || AppCommons.isFeatureEnabled(AppCommons.FEATURE_DATA_ACCESS)){
+			tab.add("Data Access", null);
+		}
 
-		tab.add("Discoverer", new DiscovererView());
+		if(AppCommons.ALL_FEATURES_ENABLED || AppCommons.isFeatureEnabled(AppCommons.FEATURE_METADATA_DISCOVERY)){
+			tab.add("Discoverer", new DiscovererView());
+		}
 
-		tab.add("Tasklets", new TaskletsView());
+		if(AppCommons.ALL_FEATURES_ENABLED || AppCommons.isFeatureEnabled(AppCommons.FEATURE_TASKLETS)){
+			tab.add("Tasklets", new TaskletsView());
+		}
 
-		tab.add("Workflow", new WorkFlowView());
+		if(AppCommons.ALL_FEATURES_ENABLED || AppCommons.isFeatureEnabled(AppCommons.FEATURE_WORKFLOW)){
+			tab.add("Workflow", new WorkFlowView());
+		}
 		
-		tab.add("Scheduler", new SchedulerView());
+		if(AppCommons.ALL_FEATURES_ENABLED || AppCommons.isFeatureEnabled(AppCommons.FEATURE_SCHEDULING)){
+			tab.add("Scheduler", new SchedulerView());
+		}
 
 		this.setLayout(new BorderLayout(5, 5));
 

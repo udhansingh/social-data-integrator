@@ -32,6 +32,7 @@ import com.kapowtech.robosuite.api.java.repository.construct.RobotSignature;
 import com.kapowtech.robosuite.api.java.repository.construct.Type;
 import com.kapowtech.robosuite.api.java.repository.engine.RepositoryClient;
 import com.kapowtech.robosuite.api.java.repository.engine.RepositoryClientException;
+import com.kapowtech.robosuite.api.java.repository.engine.RepositoryClientFactory;
 import com.kapowtech.robosuite.api.java.rql.ExecuteRequestBuilder;
 import com.kapowtech.robosuite.api.java.rql.RQLException;
 import com.kapowtech.robosuite.api.java.rql.RQLResult;
@@ -58,7 +59,7 @@ public class KapowProvider extends AbstractWebProvider {
 	public void validate(){
 		if(client == null){
 			try {
-				client = new RepositoryClient(connection.getUrl(), connection.getUsername(), connection.getPassword());
+				client = RepositoryClientFactory.createRepositoryClient(connection.getUrl(), connection.getUsername(), connection.getPassword());
 				
 				String host = "localhost";
 				int port = 50000;

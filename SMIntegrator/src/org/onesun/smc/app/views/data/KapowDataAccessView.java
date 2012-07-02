@@ -196,7 +196,9 @@ public class KapowDataAccessView extends AbstractDataAccessView {
 					DefaultCusor.startWaitCursor(rootPanel);
 					
 					executor.setConnectionProperties((KapowConnectionProperties) AppCommons.TASKLET.getConnectionProperties());
-					executor.setResource(resource);
+					// TODO: Set the right parameters for Kapow
+					executor.setProjectName(null);
+					executor.setRobotName(null);
 					
 					setStatus("");
 					dataTextArea.setText("");

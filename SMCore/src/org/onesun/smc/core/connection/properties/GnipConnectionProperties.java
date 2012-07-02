@@ -33,7 +33,10 @@ import org.w3c.dom.Element;
 public class GnipConnectionProperties extends AbstractConnectionProperties {
 	private static Logger logger = Logger.getLogger(GnipConnectionProperties.class);
 
-	private String userId = null;
+	private String username = null;
+	private String password = null;
+	private String url = null;
+	private Boolean compressionEnabled = false;
 	
 	public GnipConnectionProperties(){
 		super("Gnip", "GNIP", "GNIP");
@@ -44,7 +47,16 @@ public class GnipConnectionProperties extends AbstractConnectionProperties {
 		setName(properties.getProperty("connectionName"));
 		setIdentity(properties.getProperty("identity"));
 		
-		setUserId(properties.getProperty("userId"));
+		setUsername(properties.getProperty("username"));
+		setPassword(properties.getProperty("password"));
+		setUrl(properties.getProperty("url"));
+		
+		String ceStatus = properties.getProperty("compressionEnabled");
+		if(ceStatus.compareToIgnoreCase("true") == 0 || ceStatus.compareToIgnoreCase("yes") == 0){
+			setCompressionEnabled(true);
+		} else {
+			setCompressionEnabled(false);
+		}
 	}
 	
 	@Override
@@ -60,7 +72,10 @@ public class GnipConnectionProperties extends AbstractConnectionProperties {
 		properties.put("connectionName", getName().trim());
 		properties.put("identity", getIdentity().trim());
 		
-		properties.put("userId", getUserId().trim());
+		properties.put("username", getUsername().trim());
+		properties.put("password", getPassword().trim());
+		properties.put("url", getUrl().trim());
+		properties.put("compressionEnabled", Boolean.toString(compressionEnabled));
 		
 		properties.store(fos, "DataSift Connection Properties");
 		
@@ -73,8 +88,20 @@ public class GnipConnectionProperties extends AbstractConnectionProperties {
 	public Element toElement(Document document) throws ParserConfigurationException {
 		Element parent = super.toElement(document);
 		
-		Element child = document.createElement("usreId");
-		child.setTextContent(getUserId());
+		Element child = document.createElement("username");
+		child.setTextContent(getUsername());
+		parent.appendChild(child);
+		
+		child = document.createElement("password");
+		child.setTextContent(getPassword());
+		parent.appendChild(child);
+		
+		child = document.createElement("url");
+		child.setTextContent(getUrl());
+		parent.appendChild(child);
+
+		child = document.createElement("compressionEnabled");
+		child.setTextContent(Boolean.toString(isCompressionEnabled()));
 		parent.appendChild(child);
 		
 		return parent;
@@ -84,16 +111,50 @@ public class GnipConnectionProperties extends AbstractConnectionProperties {
 	public ConnectionProperties toConnectionProperties(Element element) throws ParserConfigurationException {
 		super.toConnectionProperties(element);
 		
-		setUserId(XMLUtils.getValue(element, "userId"));
+		setUsername(XMLUtils.getValue(element, "username"));
+		setPassword(XMLUtils.getValue(element, "password"));
+		setUrl(XMLUtils.getValue(element, "url"));
+		
+		String ceStatus = XMLUtils.getValue(element, "compressionEnabled");
+		
+		if(ceStatus.compareToIgnoreCase("true") == 0 || ceStatus.compareToIgnoreCase("yes") == 0){
+			setCompressionEnabled(true);
+		} else {
+			setCompressionEnabled(false);
+		}
 		
 		return this;
 	}
 
-	public String getUserId() {
-		return userId;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public boolean isCompressionEnabled() {
+		return compressionEnabled;
+	}
+
+	public void setCompressionEnabled(boolean compressionEnabled) {
+		this.compressionEnabled = compressionEnabled;
 	}
 }

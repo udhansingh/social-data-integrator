@@ -118,15 +118,13 @@ public class TwitterStreamingListener {
 				SchemeSocketFactory socketFactory = null;
 
 
-				if(port == -1){
-					if(uri.getScheme().compareToIgnoreCase("http") == 0){
-						port = 80;
-						socketFactory = PlainSocketFactory.getSocketFactory();
-					}
-					else if(uri.getScheme().compareToIgnoreCase("https") == 0){
-						port = 443;
-						socketFactory = SSLSocketFactory.getSocketFactory();
-					}
+				if(uri.getScheme().compareToIgnoreCase("http") == 0){
+					port = 80;
+					socketFactory = PlainSocketFactory.getSocketFactory();
+				}
+				else if(uri.getScheme().compareToIgnoreCase("https") == 0){
+					port = 443;
+					socketFactory = SSLSocketFactory.getSocketFactory();
 				}
 
 				SchemeRegistry registry = new SchemeRegistry();
@@ -155,6 +153,7 @@ public class TwitterStreamingListener {
 
 		public void terminate(){
 			running = false;
+			client.getConnectionManager().shutdown();
 		}
 
 		@Override 

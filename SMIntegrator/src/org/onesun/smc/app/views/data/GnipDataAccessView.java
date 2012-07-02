@@ -30,25 +30,18 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.xml.parsers.ParserConfigurationException;
 
-import org.datasift.EInvalidData;
-import org.datasift.IStreamConsumerEvents;
-import org.datasift.Interaction;
-import org.datasift.StreamConsumer;
-import org.datasift.User;
 import org.onesun.commons.swing.cursors.DefaultCusor;
-import org.onesun.commons.xml.XMLUtils;
 import org.onesun.smc.app.AppCommons;
 import org.onesun.smc.app.AppCommonsUI;
 import org.onesun.smc.app.handlers.RequestUpdateHandler;
 import org.onesun.smc.app.views.dialogs.SetterDialog;
-import org.onesun.smc.core.connection.properties.DataSiftConnectionProperties;
+import org.onesun.smc.core.connection.properties.GnipConnectionProperties;
+import org.onesun.smc.core.listeners.GnipStreamingListener;
 import org.onesun.smc.core.metadata.FilterMetadata;
 import org.onesun.smc.core.resources.StreamingResource;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.onesun.smc.core.services.handler.ConnectionHandler;
+import org.onesun.smc.core.services.handler.DataHandler;
 
 public class GnipDataAccessView extends AbstractDataAccessView {
 	/**
@@ -62,161 +55,14 @@ public class GnipDataAccessView extends AbstractDataAccessView {
 	private JComboBox<StreamingResource>	urlComboBox				= new JComboBox<StreamingResource>(AppCommonsUI.STREAMING_RESOURCE_COMBOBOX_MODEL);;
 	private JTextArea						dataTextArea			= new JTextArea();
 	private JScrollPane						scrollPane				= new JScrollPane(dataTextArea);
-	private StreamingResource				resource				= null;
 	
 	private List<String>					results					= Collections.synchronizedList(new ArrayList<String>());
-	private StreamConsumer 					consumer				= null;
 	
 	@Override
 	public JPanel getViewPanel(){
 		return this;
 	}
 
-	private class StreamConsumerEventHandler implements IStreamConsumerEvents {
-		// DataSift handlers
-		@Override
-		public void onDeleted(StreamConsumer c, Interaction i) throws EInvalidData {
-		}
-
-		@Override
-		public void onError(StreamConsumer c, String message) throws EInvalidData {
-			setStatus(message);
-		}
-
-		private Element toElement(Document document, Interaction i) throws ParserConfigurationException {
-			Element parent = document.createElement("item");
-			
-			Element interaction = document.createElement("interaction");
-			Element author = document.createElement("author");
-			
-			// Interaction Info.
-			try{
-				Element element = document.createElement("content");
-				element.setTextContent(i.getStringVal("interaction.content"));
-				interaction.appendChild(element);
-			} catch (DOMException e) {
-			} catch (EInvalidData e) {
-			}
-			
-//			try{
-//				Element element = document.createElement("geo");
-//				element.setTextContent(i.getStringVal("interaction.geo"));
-//				interaction.appendChild(element);
-//			} catch (DOMException e) {
-//			} catch (EInvalidData e) {
-//			}
-			
-			try{
-				Element element = document.createElement("link");
-				element.setTextContent(i.getStringVal("interaction.link"));
-				interaction.appendChild(element);
-			} catch (DOMException e) {
-			} catch (EInvalidData e) {
-			}
-			
-			try{
-				Element element = document.createElement("sample");
-				element.setTextContent(Double.toString(i.getDoubleVal("interaction.sample")));
-				interaction.appendChild(element);
-			} catch (DOMException e) {
-			} catch (EInvalidData e) {
-			}
-			
-			try{
-				Element element = document.createElement("source");
-				element.setTextContent(i.getStringVal("interaction.source"));
-				interaction.appendChild(element);
-			} catch (DOMException e) {
-			} catch (EInvalidData e) {
-			}
-			
-			try{
-				Element element = document.createElement("title");
-				element.setTextContent(i.getStringVal("interaction.title"));
-				interaction.appendChild(element);
-			} catch (DOMException e) {
-			} catch (EInvalidData e) {
-			}
-			
-			try{
-				Element element = document.createElement("type");
-				element.setTextContent(i.getStringVal("interaction.type"));
-				interaction.appendChild(element);
-			} catch (DOMException e) {
-			} catch (EInvalidData e) {
-			}
-			
-			// Author Info
-			try{
-				Element element = document.createElement("avatar");
-				element.setTextContent(i.getStringVal("interaction.author.avatar"));
-				author.appendChild(element);
-			} catch (DOMException e) {
-			} catch (EInvalidData e) {
-			}
-
-			try{
-				Element element = document.createElement("id");
-				element.setTextContent(Integer.toString(i.getIntVal("interaction.author.id")));
-				author.appendChild(element);
-			} catch (DOMException e) {
-			} catch (EInvalidData e) {
-			}
-
-			try{
-				Element element = document.createElement("link");
-				element.setTextContent(i.getStringVal("interaction.author.link"));
-				author.appendChild(element);
-			} catch (DOMException e) {
-			} catch (EInvalidData e) {
-			}
-
-			
-			try{
-				Element element = document.createElement("name");
-				element.setTextContent(i.getStringVal("interaction.author.name"));
-				author.appendChild(element);
-			} catch (DOMException e) {
-			} catch (EInvalidData e) {
-			}
-
-			
-			try{
-				Element element = document.createElement("username");
-				element.setTextContent(i.getStringVal("interaction.author.username"));
-				author.appendChild(element);
-			} catch (DOMException e) {
-			} catch (EInvalidData e) {
-			}
-
-			// Add to parent node
-			parent.appendChild(interaction);
-			parent.appendChild(author);
-			
-			return parent;
-		}
-		
-		@Override
-		public void onInteraction(StreamConsumer c, Interaction i) throws EInvalidData {
-			String text = i.toString();
-
-			dataTextArea.append(text + "\n");
-			dataTextArea.invalidate();
-
-			results.add(text);
-		}
-
-		@Override
-		public void onStopped(StreamConsumer c, String message) {
-			setStatus(message);
-		}
-
-		@Override
-		public void onWarning(StreamConsumer c, String message) throws EInvalidData {
-			setStatus(message);
-		}
-	}
-	
 	public GnipDataAccessView(){
 		super();
 	}
@@ -244,13 +90,7 @@ public class GnipDataAccessView extends AbstractDataAccessView {
 				Object o = e.getItem();
 				
 				if(o instanceof StreamingResource){
-					resource = (StreamingResource)o;
-					
-					AppCommons.TASKLET.setResource(resource);
-					
-					AppCommons.TASKLET.setResource(resource);
-		    		AppCommonsUI.MODEL_TEXTAREA.setText(AppCommons.TASKLET.toXML());
-		    		AppCommonsUI.MODEL_TEXTAREA.invalidate();
+					// Nothing to do as of now
 				}
 			}
 		});
@@ -278,10 +118,6 @@ public class GnipDataAccessView extends AbstractDataAccessView {
 		validateButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				if(resource == null && urlComboBox.getItemCount() > 0){
-					resource = urlComboBox.getItemAt(0);
-				}
-				
 				if(validateButton.getText().compareTo(START_SAMPLING_LABEL) == 0){
 					results.clear();
 					
@@ -289,28 +125,18 @@ public class GnipDataAccessView extends AbstractDataAccessView {
 					
 					DefaultCusor.startWaitCursor(rootPanel);
 					
+					executor.setConnectionProperties((GnipConnectionProperties) AppCommons.TASKLET.getConnectionProperties());
+					
 					setStatus("");
 					dataTextArea.setText("");
 					
-					try {
-						DataSiftConnectionProperties cp = (DataSiftConnectionProperties)AppCommons.TASKLET.getConnectionProperties();
-						
-						User user = new User(cp.getUserId(), cp.getApiKey());
-						consumer = user.getConsumer(StreamConsumer.TYPE_HTTP, cp.getStreamHash(), new StreamConsumerEventHandler());
-						consumer.consume();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+					executor.start();
 				}
 				else if(validateButton.getText().compareTo(STOP_SAMPLING_LABEL) == 0){
 					validateButton.setText(START_SAMPLING_LABEL);
 
 					DefaultCusor.stopWaitCursor(rootPanel);
-					try {
-						consumer.stop();
-					} catch (EInvalidData e) {
-						e.printStackTrace();
-					}
+					executor.stop();
 
 					AppCommons.RESPONSE_OBJECT = results;
 					
@@ -327,4 +153,26 @@ public class GnipDataAccessView extends AbstractDataAccessView {
 	@Override
 	protected void postInit(){
 	}
+	
+	private GnipStreamingListener executor = new GnipStreamingListener(
+			new DataHandler() {
+				@Override
+				public void flush(Object object) {
+					if(object instanceof String){
+						String text = (String)object;
+						
+						dataTextArea.append(text + "\n");
+						results.add(text);
+					}
+				}
+			},
+			
+			new ConnectionHandler(){
+				@Override
+				public void setStatusCode(int statusCode) {
+					String statusText =  "Status: " + statusCode;
+					setStatus(statusText);
+				}
+			}
+	);
 }

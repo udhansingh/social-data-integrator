@@ -17,6 +17,8 @@
 package org.onesun.commons;
 
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
 
 public class CollectionUtils {
 	public static boolean isAllNull(Collection<String> values) {
@@ -30,5 +32,26 @@ public class CollectionUtils {
 		}
 		
 		return status;
+	}
+	
+	// Use this methods to avoid Concurrent Modification Exception on a Map
+	public static synchronized boolean remove(Map<?, ?> map, String key){
+		Iterator<?> it = map.keySet().iterator();
+		
+		while(it.hasNext()){
+			Object keyObject = it.next();
+			
+			if(keyObject instanceof String){
+				String k = (String)keyObject;
+				
+				// Remove the first found and return
+				if(k.compareTo(key) == 0){
+					it.remove();
+					return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 }

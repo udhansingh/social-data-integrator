@@ -95,6 +95,7 @@ public class TwitterStreamingDataAccessView extends AbstractDataAccessView {
 				}
 			}
 	);
+	
 	@Override
 	protected void preInit(){
 	}

@@ -85,7 +85,9 @@ public class DataExtractionAgent {
 			);
 			
 			listener.setConnectionProperties((KapowConnectionProperties) tasklet.getConnectionProperties());
-			listener.setResource(resource);
+			// TODO: Set the right parameters for Kapow
+			listener.setProjectName(null);
+			listener.setRobotName(null);
 			
 			listener.start();
 		}

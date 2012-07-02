@@ -24,20 +24,23 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class ConfigurationHelper {
-	private ConfigurationHelper(){
+	public ConfigurationHelper(){
 	}
 
-	private static Properties properties = new Properties();
+	private Properties properties = new Properties();
 
-	public static Properties getProperties(){
+	public Properties getProperties(){
 		return properties;
 	}
 	
-	public static void setProperties(Properties properties){
-		ConfigurationHelper.properties = properties;
+	public void setProperties(Properties properties){
+		this.properties = properties;
 	}
 	
-	public static void saveConfiguration(File configFile){
+	public void saveConfiguration(String configFile){
+		saveConfiguration(new File(configFile));
+	}
+	public void saveConfiguration(File configFile){
 		try {
 			FileOutputStream fos = new FileOutputStream(configFile);
 			properties.store(fos, "Default Configuration Values");
@@ -49,7 +52,11 @@ public class ConfigurationHelper {
 		}
 	}
 	
-	public static void loadConfiguration(File configFile){
+	public void loadConfiguration(String configFile){
+		loadConfiguration(new File(configFile));
+	}
+	
+	public void loadConfiguration(File configFile){
 		if(configFile.exists() == true){
 			try {
 				FileInputStream fis = new FileInputStream(configFile);

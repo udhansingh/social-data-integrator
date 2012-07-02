@@ -242,8 +242,11 @@ public class Metadata implements Cloneable {
 			for(int index = 0; index < nodes.getLength(); index++){
 				Element child = (Element)nodes.item(index);
 
+				if(child == null) continue;
+				
 				try{
 					MetaObject item = new MetaObject();
+					
 					item.setName(XMLUtils.getValue(child, "name"));
 					item.setPath(XMLUtils.getValue(child, "path"));
 					item.setType(
@@ -253,6 +256,9 @@ public class Metadata implements Cloneable {
 					);
 					value = XMLUtils.getValue(child, "size");
 					item.setSize((value == null) ? -1 : Integer.parseInt(value));
+					
+					value = XMLUtils.getValue(child, "ignore");
+					item.setIgnore((value == null) ? false : Boolean.parseBoolean(value));
 
 					// Add to the meta-data only if it must be displayed and is relevant to the use case;
 					if((item.getSize() != -1) && (item.getPath().startsWith("social.media.internal.metadata.mapping.") == false)){

@@ -45,7 +45,7 @@ public class DataSiftConnectionPropertiesView extends ConnectionPropertiesPanel 
 	 */
 	private static final long serialVersionUID = 8926936146403943618L;
 
-	private JTextField userIdTextField = new JTextField();
+	private JTextField usernameTextField = new JTextField();
 
 	private JTextField apiKeyTextField = new JTextField();
 
@@ -89,20 +89,20 @@ public class DataSiftConnectionPropertiesView extends ConnectionPropertiesPanel 
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					String connectionName = connectionNameTextField.getText();
-					String userId = userIdTextField.getText();
+					String username = usernameTextField.getText();
 					String apiKey = apiKeyTextField.getText();
 					String streamHash = streamHashTextField.getText();
 					String streamConsumerType = streamConsumerTypeTextField.getText();
 
 					try {
-						if((connectionName == null && userId == null) || connectionName.isEmpty()){
+						if((connectionName == null && username == null) || connectionName.isEmpty()){
 							JOptionPane.showMessageDialog(rootPanel, AppMessages.ERROR_INVALID_CONNECTION);
 							return;
 						}
 						else {
 							DataSiftConnectionProperties connection = new DataSiftConnectionProperties();
 							connection.setName(connectionName);
-							connection.setUserId(userId);
+							connection.setUsername(username);
 							connection.setApiKey(apiKey);
 							connection.setStreamHash(streamHash);
 							connection.setStreamConsumerType(streamConsumerType);
@@ -136,12 +136,12 @@ public class DataSiftConnectionPropertiesView extends ConnectionPropertiesPanel 
 		label.setLabelFor(identityComboBox);
 		panel.add(identityComboBox);
 
-		label = new JLabel("User Id", JLabel.LEADING);
+		label = new JLabel("Username", JLabel.LEADING);
 		label.setPreferredSize(new Dimension(150, 24));
 		panel.add(label);
-		userIdTextField.setPreferredSize(new Dimension(300, 24));
-		label.setLabelFor(userIdTextField);
-		panel.add(userIdTextField);
+		usernameTextField.setPreferredSize(new Dimension(300, 24));
+		label.setLabelFor(usernameTextField);
+		panel.add(usernameTextField);
 
 		label = new JLabel("Api Key", JLabel.LEADING);
 		label.setPreferredSize(new Dimension(150, 24));
@@ -190,7 +190,7 @@ public class DataSiftConnectionPropertiesView extends ConnectionPropertiesPanel 
 			if(identityComboBox != null)			identityComboBox.setSelectedItem(provider);
 
 			connectionNameTextField.setText(connection.getName());
-			userIdTextField.setText(connection.getUserId());
+			usernameTextField.setText(connection.getUsername());
 			apiKeyTextField.setText(connection.getApiKey());
 			streamHashTextField.setText(connection.getStreamHash());
 			streamConsumerTypeTextField.setText(connection.getStreamConsumerType());
@@ -199,7 +199,7 @@ public class DataSiftConnectionPropertiesView extends ConnectionPropertiesPanel 
 
 	public void resetFields() {
 		connectionNameTextField.setText("");
-		userIdTextField.setText("");
+		usernameTextField.setText("");
 		apiKeyTextField.setText("");
 		streamHashTextField.setText("");
 		streamConsumerTypeTextField.setText("");
