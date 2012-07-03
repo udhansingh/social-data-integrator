@@ -17,6 +17,7 @@
 package org.onesun.smc.app;
 
 import java.io.File;
+import java.net.Authenticator;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
@@ -39,7 +40,8 @@ import org.onesun.smc.api.FilterFactory;
 import org.onesun.smc.api.ProviderFactory;
 import org.onesun.smc.api.TaskletsFactory;
 import org.onesun.smc.core.model.Tasklet;
-import org.onesun.smc.core.services.auth.Authenticator;
+import org.onesun.smc.core.services.auth.OAuthenticator;
+import org.onesun.smc.core.tools.ProxyAuthenticator;
 
 public class AppCommons {
 	private static Logger 								logger 								= Logger.getLogger(AppCommons.class);
@@ -58,7 +60,7 @@ public class AppCommons {
 	public static String 								APPLICATION_TITLE					= "Social Data Integrator";
 	public static String 								AUTHENTICATION						= "NONE";
 	public static int 									HTTP_CONNECTION_TIMEOUT				= 1000 * 25;
-	public static Authenticator 						AUTHENTICATOR						= null;
+	public static OAuthenticator 						AUTHENTICATOR						= null;
 	public static Object 								RESPONSE_OBJECT						= null;
 	public static String								PATH_TO_APP_HOME					= null;
 	public static String 								PATH_TO_WORK						= null;
@@ -228,7 +230,7 @@ public class AppCommons {
 		// Authenticator.setWebBrowser(new SystemWebBrowser());
 		
 // /*		
-		Authenticator.setWebBrowser(new EmbeddedWebBrowser("Authorize Application", new LocationChangeHandler() {
+		OAuthenticator.setWebBrowser(new EmbeddedWebBrowser("Authorize Application", new LocationChangeHandler() {
 			@Override
 			public boolean execute(String url) {
 					return AUTHENTICATOR.getAccessKeys(url);
@@ -291,19 +293,21 @@ public class AppCommons {
 	}
 	
 	public static void setup() {
-/*		if(IS_HTTP_PROXY_ENABLED == true){
+		if(IS_HTTP_PROXY_ENABLED == true){
+			ProxyAuthenticator pa = new ProxyAuthenticator(HTTP_PROXY_USERNAME, HTTP_PROXY_PASSWORD);
+			Authenticator.setDefault(pa);
+			
 			// HTTP Proxy
 			System.setProperty("http.proxySet", "true");
 			System.getProperties().put("http.proxyHost", HTTP_PROXY_HOST);
-			System.getProperties().put("http.proxyPort", HTTP_PROXY_PORT);
-			
+			System.getProperties().put("http.proxyPort", Integer.toString(HTTP_PROXY_PORT));
 			// HTTPS Proxy
 			System.setProperty("https.proxySet", "true");
 			System.getProperties().put("https.proxyHost", HTTP_PROXY_HOST);
-			System.getProperties().put("https.proxyPort", HTTP_PROXY_PORT);
-		}*/
+			System.getProperties().put("https.proxyPort", Integer.toString(HTTP_PROXY_PORT));
+		}
 		
-		CALLBACK_URL = Authenticator.initialize(
+		CALLBACK_URL = OAuthenticator.initialize(
 			OAUTH_CALLBACK_SERVER_PROTOCOL, 
 			OAUTH_CALLBACK_SERVER_NAME, 
 			OAUTH_CALLBACK_SERVER_PORT, 

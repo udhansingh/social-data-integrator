@@ -16,17 +16,14 @@
  */
 package org.onesun.smc.core.listeners;
 
-import java.net.Authenticator;
 import java.util.Map;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.onesun.smc.api.ConnectionProperties;
 import org.onesun.smc.api.ServiceProvider;
 import org.onesun.smc.api.SocialMediaProvider;
 import org.onesun.smc.core.connection.properties.SocialMediaConnectionProperties;
 import org.onesun.smc.core.resources.RESTResource;
-import org.onesun.smc.core.tools.ProxyAuthenticator;
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.model.OAuthRequest;
 import org.scribe.model.Request;
@@ -47,20 +44,6 @@ public class RestListener {
 	private Integer responseCode = -1;
 	private String responseBody = null;
 	private ServiceProvider serviceProvider = null;
-	
-	private Boolean httpProxyEnabled = false;
-	
-	private String httpProxyUsername = null;
-	private String httpProxyPassword = null;
-	private String httpProxyHost = null;
-	private Integer httpProxyPort = -1;
-	
-	public void setHttpProxyProperties(String httpProxyHost, Integer httpProxyPort, String httpProxyUsername, String httpProxyPassword){
-		this.httpProxyHost = httpProxyHost;
-		this.httpProxyPort = httpProxyPort;
-		this.httpProxyUsername = httpProxyUsername;
-		this.httpProxyPassword = httpProxyPassword;
-	}
 	
 	public RestListener(ServiceProvider serviceProvider, RESTResource resource, String authentication){
 		// Generic
@@ -130,22 +113,6 @@ public class RestListener {
 			request = new Request(resource.getVerb(), url);
 		}
 		
-		if(httpProxyEnabled == true){
-//			ProxyAuthenticator pa = new ProxyAuthenticator(httpProxyUsername, httpProxyPassword);
-//			Authenticator.setDefault(pa);
-			
-			// HTTP Proxy
-			System.setProperty("http.proxySet", "true");
-			System.getProperties().put("http.proxyHost", httpProxyHost);
-			System.getProperties().put("http.proxyPort", Integer.toString(httpProxyPort));
-			// HTTPS Proxy
-			System.setProperty("https.proxySet", "true");
-			System.getProperties().put("https.proxyHost", httpProxyHost);
-			System.getProperties().put("https.proxyPort", Integer.toString(httpProxyPort));
-			
-			String encoded = new String(Base64.encodeBase64((httpProxyUsername + ":" + httpProxyPassword).getBytes()));
-			request.addHeader("Proxy-Authorization", encoded);
-		}
 		try{
 			// Process Request Headers
 			Map<String, String> headers = resource.getHeaders();
@@ -200,13 +167,5 @@ public class RestListener {
 
 	public void setAccessToken(Token accessToken) {
 		this.accessToken = accessToken;
-	}
-
-	public Boolean isHttpProxyEnabled() {
-		return httpProxyEnabled;
-	}
-
-	public void setHttpProxyEnabled(Boolean httpProxyEnabled) {
-		this.httpProxyEnabled = httpProxyEnabled;
 	}
 }

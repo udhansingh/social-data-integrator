@@ -19,7 +19,7 @@ package org.onesun.smc.tests;
 import org.onesun.smc.api.ProviderFactory;
 import org.onesun.smc.api.SocialMediaProvider;
 import org.onesun.smc.core.connection.properties.SocialMediaConnectionProperties;
-import org.onesun.smc.core.services.auth.Authenticator;
+import org.onesun.smc.core.services.auth.OAuthenticator;
 import org.scribe.model.Token;
 
 public class TestAuthenticator {
@@ -58,7 +58,7 @@ public class TestAuthenticator {
 			
 			if(provider == null) return;
 			
-			Authenticator authenticator = new Authenticator(provider, cp, timeout);
+			OAuthenticator authenticator = new OAuthenticator(provider, cp, timeout);
 			authenticator.authorize();
 
 			Token accessToken = authenticator.getAccessToken();

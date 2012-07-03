@@ -55,7 +55,7 @@ import org.onesun.smc.app.AppCommonsUI;
 import org.onesun.smc.app.AppMessages;
 import org.onesun.smc.core.connection.properties.SocialMediaConnectionProperties;
 import org.onesun.smc.core.resources.RESTResource;
-import org.onesun.smc.core.services.auth.Authenticator;
+import org.onesun.smc.core.services.auth.OAuthenticator;
 import org.scribe.exceptions.OAuthException;
 import org.scribe.model.Token;
 
@@ -261,7 +261,7 @@ public class SocialMediaConnectionPropertiesView extends ConnectionPropertiesPan
 				connection.setIdentity(providerName);
 				connection.toScopeList(scope);
 
-				AppCommons.AUTHENTICATOR = new Authenticator(entry, connection, AppCommons.HTTP_CONNECTION_TIMEOUT);
+				AppCommons.AUTHENTICATOR = new OAuthenticator(entry, connection, AppCommons.HTTP_CONNECTION_TIMEOUT);
 
 				try {
 					AppCommons.AUTHENTICATOR.authorize();
