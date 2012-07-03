@@ -14,7 +14,7 @@
    limitations under the License.
 
  */
-package org.onesun.smc.core.listeners;
+package org.onesun.smc.core.client;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -56,7 +56,7 @@ import org.onesun.smc.core.services.handler.DataHandler;
 import com.sun.org.apache.xerces.internal.util.URI;
 import com.sun.org.apache.xerces.internal.util.URI.MalformedURIException;
 
-public class GnipStreamingListener {
+public class GnipStreamingClient {
 	private static final String ENCODING								= "UTF-8";
 
 	private Object requestObject = null;
@@ -69,7 +69,7 @@ public class GnipStreamingListener {
 	private DataHandler dataHandler = null;
 	private ConnectionHandler connectionHandler = null;
 	
-	public GnipStreamingListener(DataHandler datahandler, ConnectionHandler connectionHandler){
+	public GnipStreamingClient(DataHandler datahandler, ConnectionHandler connectionHandler){
 		this.dataHandler = datahandler;
 		this.connectionHandler = connectionHandler;
 	}

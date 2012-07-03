@@ -40,9 +40,9 @@ import org.onesun.smc.app.AppCommonsUI;
 import org.onesun.smc.app.AppIcons;
 import org.onesun.smc.app.handlers.RequestUpdateHandler;
 import org.onesun.smc.app.views.dialogs.SetterDialog;
+import org.onesun.smc.core.client.KapowStreamingClient;
 import org.onesun.smc.core.connection.properties.KapowConnectionProperties;
 import org.onesun.smc.core.connection.properties.WebConnectionProperties;
-import org.onesun.smc.core.listeners.KapowStreamingListener;
 import org.onesun.smc.core.metadata.FilterMetadata;
 import org.onesun.smc.core.providers.web.kapow.KapowObject;
 import org.onesun.smc.core.resources.WebResource;
@@ -79,7 +79,7 @@ public class KapowDataAccessView extends AbstractDataAccessView {
 		return this;
 	}
 
-	private KapowStreamingListener executor = new KapowStreamingListener(
+	private KapowStreamingClient executor = new KapowStreamingClient(
 			new DataHandler() {
 				@Override
 				public void flush(Object object) {

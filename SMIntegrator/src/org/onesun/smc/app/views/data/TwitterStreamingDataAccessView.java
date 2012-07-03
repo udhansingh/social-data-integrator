@@ -41,8 +41,8 @@ import org.onesun.smc.app.AppCommons;
 import org.onesun.smc.app.AppCommonsUI;
 import org.onesun.smc.app.handlers.RequestUpdateHandler;
 import org.onesun.smc.app.views.dialogs.SetterDialog;
+import org.onesun.smc.core.client.TwitterStreamingClient;
 import org.onesun.smc.core.connection.properties.TwitterStreamingConnectionProperties;
-import org.onesun.smc.core.listeners.TwitterStreamingListener;
 import org.onesun.smc.core.metadata.FilterMetadata;
 import org.onesun.smc.core.model.Parameter;
 import org.onesun.smc.core.resources.StreamingResource;
@@ -74,7 +74,7 @@ public class TwitterStreamingDataAccessView extends AbstractDataAccessView {
 		return this;
 	}
 
-	private TwitterStreamingListener executor = new TwitterStreamingListener(
+	private TwitterStreamingClient executor = new TwitterStreamingClient(
 			new DataHandler() {
 				@Override
 				public void flush(Object object) {

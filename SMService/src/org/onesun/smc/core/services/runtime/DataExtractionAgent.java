@@ -12,12 +12,12 @@ import org.onesun.smc.api.DataReader;
 import org.onesun.smc.api.DataService;
 import org.onesun.smc.api.ProviderFactory;
 import org.onesun.smc.api.ServiceProvider;
+import org.onesun.smc.core.client.KapowStreamingClient;
+import org.onesun.smc.core.client.RESTClient;
 import org.onesun.smc.core.connection.properties.KapowConnectionProperties;
 import org.onesun.smc.core.data.reader.FacetedDataReader;
 import org.onesun.smc.core.data.reader.JSONDataReader;
 import org.onesun.smc.core.data.reader.XMLDataReader;
-import org.onesun.smc.core.listeners.KapowStreamingListener;
-import org.onesun.smc.core.listeners.RestListener;
 import org.onesun.smc.core.metadata.FilterMetadata;
 import org.onesun.smc.core.metadata.Metadata;
 import org.onesun.smc.core.model.DataObject;
@@ -55,7 +55,7 @@ public class DataExtractionAgent {
 		if(cp.getAuthentication().compareTo("KAPOW") == 0){
 			WebResource resource = (WebResource)((WebResource)tasklet.getResource()).clone();
 			
-			KapowStreamingListener listener = new KapowStreamingListener(
+			KapowStreamingClient listener = new KapowStreamingClient(
 					new DataHandler() {
 						@Override
 						public void flush(Object object) {
@@ -155,7 +155,7 @@ public class DataExtractionAgent {
 				resource.setPayload(payload);
 			}
 			
-			RestListener listener = new RestListener(provider, resource, cp.getAuthentication());
+			RESTClient listener = new RESTClient(provider, resource, cp.getAuthentication());
 			listener.setConnection(cp);
 			
 			listener.execute();

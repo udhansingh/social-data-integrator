@@ -36,8 +36,8 @@ import org.onesun.smc.app.AppCommons;
 import org.onesun.smc.app.AppCommonsUI;
 import org.onesun.smc.app.handlers.RequestUpdateHandler;
 import org.onesun.smc.app.views.dialogs.SetterDialog;
+import org.onesun.smc.core.client.GnipStreamingClient;
 import org.onesun.smc.core.connection.properties.GnipConnectionProperties;
-import org.onesun.smc.core.listeners.GnipStreamingListener;
 import org.onesun.smc.core.metadata.FilterMetadata;
 import org.onesun.smc.core.resources.StreamingResource;
 import org.onesun.smc.core.services.handler.ConnectionHandler;
@@ -154,7 +154,7 @@ public class GnipDataAccessView extends AbstractDataAccessView {
 	protected void postInit(){
 	}
 	
-	private GnipStreamingListener executor = new GnipStreamingListener(
+	private GnipStreamingClient executor = new GnipStreamingClient(
 			new DataHandler() {
 				@Override
 				public void flush(Object object) {

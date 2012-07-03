@@ -47,7 +47,7 @@ import org.onesun.smc.app.AppCommonsUI;
 import org.onesun.smc.app.AppMessages;
 import org.onesun.smc.app.handlers.RequestUpdateHandler;
 import org.onesun.smc.app.views.dialogs.SetterDialog;
-import org.onesun.smc.core.listeners.RestListener;
+import org.onesun.smc.core.client.RESTClient;
 import org.onesun.smc.core.metadata.FilterMetadata;
 import org.onesun.smc.core.model.Parameter;
 import org.onesun.smc.core.resources.RESTResource;
@@ -249,7 +249,7 @@ public class SocialMediaDataAccessView extends AbstractDataAccessView {
 				
 				ServiceProvider provider = ProviderFactory.getProvider(cp.getIdentity().toLowerCase(), "SOCIAL_MEDIA");
 				
-				RestListener listener = new RestListener(provider, clone, AppCommons.AUTHENTICATION);
+				RESTClient listener = new RESTClient(provider, clone, AppCommons.AUTHENTICATION);
 				listener.setConnection(cp);
 				if(AppCommons.AUTHENTICATION.compareTo("OAUTH") == 0 && AppCommons.AUTHENTICATOR != null){
 					listener.setOAuthService(AppCommons.AUTHENTICATOR.getService());
