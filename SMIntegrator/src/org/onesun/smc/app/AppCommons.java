@@ -81,11 +81,6 @@ public class AppCommons {
 	public static WebBrowser							WEB_BROWSER							= null;
 	public static String								CALLBACK_URL						= null;
 	public static ProxyConfiguration					PROXY_CONFIGURATION					= new ProxyConfiguration();
-//	public static Boolean								IS_HTTP_PROXY_ENABLED				= false;
-//	public static String								HTTP_PROXY_HOST						= "";
-//	public static Integer								HTTP_PROXY_PORT						= 80;
-//	public static String								HTTP_PROXY_USERNAME					= "";
-//	public static String								HTTP_PROXY_PASSWORD					= "";
 	public static ConfigurationHelper					CONFIGURATION_HELPER				= new ConfigurationHelper();
 	private static Map<String, Boolean> 				enabledFeaturesMap					= new HashMap<String, Boolean>();
 	
@@ -297,7 +292,7 @@ public class AppCommons {
 	
 	public static void setup() {
 		if(PROXY_CONFIGURATION.isEnabled() == true){
-			ProxyAuthenticator pa = new ProxyAuthenticator(PROXY_CONFIGURATION);
+			ProxyAuthenticator pa = new ProxyAuthenticator(PROXY_CONFIGURATION.getUsername(), PROXY_CONFIGURATION.getPassword());
 			Authenticator.setDefault(pa);
 			
 			// HTTP Proxy
