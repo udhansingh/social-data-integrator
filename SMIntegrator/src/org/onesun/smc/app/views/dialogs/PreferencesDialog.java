@@ -229,7 +229,7 @@ public class PreferencesDialog extends AbstractDialog {
 		label = new JLabel("Enable Proxy", JLabel.LEADING);
 		label.setPreferredSize(new Dimension(150, 24));
 		panel.add(label);
-		enableProxyCheckBox.setSelected(AppCommons.IS_HTTP_PROXY_ENABLED);
+		enableProxyCheckBox.setSelected(AppCommons.PROXY_CONFIGURATION.isEnabled());
 		enableProxyCheckBox.setPreferredSize(new Dimension(250, 24));
 		label.setLabelFor(enableProxyCheckBox);
 		panel.add(enableProxyCheckBox);
@@ -237,7 +237,7 @@ public class PreferencesDialog extends AbstractDialog {
 		label = new JLabel("Hostname", JLabel.LEADING);
 		label.setPreferredSize(new Dimension(150, 24));
 		panel.add(label);
-		httpProxyHostnameTextField.setText(AppCommons.HTTP_PROXY_HOST);
+		httpProxyHostnameTextField.setText(AppCommons.PROXY_CONFIGURATION.getHostname());
 		httpProxyHostnameTextField.setPreferredSize(new Dimension(250, 24));
 		label.setLabelFor(httpProxyHostnameTextField);
 		panel.add(httpProxyHostnameTextField);
@@ -245,7 +245,7 @@ public class PreferencesDialog extends AbstractDialog {
 		label = new JLabel("Port Number", JLabel.LEADING);
 		label.setPreferredSize(new Dimension(150, 24));
 		panel.add(label);
-		httpProxyPortTextField.setText(Integer.toString(AppCommons.HTTP_PROXY_PORT));
+		httpProxyPortTextField.setText(Integer.toString(AppCommons.PROXY_CONFIGURATION.getPort()));
 		httpProxyPortTextField.setPreferredSize(new Dimension(250, 24));
 		label.setLabelFor(httpProxyPortTextField);
 		panel.add(httpProxyPortTextField);
@@ -253,7 +253,7 @@ public class PreferencesDialog extends AbstractDialog {
 		label = new JLabel("Username", JLabel.LEADING);
 		label.setPreferredSize(new Dimension(150, 24));
 		panel.add(label);
-		httpProxyUsernameTextField.setText(AppCommons.HTTP_PROXY_USERNAME);
+		httpProxyUsernameTextField.setText(AppCommons.PROXY_CONFIGURATION.getUsername());
 		httpProxyUsernameTextField.setPreferredSize(new Dimension(250, 24));
 		label.setLabelFor(httpProxyUsernameTextField);
 		panel.add(httpProxyUsernameTextField);
@@ -261,7 +261,7 @@ public class PreferencesDialog extends AbstractDialog {
 		label = new JLabel("Pasword", JLabel.LEADING);
 		label.setPreferredSize(new Dimension(150, 24));
 		panel.add(label);
-		httpProxyPasswordTextField.setText(AppCommons.HTTP_PROXY_PASSWORD);
+		httpProxyPasswordTextField.setText(AppCommons.PROXY_CONFIGURATION.getPassword());
 		httpProxyPasswordTextField.setPreferredSize(new Dimension(250, 24));
 		label.setLabelFor(httpProxyPasswordTextField);
 		panel.add(httpProxyPasswordTextField);
@@ -304,19 +304,19 @@ public class PreferencesDialog extends AbstractDialog {
 		
 		// Proxy Server Settings
 		String httpProxyEnabled = enableProxyCheckBox.getText().trim();
-		httpProxyEnabled = (httpProxyEnabled != null && httpProxyEnabled.length() > 0) ? httpProxyEnabled : Boolean.toString(AppCommons.IS_HTTP_PROXY_ENABLED);
+		httpProxyEnabled = (httpProxyEnabled != null && httpProxyEnabled.length() > 0) ? httpProxyEnabled : Boolean.toString(AppCommons.PROXY_CONFIGURATION.isEnabled());
 		
 		String httpProxyHostname = httpProxyHostnameTextField.getText().trim();
-		httpProxyHostname = (httpProxyHostname != null && httpProxyHostname.length() > 0) ? httpProxyHostname : AppCommons.HTTP_PROXY_HOST;
+		httpProxyHostname = (httpProxyHostname != null && httpProxyHostname.length() > 0) ? httpProxyHostname : AppCommons.PROXY_CONFIGURATION.getHostname();
 		
 		String httpProxyPort = httpProxyPortTextField.getText().trim();
-		httpProxyPort = (httpProxyPort != null && httpProxyPort.length() > 0) ? httpProxyPort : Integer.toString(AppCommons.HTTP_PROXY_PORT);
+		httpProxyPort = (httpProxyPort != null && httpProxyPort.length() > 0) ? httpProxyPort : Integer.toString(AppCommons.PROXY_CONFIGURATION.getPort());
 		
 		String httpProxyUsername = httpProxyUsernameTextField.getText().trim();
-		httpProxyUsername = (httpProxyUsername != null && httpProxyUsername.length() > 0) ? httpProxyUsername : AppCommons.HTTP_PROXY_USERNAME;
+		httpProxyUsername = (httpProxyUsername != null && httpProxyUsername.length() > 0) ? httpProxyUsername : AppCommons.PROXY_CONFIGURATION.getUsername();
 		
 		String httpProxyPassword = httpProxyPasswordTextField.getText().trim();
-		httpProxyPassword = (httpProxyPassword != null && httpProxyPassword.length() > 0) ? httpProxyPassword : AppCommons.HTTP_PROXY_PASSWORD;
+		httpProxyPassword = (httpProxyPassword != null && httpProxyPassword.length() > 0) ? httpProxyPassword : AppCommons.PROXY_CONFIGURATION.getPassword();
 
 		
 		AppCommons.HTTP_CONNECTION_TIMEOUT				= timeout;
@@ -327,11 +327,11 @@ public class PreferencesDialog extends AbstractDialog {
 		AppCommons.UCLASSIFY_READ_ACCESS_KEY			= uclassifyLicense;
 		AppCommons.OPENCALAIS_LICENSE_KEY				= openCalaisLicense;
 		
-		AppCommons.IS_HTTP_PROXY_ENABLED				= Boolean.parseBoolean(httpProxyEnabled);
-		AppCommons.HTTP_PROXY_HOST					= httpProxyHostname;
-		AppCommons.HTTP_PROXY_PORT						= Integer.parseInt(httpProxyPort);
-		AppCommons.HTTP_PROXY_USERNAME					= httpProxyUsername;
-		AppCommons.HTTP_PROXY_PASSWORD					= httpProxyPassword;
+		AppCommons.PROXY_CONFIGURATION.setEnabled(Boolean.parseBoolean(httpProxyEnabled));
+		AppCommons.PROXY_CONFIGURATION.setHostname(httpProxyHostname);
+		AppCommons.PROXY_CONFIGURATION.setPort(Integer.parseInt(httpProxyPort));
+		AppCommons.PROXY_CONFIGURATION.setUsername(httpProxyUsername);
+		AppCommons.PROXY_CONFIGURATION.setPassword(httpProxyPassword);
 		 
 		AppCommons.saveConfiguration();
 		

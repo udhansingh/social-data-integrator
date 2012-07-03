@@ -28,6 +28,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.onesun.smc.api.ConnectionProperties;
+import org.onesun.smc.api.ProxyConfiguration;
 import org.onesun.smc.core.connection.properties.KapowConnectionProperties;
 import org.onesun.smc.core.model.DataObject;
 import org.onesun.smc.core.services.handler.ConnectionHandler;
@@ -38,6 +39,7 @@ import com.kapowtech.robosuite.api.java.repository.construct.InputAttribute;
 import com.kapowtech.robosuite.api.java.repository.construct.InputObject;
 import com.kapowtech.robosuite.api.java.repository.construct.RoboServer;
 import com.kapowtech.robosuite.api.java.repository.construct.RobotSignature;
+import com.kapowtech.robosuite.api.java.repository.engine.ProxyServerConfiguration;
 import com.kapowtech.robosuite.api.java.repository.engine.RepositoryClient;
 import com.kapowtech.robosuite.api.java.repository.engine.RepositoryClientException;
 import com.kapowtech.robosuite.api.java.repository.engine.RepositoryClientFactory;
@@ -65,7 +67,8 @@ public class KapowStreamingClient {
 	
 	private String									inputTypeName		= null;
 	private Map<String, String> 					inputAttributes		= null;
-
+	private ProxyConfiguration						proxyConfiguration	= null;
+	
 	public KapowStreamingClient(DataHandler datahandler, ConnectionHandler connectionHandler){
 		this.dataHandler = datahandler;
 		this.connectionHandler = connectionHandler;
@@ -236,7 +239,14 @@ public class KapowStreamingClient {
 					RepositoryClient repositoryClient = null;
 					RobotSignature robotSignature = null;
 					try {
-						repositoryClient = RepositoryClientFactory.createRepositoryClient(url, username, password);
+						if(proxyConfiguration != null && proxyConfiguration.isEnabled() == true){
+							ProxyServerConfiguration psc = new ProxyServerConfiguration(proxyConfiguration.getHostname(), proxyConfiguration.getPort(), 
+									proxyConfiguration.getUsername(), proxyConfiguration.getPassword());
+							
+							repositoryClient = RepositoryClientFactory.createRepositoryClient(url, username, password, psc);
+						}else {
+							repositoryClient = RepositoryClientFactory.createRepositoryClient(url, username, password);
+						}
 						robotSignature = repositoryClient.getRobotSignature(projectName, robotName);
 					} catch (RepositoryClientException e) {
 						logger.error("RepositoryClientException: while creating client " + e.getMessage());
@@ -558,5 +568,9 @@ public class KapowStreamingClient {
 
 	public void setInputAttributes(Map<String, String> inputAttributes) {
 		this.inputAttributes = inputAttributes;
+	}
+
+	public void setProxyConfiguration(ProxyConfiguration proxyConfiguration) {
+		this.proxyConfiguration = proxyConfiguration;
 	}
 }

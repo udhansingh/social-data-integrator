@@ -195,6 +195,9 @@ public class KapowDataAccessView extends AbstractDataAccessView {
 					
 					DefaultCusor.startWaitCursor(rootPanel);
 					
+					if(AppCommons.PROXY_CONFIGURATION != null && AppCommons.PROXY_CONFIGURATION.isEnabled() == true){
+						executor.setProxyConfiguration(AppCommons.PROXY_CONFIGURATION);
+					}
 					executor.setConnectionProperties((KapowConnectionProperties) AppCommons.TASKLET.getConnectionProperties());
 					// TODO: Set the right parameters for Kapow
 					executor.setProjectName(null);

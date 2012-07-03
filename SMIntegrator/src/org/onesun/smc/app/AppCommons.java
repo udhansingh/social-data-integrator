@@ -38,6 +38,7 @@ import org.onesun.smc.api.DataServicesFactory;
 import org.onesun.smc.api.DataTypeFactory;
 import org.onesun.smc.api.FilterFactory;
 import org.onesun.smc.api.ProviderFactory;
+import org.onesun.smc.api.ProxyConfiguration;
 import org.onesun.smc.api.TaskletsFactory;
 import org.onesun.smc.core.model.Tasklet;
 import org.onesun.smc.core.services.auth.OAuthenticator;
@@ -79,11 +80,12 @@ public class AppCommons {
 	public static String 								OPENCALAIS_LICENSE_KEY				= null;
 	public static WebBrowser							WEB_BROWSER							= null;
 	public static String								CALLBACK_URL						= null;
-	public static Boolean								IS_HTTP_PROXY_ENABLED				= false;
-	public static String								HTTP_PROXY_HOST						= "";
-	public static Integer								HTTP_PROXY_PORT						= 80;
-	public static String								HTTP_PROXY_USERNAME					= "";
-	public static String								HTTP_PROXY_PASSWORD					= "";
+	public static ProxyConfiguration					PROXY_CONFIGURATION					= new ProxyConfiguration();
+//	public static Boolean								IS_HTTP_PROXY_ENABLED				= false;
+//	public static String								HTTP_PROXY_HOST						= "";
+//	public static Integer								HTTP_PROXY_PORT						= 80;
+//	public static String								HTTP_PROXY_USERNAME					= "";
+//	public static String								HTTP_PROXY_PASSWORD					= "";
 	public static ConfigurationHelper					CONFIGURATION_HELPER				= new ConfigurationHelper();
 	private static Map<String, Boolean> 				enabledFeaturesMap					= new HashMap<String, Boolean>();
 	
@@ -200,20 +202,21 @@ public class AppCommons {
 			OAUTH_CALLBACK_SERVER_CONTEXT = (propertyValue != null && propertyValue.trim().length() > 0) ? propertyValue : OAUTH_CALLBACK_SERVER_CONTEXT;
 
 			// Proxy Settings
+			
 			propertyValue = (String)properties.get("http.proxy.enabled");
-			IS_HTTP_PROXY_ENABLED = (propertyValue != null && propertyValue.trim().length() > 0) ? Boolean.parseBoolean(propertyValue) : IS_HTTP_PROXY_ENABLED;
+			PROXY_CONFIGURATION.setEnabled((propertyValue != null && propertyValue.trim().length() > 0) ? Boolean.parseBoolean(propertyValue) : false);
 			
 			propertyValue = (String)properties.get("http.proxy.host");
-			HTTP_PROXY_HOST = (propertyValue != null && propertyValue.trim().length() > 0) ? propertyValue : HTTP_PROXY_HOST;
+			PROXY_CONFIGURATION.setHostname((propertyValue != null && propertyValue.trim().length() > 0) ? propertyValue : "");
 
 			propertyValue = (String)properties.get("http.proxy.port");
-			HTTP_PROXY_PORT = (propertyValue != null && propertyValue.trim().length() > 0) ? Integer.parseInt(propertyValue) : HTTP_PROXY_PORT;
+			PROXY_CONFIGURATION.setPort((propertyValue != null && propertyValue.trim().length() > 0) ? Integer.parseInt(propertyValue) : -1);
 			
 			propertyValue = (String)properties.get("http.proxy.username");
-			HTTP_PROXY_USERNAME = (propertyValue != null && propertyValue.trim().length() > 0) ? propertyValue : HTTP_PROXY_USERNAME;
+			PROXY_CONFIGURATION.setUsername((propertyValue != null && propertyValue.trim().length() > 0) ? propertyValue : "");
 			
 			propertyValue = (String)properties.get("http.proxy.password");
-			HTTP_PROXY_PASSWORD = (propertyValue != null && propertyValue.trim().length() > 0) ? propertyValue : HTTP_PROXY_PASSWORD;
+			PROXY_CONFIGURATION.setPassword((propertyValue != null && propertyValue.trim().length() > 0) ? propertyValue : "");
 
 			// License Settings
 			propertyValue = (String)properties.get("text.analysis.license.uclassify");
@@ -277,11 +280,11 @@ public class AppCommons {
 		properties.put("oauth.callback.server.port",		Integer.toString(OAUTH_CALLBACK_SERVER_PORT));
 		properties.put("oauth.callback.server.context",		OAUTH_CALLBACK_SERVER_CONTEXT);
 		
-		properties.put("http.proxy.enabled",				Boolean.toString(IS_HTTP_PROXY_ENABLED));
-		properties.put("http.proxy.host",					HTTP_PROXY_HOST);
-		properties.put("http.proxy.port",					Integer.toString(HTTP_PROXY_PORT));
-		properties.put("http.proxy.username",				HTTP_PROXY_USERNAME);
-		properties.put("http.proxy.password",				HTTP_PROXY_PASSWORD);
+		properties.put("http.proxy.enabled",				Boolean.toString(PROXY_CONFIGURATION.isEnabled()));
+		properties.put("http.proxy.host",					PROXY_CONFIGURATION.getHostname());
+		properties.put("http.proxy.port",					Integer.toString(PROXY_CONFIGURATION.getPort()));
+		properties.put("http.proxy.username",				PROXY_CONFIGURATION.getUsername());
+		properties.put("http.proxy.password",				PROXY_CONFIGURATION.getPassword());
 		
 		if(ALL_FEATURES_ENABLED == true || isFeatureEnabled(FEATURE_DATA_SERVICES) ){
 			properties.put("text.analysis.license.uclassify",	(UCLASSIFY_READ_ACCESS_KEY == null) ? "" : UCLASSIFY_READ_ACCESS_KEY);
@@ -293,18 +296,18 @@ public class AppCommons {
 	}
 	
 	public static void setup() {
-		if(IS_HTTP_PROXY_ENABLED == true){
-			ProxyAuthenticator pa = new ProxyAuthenticator(HTTP_PROXY_USERNAME, HTTP_PROXY_PASSWORD);
+		if(PROXY_CONFIGURATION.isEnabled() == true){
+			ProxyAuthenticator pa = new ProxyAuthenticator(PROXY_CONFIGURATION);
 			Authenticator.setDefault(pa);
 			
 			// HTTP Proxy
 			System.setProperty("http.proxySet", "true");
-			System.getProperties().put("http.proxyHost", HTTP_PROXY_HOST);
-			System.getProperties().put("http.proxyPort", Integer.toString(HTTP_PROXY_PORT));
+			System.getProperties().put("http.proxyHost", PROXY_CONFIGURATION.getHostname());
+			System.getProperties().put("http.proxyPort", Integer.toString(PROXY_CONFIGURATION.getPort()));
 			// HTTPS Proxy
 			System.setProperty("https.proxySet", "true");
-			System.getProperties().put("https.proxyHost", HTTP_PROXY_HOST);
-			System.getProperties().put("https.proxyPort", Integer.toString(HTTP_PROXY_PORT));
+			System.getProperties().put("https.proxyHost", PROXY_CONFIGURATION.getHostname());
+			System.getProperties().put("https.proxyPort", Integer.toString(PROXY_CONFIGURATION.getPort()));
 		}
 		
 		CALLBACK_URL = OAuthenticator.initialize(
