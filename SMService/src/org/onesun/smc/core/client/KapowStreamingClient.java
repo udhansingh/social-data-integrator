@@ -30,7 +30,6 @@ import org.apache.log4j.Logger;
 import org.onesun.smc.api.ConnectionProperties;
 import org.onesun.smc.api.ProxyConfiguration;
 import org.onesun.smc.core.connection.properties.KapowConnectionProperties;
-import org.onesun.smc.core.model.DataObject;
 import org.onesun.smc.core.services.handler.ConnectionHandler;
 import org.onesun.smc.core.services.handler.DataHandler;
 
@@ -528,12 +527,8 @@ public class KapowStreamingClient {
 				RQLObject rqlObject = response.getOutputObject();
 				
 				if(rqlObject != null){
-					DataObject dataObject = new DataObject();
-					dataObject.setType("RQLOBJECT");
-					dataObject.setObject(rqlObject);
-
 					try {
-						dataHandler.flush(dataObject);
+						dataHandler.flush(rqlObject);
 					} catch(Exception e){
 						logger.error("Exception while flushing response from robot: " + e.getMessage());
 					}

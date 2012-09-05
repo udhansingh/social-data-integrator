@@ -35,19 +35,19 @@ public class TwitterStreamingProvider extends AbstractStreamingProvider {
 		resource.setResourceName("Filter");
 		resourseList.add(resource);
 
-		resource = new StreamingResource(Verb.POST, "https://stream.twitter.com/1/statuses/firehose.json");
+		resource = new StreamingResource(Verb.GET, "https://stream.twitter.com/1/statuses/firehose.json");
 		resource.setResourceName("FireHose");
 		resourseList.add(resource);
 
-		resource = new StreamingResource(Verb.POST, "https://stream.twitter.com/1/statuses/links.json");
-		resource.setResourceName("Links");
-		resourseList.add(resource);
+//		resource = new StreamingResource(Verb.POST, "https://stream.twitter.com/1/statuses/links.json");
+//		resource.setResourceName("Links");
+//		resourseList.add(resource);
+//		
+//		resource = new StreamingResource(Verb.POST, "https://stream.twitter.com/1/statuses/retweet.json");
+//		resource.setResourceName("Retweet");
+//		resourseList.add(resource);
 		
-		resource = new StreamingResource(Verb.POST, "https://stream.twitter.com/1/statuses/retweet.json");
-		resource.setResourceName("Retweet");
-		resourseList.add(resource);
-		
-		resource = new StreamingResource(Verb.POST, "https://stream.twitter.com/1/statuses/sample.json");
+		resource = new StreamingResource(Verb.GET, "https://stream.twitter.com/1/statuses/sample.json");
 		resource.setResourceName("Sample");
 		resourseList.add(resource);
 		

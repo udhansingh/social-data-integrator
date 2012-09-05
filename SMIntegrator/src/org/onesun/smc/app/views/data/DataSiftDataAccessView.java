@@ -32,6 +32,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.datasift.Definition;
 import org.datasift.EInvalidData;
 import org.datasift.IStreamConsumerEvents;
 import org.datasift.Interaction;
@@ -296,6 +297,7 @@ public class DataSiftDataAccessView extends AbstractDataAccessView {
 						DataSiftConnectionProperties cp = (DataSiftConnectionProperties)AppCommons.TASKLET.getConnectionProperties();
 						
 						User user = new User(cp.getUsername(), cp.getApiKey());
+	
 						consumer = user.getConsumer(StreamConsumer.TYPE_HTTP, cp.getStreamHash(), new StreamConsumerEventHandler());
 						consumer.consume();
 					} catch (Exception e) {

@@ -74,7 +74,7 @@ public class TwitterStreamingDataAccessView extends AbstractDataAccessView {
 		return this;
 	}
 
-	private TwitterStreamingClient executor = new TwitterStreamingClient(
+	private TwitterStreamingClient executor = new TwitterStreamingClient("OAUTH",
 			new DataHandler() {
 				@Override
 				public void flush(Object object) {

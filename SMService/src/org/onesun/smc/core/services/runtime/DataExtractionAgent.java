@@ -66,11 +66,13 @@ public class DataExtractionAgent {
 									if(service instanceof DBService){
 										DBService dbs = (DBService)service;
 										
-										DataObject dataObject = new DataObject();
-										dataObject.setType("RQLOBJECT");
-										dataObject.setObject(rqlObject);
+										// TODO: Revisit this when needed - Interfaces where changed on Jul 9, 2012
 										
-										dbs.write(dataObject);
+//										DataObject dataObject = new DataObject();
+//										dataObject.setType("RQLOBJECT");
+//										dataObject.setObject(rqlObject);
+//										
+//										dbs.write(dataObject);
 									}
 								}
 							}
@@ -208,7 +210,8 @@ public class DataExtractionAgent {
 						if(isCached() == true && service != null){
 							if(service instanceof DBService){
 								DBService dbs = (DBService)service;
-								dbs.write(dataObject);
+								// TODO: Revisit this when needed - Interfaces where changed on Jul 9, 2012
+								//	dbs.write(dataObject);
 							}
 						}
 					}
@@ -237,10 +240,13 @@ public class DataExtractionAgent {
 		this.service = service;
 	}
 	
-	public void init(){
+	public void init(String tableName) throws Exception {
 		if(service instanceof DBService){
-			DBService dbs = (DBService)service;
-			dbs.init();
+//			DBService dbs = (DBService)service;
+// TODO: Determine the table name;
+//			dbs.init(tableName);
+			
+			throw new Exception("TODO Pending");
 		}
 	}
 

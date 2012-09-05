@@ -41,6 +41,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
@@ -104,13 +105,14 @@ public class MetadataTableView extends JPanel {
 	private FacetedMetadata facetedMetadata = null;
 	private Metadata metadata = null;
 	private DataPreviewer dataPreviewer = null;
-
+	private MetadataPropertiesView metadataPropertiesView = new MetadataPropertiesView();
+	
 	public MetadataTableView(){
 		super();
 		
 		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
-		createControls();
+		initControls();
 
 		this.addComponentListener(new ComponentListener() {
 
@@ -138,9 +140,7 @@ public class MetadataTableView extends JPanel {
 		});
 	}
 
-	private void createControls(){
-		Dimension viewPort = new Dimension(250, 900);
-
+	private void initControls(){
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		table.setAutoscrolls(true);
 		table.setRowSelectionAllowed(false);
@@ -202,13 +202,24 @@ public class MetadataTableView extends JPanel {
 		panel = new JPanel(new SpringLayout());
 		label = new JLabel("Schema (Flattened)", JLabel.LEADING);
 		label.setPreferredSize(new Dimension(150, 24));
-		scrollPane.setPreferredSize(viewPort);
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		panel.add(label);
 		label.setLabelFor(scrollPane);
 		panel.add(scrollPane);
-		SpringLayoutUtils.makeCompactGrid(panel, 2, 1, 5, 5,	5, 5);
+		SpringLayoutUtils.makeCompactGrid(panel, 2, 1, 5, 5,	0, 0);
+		
+		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panel, metadataPropertiesView);
+		splitPane.setDividerSize(5);
+		
+		double weight = splitPane.getResizeWeight(); // 0.0 by default
+	    weight = .7D;
+	    splitPane.setResizeWeight(weight);
+	    
+	    panel = new JPanel(new SpringLayout());
+	    panel.add(splitPane);
+	    
+	    SpringLayoutUtils.makeCompactGrid(panel, 1, 1, 5, 5,	0, 0);
 		this.add(panel);
 
 		schemaFacets.addItemListener(new ItemListener() {

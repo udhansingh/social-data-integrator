@@ -1,17 +1,18 @@
 package org.onesun.smc.core.services.data;
 
+import java.math.BigInteger;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.onesun.commons.SQLUtils;
-import org.onesun.smc.core.model.DataObject;
 
 import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
 
@@ -27,7 +28,7 @@ public class MySQLDBService extends AbstractDBService {
 	}
 
 	@Override
-	public void init(){
+	public void init(String tableName){
 		try {
 			// Do not init if a connection is already obtained
 			if(connection == null){
@@ -47,65 +48,69 @@ public class MySQLDBService extends AbstractDBService {
 	}
 
 	@Override
-	public void write(DataObject dataObject){
-		if(dataObject != null && (dataObject.getType().compareTo(Map.class.getName()) == 0)){
-			@SuppressWarnings("unchecked")
-			Map<String, String> map = (Map<String, String>)dataObject.getObject();
+	public void write(String tableName, DataSet dataSet){
+		Map<String, String> metaMap = dataSet.getMetadata();
+		
+		String sql = "INSERT INTO " + tableName + " (";
+		
+		if(metaMap != null && metaMap.size() > 0) {
+			for(String key : metaMap.keySet()){
+				sql += key + ", ";
+			}
 			
-			
-			if(map != null && map.size() > 0){
-				String sql = "INSERT INTO " + tableName + " (";
+			sql = sql.substring(0, sql.length() - 2) + ")";
+		}
 				
+		List<Map<String, Object>> data = dataSet.getData();
+		
+		if(data != null && data.size() > 0){
+			// Process each row
+			for(Map<String, Object> map : data){
 				String values = " VALUES (";
+				
+				// process each column
 				for(String key : map.keySet()){
-					String[] tokens = key.split(";");
+					// Get type name
+					String type = metaMap.get(key);
+					Object object = map.get(key);
 					
-					if(tokens.length >= 2){
-						sql += tokens[0]  + ", ";
-						String value = null;
-						
-						value = map.get(key);
-						if(tokens[1].compareTo(Integer.class.getName()) == 0){
-							if(value == null || value.length() == 0){
-								value = "-1";
+					// logger.info("Processing: Key = " + key + "\t\tType =  " + type + "\t\tObject = " + object);
+					
+					// TODO: Add more support for types
+					if(type != null){
+						if(type.compareTo(Integer.class.getName()) == 0){
+							if(object != null){
+								values += (Integer)object + ", ";
+							} else {
+								values +=  "-1, ";
 							}
-							Integer intValue = Integer.parseInt(value);
-							values +=  intValue + ", ";
 						}
-						else if(tokens[1].compareTo(String.class.getName()) == 0){
-							if(value != null && value.length() > 0){
-								String escaped = StringEscapeUtils.escapeXml(value);
+						else if(type.compareTo(BigInteger.class.getName()) == 0){
+							if(object != null){
+								values += (BigInteger)object + ", ";
+							} else {
+								values +=  "-1, ";
+							}
+						}
+						else if(type.compareTo(String.class.getName()) == 0){
+							if(object != null){
+								String escaped = StringEscapeUtils.escapeXml((String)object);
 								values += SQLUtils.quote(escaped) + ", ";
 							}
 							else {
 								values += SQLUtils.quote("") + ", ";
 							}
 						}
-					} else {
-						// Default to String
-						sql += key + ", ";
-						String value = map.get(key);
-						
-						if(value != null && value.length() > 0){
-							String escaped = StringEscapeUtils.escapeXml(value);
-							values += SQLUtils.quote(escaped) + ", ";
-						}
-						else {
-							values += SQLUtils.quote("") + ", ";
-						}
 					}
-					
 				}
 				
-				sql = sql.substring(0, sql.length() - 2) + ")";
 				values = values.substring(0, values.length() - 2) + ")";
 				
-				sql += values;
-				
-//				logger.info("INSERT SQL: " + sql);
-				
 				try {
-					PreparedStatement statement = connection.prepareStatement(sql);
+					String sqlStatement = sql + values;
+					// logger.info("INSERT SQL: " + sqlStatement);
+
+					PreparedStatement statement = connection.prepareStatement(sqlStatement);
 					statement.executeUpdate();
 					statement.close();
 					
@@ -130,35 +135,57 @@ public class MySQLDBService extends AbstractDBService {
 	}
 
 	@Override
-	public List<DataObject> read(){
-		return read(-1, -1);
+	public DataSet read(String tableName){
+		return read(tableName, null, -1, -1);
 	}
 
 	@Override
-	public List<DataObject> read(int offset, int limit){
-		List<DataObject> objects = null;
-
+	public DataSet read(String tableName, List<String> columns, int offset, int limit){
+		DataSet dataSet = null;
 		String sql = "SELECT";
 
-		if(offset > -1 && limit > -1){
-			sql = "SELECT LIMIT " + offset + " " + limit;
+		// Select ALL columns by default
+		if(columns == null || (columns != null && columns.size() == 0)){
+			sql += " * FROM " + tableName;
 		}
-
-		sql += " * FROM " + tableName;
+		else {
+			sql += " " + columns.toString().replace(" ", "").replace("[", "(").replace("]", ")") + " FROM " + tableName;
+		}
+		
+		if(offset > -1 && limit > -1){
+			sql += " LIMIT " + offset + ", " + limit;
+		}
+		
 		try {
 			PreparedStatement statement = connection.prepareStatement(sql);
 			ResultSet rs = statement.executeQuery();
 
-			objects = new ArrayList<DataObject>();
+			ResultSetMetaData rsMeta = rs.getMetaData();
+			final int maxCols = rsMeta.getColumnCount();
 			
-			while(rs.next()){
-				Object o = rs.getObject("java_object");
-				String t = rs.getString("java_type");
+			
+			if(maxCols > 0){
+				dataSet = new DataSet();
 
-				DataObject dc = new DataObject();
-				dc.setType(t);
-				dc.setObject(o);
-				objects.add(dc);
+				for(int col = 1; col <= maxCols; col++){
+					String name = rsMeta.getColumnName(col);
+					String type = rsMeta.getColumnClassName(col);
+					
+					// column name, column type based on java
+					dataSet.addColumn(name, type);
+				}
+			}
+
+			while(rs.next()) {
+				Map<String, Object> datum = new ConcurrentHashMap<String, Object>();
+				
+				for(String columnName : dataSet.getColumnNames()){
+					Object o = rs.getObject(columnName);
+				
+					datum.put(columnName, o);
+				}
+				
+				dataSet.append(datum);
 			}
 
 			statement.close();
@@ -168,7 +195,7 @@ public class MySQLDBService extends AbstractDBService {
 		} finally {
 		}
 
-		return objects;
+		return dataSet;
 	}
 
 	@Override
@@ -184,7 +211,7 @@ public class MySQLDBService extends AbstractDBService {
 	}
 
 	@Override
-	public int getCount(String column) {
+	public int getCount(String tableName, String column) {
 		String sql = "SELECT count(" + column + ")";
 
 		sql += " FROM " + tableName;
@@ -192,11 +219,13 @@ public class MySQLDBService extends AbstractDBService {
 			PreparedStatement statement = connection.prepareStatement(sql);
 			ResultSet rs = statement.executeQuery();
 			
+			Integer count = -1;
 			while(rs.next()){
-				return rs.getInt(1);
+				 count = rs.getInt(1);
 			}
-			
 			statement.close();
+			
+			return count;
 		} catch (Exception e) {
 			logger.info("Exception while executing statement: " + e.getMessage());
 			e.printStackTrace();
@@ -207,7 +236,7 @@ public class MySQLDBService extends AbstractDBService {
 	}
 
 	@Override
-	public void delete(int begin, int end) {
+	public void delete(String tableName, int begin, int end) {
 		String sql = "DELETE FROM " + tableName + " WHERE internal_id in (SELECT TOP " + end + " internal_id from " + tableName + ")";
 
 		try {
@@ -234,5 +263,133 @@ public class MySQLDBService extends AbstractDBService {
 			connection.close();
 		} catch (SQLException e) {
 		}
+	}
+
+	@Override
+	public void update(String tableName, DataSet dataSet, String clause) {
+		Map<String, String> metaMap = dataSet.getMetadata();
+		
+		String sql = "UPDATE " + tableName + " SET ";
+		
+		List<Map<String, Object>> data = dataSet.getData();
+		
+		if(data != null && data.size() > 0){
+			// Process each row
+			for(Map<String, Object> map : data){
+				String values = " ";
+				
+				// process each column
+				for(String key : map.keySet()){
+					// Get type name
+					String type = metaMap.get(key);
+					Object object = map.get(key);
+					
+					// logger.info("Processing: Key = " + key + "\t\tType =  " + type + "\t\tObject = " + object);
+					
+					// TODO: Add more support for types
+					if(type != null){
+						if(type.compareTo(Integer.class.getName()) == 0){
+							if(object != null){
+								values += key + "=" + (Integer)object + ", ";
+							} else {
+								values +=  key + "=" + "-1, ";
+							}
+						}
+						else if(type.compareTo(BigInteger.class.getName()) == 0){
+							if(object != null){
+								values += key + "=" + (BigInteger)object + ", ";
+							} else {
+								values +=  key + "=" + "-1, ";
+							}
+						}
+						else if(type.compareTo(String.class.getName()) == 0){
+							if(object != null){
+								String escaped = StringEscapeUtils.escapeXml((String)object);
+								values += key + "=" + SQLUtils.quote(escaped) + ", ";
+							}
+							else {
+								values += key + "=" + SQLUtils.quote("") + ", ";
+							}
+						}
+					}
+				}
+				
+				values = values.substring(0, values.length() - 2);
+				
+				try {
+					String sqlStatement = sql + values;
+					
+					if(clause != null){
+						sqlStatement += " WHERE " + clause;
+					}
+					
+					// logger.info("UPDATE SQL: " + sqlStatement);
+
+					PreparedStatement statement = connection.prepareStatement(sqlStatement);
+					statement.executeUpdate();
+					statement.close();
+				} 
+				catch(SQLException e){
+					logger.info("SQLException during update: " + e.getMessage());
+				}
+				catch (Exception e) {
+					logger.error("Generic Exception during update: " + e.getMessage());
+				} finally {
+				}
+
+			}
+		}
+	}
+
+	@Override
+	public DataSet find(String tableName, String clause) {
+		DataSet dataSet = null;
+		
+		String sql = "SELECT * FROM " + tableName;
+		
+		if(clause != null){
+			sql += " WHERE " + clause;
+		}
+		
+		try {
+			PreparedStatement statement = connection.prepareStatement(sql);
+			ResultSet rs = statement.executeQuery();
+
+			ResultSetMetaData rsMeta = rs.getMetaData();
+			final int maxCols = rsMeta.getColumnCount();
+			
+			if(maxCols > 0){
+				dataSet = new DataSet();
+
+				for(int col = 1; col <= maxCols; col++){
+					String name = rsMeta.getColumnName(col);
+					String type = rsMeta.getColumnClassName(col);
+					
+					// column name, column type based on java
+					dataSet.addColumn(name, type);
+				}
+			}
+
+			while(rs.next()) {
+				Map<String, Object> datum = new ConcurrentHashMap<String, Object>();
+				
+				for(String columnName : dataSet.getColumnNames()){
+					Object o = rs.getObject(columnName);
+				
+					datum.put(columnName, o);
+				}
+				
+				dataSet.append(datum);
+			}
+
+			statement.close();
+		} catch (Exception e) {
+			logger.info("Exception while executing statement: " + e.getMessage());
+			e.printStackTrace();
+		} finally {
+		}
+
+		
+		return dataSet;
 	}
 }

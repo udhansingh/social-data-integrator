@@ -15,7 +15,6 @@
    
  */
 package org.onesun.commons.xml;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,28 +31,23 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
 public class XMLUtils {	public static String getAttributeValue(Element element, String tag){
 		if(element != null) {			NamedNodeMap attributes = element.getAttributes();
 			for(int index = 0; index < attributes.getLength(); index++){				Node an = attributes.item(index);
 				if(an.getNodeName().compareTo(tag) == 0){					return an.getNodeValue();				}			}		}
 		return null;	}
-		public static String getValue(Element element, String tag){		String textValue = null;
+	public static String getValue(Element element, String tag){		String textValue = null;
 		NodeList nodes = element.getElementsByTagName(tag);		if(nodes != null && nodes.getLength() > 0){			Element childElement = (Element)nodes.item(0);			Node node = childElement.getFirstChild();
-			if(node != null) {				textValue = node.getNodeValue();			}		}
-		return textValue;	}
+			if(node != null) {				textValue = node.getNodeValue();			}		}		return textValue;	}
 	public static List<String> getMultiValue(Element element, String tag){		List<String> values = null;
 		NodeList nodes = element.getElementsByTagName(tag);		if(nodes != null && nodes.getLength() > 0){			values = new ArrayList<String>();
-			for(int index = 0; index < nodes.getLength(); index++){				Element childElement = (Element)nodes.item(index);				Node node = childElement.getFirstChild();				if(node != null) {					values.add(node.getNodeValue());				}			}		}
-		return values;	}
-	public static Element getElement(Element element, String tag){		NodeList nodes = element.getElementsByTagName(tag);		if(nodes != null && nodes.getLength() > 0){			Element childElement = (Element)nodes.item(0);			String nodeName = null; 			if(childElement != null) {				nodeName = childElement.getNodeName();			}			if(nodeName != null && nodeName.compareTo(tag) == 0){				return childElement;			}		}
-		return null;	}		public static List<Element> getElements(Element element, String tag){		List<Element> list = null;				NodeList nodes = element.getElementsByTagName(tag);				if(nodes != null && nodes.getLength() > 0){			list = new ArrayList<Element>();						for(int index = 0; index < nodes.getLength(); index++){				Element childElement = (Element)nodes.item(index);								String nodeName = null; 				if(childElement != null) {					nodeName = childElement.getNodeName();				}								if(nodeName != null && nodeName.compareTo(tag) == 0){					list.add(childElement);				}			}		}		return list;	}
-	public static boolean exists(Element element, String tag) {		NodeList nodes = element.getElementsByTagName(tag);				if(nodes != null && nodes.getLength() > 0){			return true;		}
-		return false;	}
+			for(int index = 0; index < nodes.getLength(); index++){				Element childElement = (Element)nodes.item(index);				Node node = childElement.getFirstChild();				if(node != null) {					values.add(node.getNodeValue());				}			}		}		return values;	}
+	public static Element getElement(Element element, String tag){		NodeList nodes = element.getElementsByTagName(tag);		if(nodes != null && nodes.getLength() > 0){			Element childElement = (Element)nodes.item(0);			String nodeName = null; 			if(childElement != null) {				nodeName = childElement.getNodeName();			}			if(nodeName != null && nodeName.compareTo(tag) == 0){				return childElement;			}		}		return null;	}		public static List<Element> getElements(Element element, String tag){		List<Element> list = null;				NodeList nodes = element.getElementsByTagName(tag);				if(nodes != null && nodes.getLength() > 0){			list = new ArrayList<Element>();						for(int index = 0; index < nodes.getLength(); index++){				Element childElement = (Element)nodes.item(index);								String nodeName = null; 				if(childElement != null) {					nodeName = childElement.getNodeName();				}								if(nodeName != null && nodeName.compareTo(tag) == 0){					list.add(childElement);				}			}		}		return list;	}
+	public static boolean exists(Element element, String tag) {		NodeList nodes = element.getElementsByTagName(tag);				if(nodes != null && nodes.getLength() > 0){			return true;		}		return false;	}
 	
 	public static Document toDocument(String input) throws SAXException, IOException, ParserConfigurationException{
 		InputStream is = new ByteArrayInputStream(input.getBytes("UTF-8"));
-		return toDocument(is);
+		Document document = toDocument(is);		return document;
 	}
 
 	
@@ -63,8 +57,7 @@ public class XMLUtils {	public static String getAttributeValue(Element element,
 		
 		DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
 		Document document = documentBuilder.parse(is);
-
-		return document;
+		is.close();		return document;
 	}
 
 	public static Document newDocument() throws ParserConfigurationException{

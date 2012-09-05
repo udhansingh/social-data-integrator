@@ -200,8 +200,10 @@ public class KapowDataAccessView extends AbstractDataAccessView {
 					}
 					executor.setConnectionProperties((KapowConnectionProperties) AppCommons.TASKLET.getConnectionProperties());
 					// TODO: Set the right parameters for Kapow
-					executor.setProjectName(null);
-					executor.setRobotName(null);
+					String text = resource.getName();
+					String[] tokens = text.split("/");
+					executor.setProjectName(tokens[0]);
+					executor.setRobotName(tokens[1]);
 					
 					setStatus("");
 					dataTextArea.setText("");

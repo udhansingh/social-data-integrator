@@ -122,13 +122,18 @@ public class TaskletsView extends JPanel {
 			Tasklet t = AppCommons.TASKLET;
 			
 			DataExtractionAgent dea = new DataExtractionAgent();
-			dea.setDataService(new HSQLDBService());
+			// TODO: Determine tablename to be used
+			dea.setDataService(new HSQLDBService(null));
 			dea.setCached(true);
 			dea.setTasklet(t);
 			
-			dea.init();
-			dea.execute();
-			dea.deinit();
+			try {
+				dea.init(null);
+				dea.execute();
+				dea.deinit();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }

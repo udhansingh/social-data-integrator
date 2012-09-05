@@ -7,7 +7,6 @@ import org.onesun.smc.api.DBService;
 public abstract class AbstractDBService implements DBService {
 	protected Connection connection = null;
 	protected String id = null;
-	protected String tableName = null;
 	
 	protected String server = null;
 	protected Integer serverPort = -1;
@@ -47,16 +46,6 @@ public abstract class AbstractDBService implements DBService {
 	@Override
 	public void setSchema(String schema) {
 		this.schema = schema;
-	}
-	
-	@Override
-	public void setTableName(String tableName){
-		this.tableName = tableName;
-	}
-	
-	@Override
-	public String getTableName(){
-		return this.tableName;
 	}
 	
 	@Override

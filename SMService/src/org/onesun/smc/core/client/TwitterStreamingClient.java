@@ -23,6 +23,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.auth.AuthScope;
@@ -45,25 +46,37 @@ import org.onesun.smc.core.connection.properties.TwitterStreamingConnectionPrope
 import org.onesun.smc.core.resources.StreamingResource;
 import org.onesun.smc.core.services.handler.ConnectionHandler;
 import org.onesun.smc.core.services.handler.DataHandler;
+import org.scribe.builder.ServiceBuilder;
+import org.scribe.builder.api.TwitterApi;
+import org.scribe.model.OAuthRequest;
+import org.scribe.model.Token;
+import org.scribe.oauth.OAuthService;
 
+import com.sun.istack.internal.logging.Logger;
 import com.sun.org.apache.xerces.internal.util.URI;
 import com.sun.org.apache.xerces.internal.util.URI.MalformedURIException;
 
 public class TwitterStreamingClient {
+	private static Logger logger = Logger.getLogger(TwitterStreamingClient.class);
 	private static final String ENCODING								= "UTF-8";
 
 	private Object requestObject = null;
 	private DefaultHttpClient client = null;
 
 	private StreamingResource resource = null;
-	private TwitterStreamingConnectionProperties connectionProperties = null;
+	
+	private String connectionType = null;
+	
+	private ConnectionProperties connectionProperties = null;
+	
 	private volatile boolean running = true;
 	private StreamProcessor processor = null;
 	
 	private DataHandler dataHandler = null;
 	private ConnectionHandler connectionHandler = null;
 	
-	public TwitterStreamingClient(DataHandler datahandler, ConnectionHandler connectionHandler){
+	public TwitterStreamingClient(String connectionType, DataHandler datahandler, ConnectionHandler connectionHandler){
+		this.connectionType = connectionType;
 		this.dataHandler = datahandler;
 		this.connectionHandler = connectionHandler;
 	}
@@ -111,6 +124,8 @@ public class TwitterStreamingClient {
 				url += parameters;
 			}
 
+			OAuthRequest request = null;
+			String usableUrl = new String(url);
 			try {
 				URI uri = new URI(url);
 
@@ -133,14 +148,67 @@ public class TwitterStreamingClient {
 				ThreadSafeClientConnManager manager = new ThreadSafeClientConnManager(registry);
 				client = new DefaultHttpClient(manager, params);
 
-				client.getCredentialsProvider().setCredentials(new AuthScope(uri.getHost(), port),
-						new UsernamePasswordCredentials(connectionProperties.getUsername(), connectionProperties.getPassword()));
+				if(connectionType != null && connectionType.compareToIgnoreCase("BASIC") == 0){
+					TwitterStreamingConnectionProperties cp =  (TwitterStreamingConnectionProperties)connectionProperties;
+					
+					client.getCredentialsProvider().setCredentials(new AuthScope(uri.getHost(), port),
+						new UsernamePasswordCredentials(cp.getUsername(), cp.getPassword()));
+				} else if(connectionType != null && connectionType.compareToIgnoreCase("OAUTH") == 0){
+					// SocialMediaConnectionProperties cp = (SocialMediaConnectionProperties)connectionProperties;
+					
+					request = new OAuthRequest(resource.getVerb(), url);
+					
+					OAuthService service = new ServiceBuilder()
+                    .provider(TwitterApi.class)
+                    //.apiKey(cp.getApiKey())
+                    //.apiSecret(cp.getApiSecret())
+                    .apiKey("O0DVGQLZ8LoIlW44mt5A")
+                    .apiSecret("Zr0zShDB6ukUnflchWkDfTedRrpH6Btv16dYKyJMMzI")
+                    .build();
+					
+					//Token accessToken = new Token(cp.getAccessToken(), cp.getAccessSecret());
+					Token accessToken = new Token("29169735-aLyWSq9tTXkSBjnaTgq2XXMlsHMMPzf9OPj3LCdvz", "RVAger87Ihd8VTuZ2thOYKYcqIoxMj9nCrt4X5KFF4c");
+					service.signRequest(accessToken, request);
+
+//					Map<String, String> oauthParameters = request.getOauthParameters();
+//					for(String key : oauthParameters.keySet()){
+//						if(usableUrl.contains("?")){
+//							usableUrl += "&" + key + "=" + oauthParameters.get(key);
+//						}
+//						else {
+//							usableUrl += "?" + key + "=" + oauthParameters.get(key);
+//						}
+//					}
+				}
+				
+				logger.info("URL to connect: " + usableUrl);
 
 				if(resource.getVerb().name().compareToIgnoreCase("post") == 0){
-					requestObject = new HttpPost(url);// + URLEncoder.encode("?" + paramsText, "UTF-8"));
+					HttpPost post = new HttpPost(usableUrl);
+					
+					if(request != null){
+						// Add headers
+						Map<String, String> headers = request.getHeaders();
+						for(String key : headers.keySet()){
+							post.addHeader(key, headers.get(key));
+						}
+					}
+					
+					
+					requestObject = post; // + URLEncoder.encode("?" + paramsText, "UTF-8"));
 				}
 				else if(resource.getVerb().name().compareToIgnoreCase("get") == 0){
-					requestObject = new HttpGet(url);// + "?" + URLEncoder.encode("?" + paramsText, "UTF-8"));
+					HttpGet get = new HttpGet(usableUrl);
+					
+					if(request != null){
+						// Add headers
+						Map<String, String> headers = request.getHeaders();
+						for(String key : headers.keySet()){
+							get.addHeader(key, headers.get(key));
+						}
+					}
+					
+					requestObject = get; // + "?" + URLEncoder.encode("?" + paramsText, "UTF-8"));
 				}
 			} catch (MalformedURIException e) {
 				e.printStackTrace();
@@ -173,6 +241,7 @@ public class TwitterStreamingClient {
 								get.addHeader(key, headers.get(key));
 							}
 						}
+						
 						
 						resp = client.execute(get);
 					}

@@ -10,13 +10,9 @@ import org.onesun.smc.app.handlers.UITask;
 import org.onesun.smc.core.metadata.Metadata;
 
 public class DiscovererView extends JPanel {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1581982691500247615L;
+	private static final long serialVersionUID = 1284906946001890574L;
 	
-	
-	private MetadataTableView metadataTableView = new MetadataTableView();
+	private MetadataTableView metadataTableView = new MetadataTableView();	
 	private DataPreviewTableView dataPreviewTableView = new DataPreviewTableView();
 	
 	private JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, metadataTableView, dataPreviewTableView);

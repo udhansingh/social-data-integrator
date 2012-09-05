@@ -4,19 +4,26 @@ import java.io.File;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
+import org.onesun.commons.SQLUtils;
 import org.onesun.commons.file.FileUtils;
-import org.onesun.smc.core.model.DataObject;
 
 public class HSQLDBService extends AbstractDBService {
 	private static Logger logger = Logger.getLogger(HSQLDBService.class);
+	private int duplicatesCount = 0;
+	private int uniquesCount = 0;
+	private int insertErrorsCount = 0;
+	private int otherErrorsCount = 0;
 	
-	public HSQLDBService(){
+	public HSQLDBService(String tableName){
 		super();
 		
 		id = UUID.randomUUID().toString();
@@ -67,7 +74,7 @@ public class HSQLDBService extends AbstractDBService {
 
 	
 	@Override
-	public void init(){
+	public void init(String tableName){
 		try {
 			// Do not init if a connection is already obtained
 			if(connection == null){
@@ -88,35 +95,90 @@ public class HSQLDBService extends AbstractDBService {
 	}
 
 	@Override
-	public void write(DataObject dataObject){
-		String cn = "java_type, java_object";
-		String qm = "?, ?";
+	public void write(String tableName, DataSet dataSet){
+		Map<String, String> metaMap = dataSet.getMetadata();
+		
+		String sql = "INSERT INTO " + tableName + " (";
+		String values = " VALUES (";
+		
+		if(metaMap != null && metaMap.size() > 0) {
+			for(String key : metaMap.keySet()){
+				sql += key + ", ";
+			}
+		}
+				
+		List<Map<String, Object>> data = dataSet.getData();
+		
+		if(data != null && data.size() > 0){
+			// Process each row
+			for(Map<String, Object> map : data){
+				
+				// process each column
+				for(String key : map.keySet()){
+					// Get type name
+					String type = metaMap.get(key);
+					Object object = map.get(key);
+					
+					if(type.compareTo(Integer.class.getName()) == 0){
+						if(object != null){
+							values += (Integer)object + ", ";
+						} else {
+							values +=  "-1, ";
+						}
+					}
+					else if(type.compareTo(String.class.getName()) == 0){
+						if(object != null){
+							String escaped = StringEscapeUtils.escapeXml((String)object);
+							values += SQLUtils.quote(escaped) + ", ";
+						}
+						else {
+							values += SQLUtils.quote("") + ", ";
+						}
+					}
+				}
+				
+				sql = sql.substring(0, sql.length() - 2) + ")";
+				values = values.substring(0, values.length() - 2) + ")";
+				
+				sql += values;
+				
+//				logger.info("INSERT SQL: " + sql);
+				
+				try {
+					PreparedStatement statement = connection.prepareStatement(sql);
+					statement.executeUpdate();
+					statement.close();
+					
+					uniquesCount++;
+				} 
+				catch(SQLException e){
+					if(e.getMessage().contains("integrity constraint violation: unique constraint or index violation")) {
+						duplicatesCount++;
+						logger.info("Duplicates #" + duplicatesCount + "\t\t\tUniques #" + uniquesCount + "\t\t\tAppend Errors #" + insertErrorsCount + "\t\t\tOther Errors #" + otherErrorsCount);
+					}
+					else {
+						insertErrorsCount++;
+						logger.info("Duplicates #" + duplicatesCount + "\t\t\tUniques #" + uniquesCount + "\t\t\tAppend Errors #" + insertErrorsCount + "\t\t\tOther Errors #" + otherErrorsCount);
+					}
+				}
+				catch (Exception e) {
+					otherErrorsCount++;
+					logger.error("Exception while executing statement: " + e.getMessage());
+				} finally {
+				}
 
-		String sql = "INSERT INTO " + tableName + "(" + cn + ") VALUES(" + qm + ")";
-		logger.info("INSERT SQL: " + sql);
-
-		try {
-			PreparedStatement statement = connection.prepareStatement(sql);
-
-			statement.setString(1, dataObject.getType());
-			statement.setObject(2, dataObject.getObject());
-			statement.executeUpdate();
-			statement.close();
-		} catch (Exception e) {
-			logger.info("Exception while executing statement: " + e.getMessage());
-			e.printStackTrace();
-		} finally {
+			}
 		}
 	}
 
 	@Override
-	public List<DataObject> read(){
-		return read(-1, -1);
+	public DataSet read(String tableName){
+		return read(tableName, null, -1, -1);
 	}
 
 	@Override
-	public List<DataObject> read(int offset, int limit){
-		List<DataObject> objects = null;
+	public DataSet read(String tableName, List<String> columns, int offset, int limit){
+		DataSet dataSet = null;
 
 		String sql = "SELECT";
 
@@ -124,21 +186,42 @@ public class HSQLDBService extends AbstractDBService {
 			sql = "SELECT LIMIT " + offset + " " + limit;
 		}
 
-		sql += " * FROM " + tableName;
+		if(columns == null || (columns != null && columns.size() == 0)){
+			sql += " * FROM " + tableName;
+		}
+		else {
+			sql += " " + columns.toString().replace(" ", "").replace("[", "(").replace("]", ")") + " FROM " + tableName;
+		}
+		
 		try {
 			PreparedStatement statement = connection.prepareStatement(sql);
 			ResultSet rs = statement.executeQuery();
 
-			objects = new ArrayList<DataObject>();
+			ResultSetMetaData rsMeta = rs.getMetaData();
+			final int maxCols = rsMeta.getColumnCount();
 			
-			while(rs.next()){
-				Object o = rs.getObject("java_object");
-				String t = rs.getString("java_type");
+			if(maxCols > 0){
+				dataSet = new DataSet();
 
-				DataObject dc = new DataObject();
-				dc.setType(t);
-				dc.setObject(o);
-				objects.add(dc);
+				for(int col = 1; col <= maxCols; col++){
+					String name = rsMeta.getColumnName(col);
+					String type = rsMeta.getColumnTypeName(col);
+					
+					// column name, column type
+					dataSet.addColumn(name, type);
+				}
+			}
+			
+			while(rs.next()) {
+				Map<String, Object> datum = new ConcurrentHashMap<String, Object>();
+				
+				for(String columnName : dataSet.getColumnNames()){
+					Object o = rs.getObject(columnName);
+				
+					datum.put(columnName, o);
+				}
+				
+				dataSet.append(datum);
 			}
 
 			statement.close();
@@ -148,7 +231,7 @@ public class HSQLDBService extends AbstractDBService {
 		} finally {
 		}
 
-		return objects;
+		return dataSet;
 	}
 
 	@Override
@@ -164,7 +247,7 @@ public class HSQLDBService extends AbstractDBService {
 	}
 
 	@Override
-	public int getCount(String column) {
+	public int getCount(String tableName, String column) {
 		String sql = "SELECT count(" + column + ")";
 
 		sql += " FROM " + tableName;
@@ -187,7 +270,7 @@ public class HSQLDBService extends AbstractDBService {
 	}
 
 	@Override
-	public void delete(int begin, int end) {
+	public void delete(String tableName, int begin, int end) {
 		String sql = "DELETE FROM " + tableName + " WHERE internal_id in (SELECT TOP " + end + " internal_id from " + tableName + ")";
 
 		try {
@@ -205,5 +288,16 @@ public class HSQLDBService extends AbstractDBService {
 	@Override
 	public String getIdentity() {
 		return "HSQLDBService";
+	}
+
+	@Override
+	public void update(String tableName, DataSet mandatoryUpdate, String clause) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public DataSet find(String tableName, String clause) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

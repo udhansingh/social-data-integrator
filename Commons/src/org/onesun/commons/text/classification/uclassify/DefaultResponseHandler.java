@@ -26,7 +26,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
-import org.onesun.commons.xml.XMLReader;
+import org.onesun.commons.xml.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -43,7 +43,7 @@ public class DefaultResponseHandler extends AbstractResponseHandler {
 		
 		Element element = document.getDocumentElement();
 		
-		Element statusElement = XMLReader.getElement(element, "status");
+		Element statusElement = XMLUtils.getElement(element, "status");
 		
 		String successString = statusElement.getAttribute("success");
 		boolean success = (successString != null) 
