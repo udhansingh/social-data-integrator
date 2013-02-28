@@ -3,10 +3,10 @@ package org.onesun.smc.api;
 public class ProxyConfiguration {
 	private Boolean enabled = false;
 	
-	private String hostname;
-	private Integer port;
-	private String username;
-	private String password;
+	private String hostname = "";
+	private Integer port = -1;
+	private String username = "";
+	private String password = "";
 	
 	public String getHostname() {
 		return hostname;

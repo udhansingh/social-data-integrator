@@ -176,7 +176,8 @@ public class KapowStreamingClient {
 			
 			if(server == null){
 				try {
-					server = new RoboServer(hostname, consolePort, true);
+					server = new RoboServer(hostname, consolePort);
+							// new RoboServer(hostname, consolePort, true);
 				} catch (Exception e) {
 					logger.error("Exception while creating RoboServer: " + e.getMessage());
 					throw e;

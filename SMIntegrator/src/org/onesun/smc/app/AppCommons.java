@@ -29,6 +29,7 @@ import org.onesun.commons.text.classification.opencalais.OpenCalaisClient;
 import org.onesun.commons.text.classification.uclassify.UClassifyClient;
 import org.onesun.commons.webbrowser.EmbeddedWebBrowser;
 import org.onesun.commons.webbrowser.LocationChangeHandler;
+import org.onesun.commons.webbrowser.SystemWebBrowser;
 import org.onesun.commons.webbrowser.WebBrowser;
 import org.onesun.smc.api.ConfigurationHelper;
 import org.onesun.smc.api.ConnectionPropertiesFactory;
@@ -225,16 +226,16 @@ public class AppCommons {
 		}
 
 		// Initialize which browser to use
-		// Authenticator.setWebBrowser(new SystemWebBrowser());
+		OAuthenticator.setWebBrowser(new SystemWebBrowser());
 		
-// /*		
+/*		
 		OAuthenticator.setWebBrowser(new EmbeddedWebBrowser("Authorize Application", new LocationChangeHandler() {
 			@Override
 			public boolean execute(String url) {
 					return AUTHENTICATOR.getAccessKeys(url);
 			}
 		}));
-// */		
+*/		
 		// Setup Configuration
 		setup();
 		
