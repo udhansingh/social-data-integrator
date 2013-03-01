@@ -34,20 +34,22 @@ public class App {
 	 */
 	public static void main(String[] args) {
 		for(String arg : args){
-			String key = "featuresEnabled";
+			String key = "features";
 			
 			if(arg.startsWith(key)){
 				String[] tokens = arg.split(key + "=");
 
 				if(tokens.length >= 2){
-					if(tokens[1].compareToIgnoreCase("full") == 0){
+					if(tokens[1].compareToIgnoreCase("all") == 0){
 						AppCommons.ALL_FEATURES_ENABLED = true;
 					}
 					else {
-						String[] featuresToEnable = tokens[1].split(",");
+						String[] requestedFeatures = tokens[1].split(",");
 						
-						for(String featureToEnable : featuresToEnable){
-							AppCommons.setFeatureEnabled(featureToEnable, true);
+						for(String featureName : requestedFeatures){
+							if(AppCommons.isValidFeature(featureName)) {
+								AppCommons.setFeatureEnabled(featureName, true);
+							}
 						}
 					}
 				}

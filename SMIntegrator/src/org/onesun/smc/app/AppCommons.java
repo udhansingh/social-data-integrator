@@ -332,4 +332,20 @@ public class AppCommons {
 
 		return flag;
 	}
+
+	public static boolean isValidFeature(String featureName) {
+		if(
+			(featureName.compareToIgnoreCase(FEATURE_CONNECTIVITY) == 0) || 
+			(featureName.compareToIgnoreCase(FEATURE_DATA_SERVICES) == 0) ||
+			(featureName.compareToIgnoreCase(FEATURE_DATA_ACCESS) == 0) ||
+			(featureName.compareToIgnoreCase(FEATURE_METADATA_DISCOVERY) == 0) ||
+			(featureName.compareToIgnoreCase(FEATURE_TASKLETS) == 0) ||
+			(featureName.compareToIgnoreCase(FEATURE_WORKFLOW) == 0) ||
+			(featureName.compareToIgnoreCase(FEATURE_SCHEDULING) == 0)
+		) {
+			return true;
+		}
+		
+		return false;
+	}
 }
