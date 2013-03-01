@@ -19,6 +19,7 @@ package org.onesun.smc.app;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.io.File;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.UIManager;
@@ -26,35 +27,126 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import org.onesun.commons.swing.MainWindow;
 import org.onesun.smc.app.views.AppMainView;
+import org.kohsuke.args4j.Argument;
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
+import org.kohsuke.args4j.Option;
 
 
 public class App {
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		for(String arg : args){
-			String key = "features";
-			
-			if(arg.startsWith(key)){
-				String[] tokens = arg.split(key + "=");
+	private final static String VERSION = "Feb 28, 2013 20:00 PST";
+	
+	@Option(required=false, name="-f", aliases="--features", usage="Connectivity,DataAccess,MetadataDiscovery", metaVar="<list of features>")
+	private String features = null;
+	
+	@Option(required=false, name="-b", aliases="--browser", usage="<embedded|system>", metaVar="<browser to use>")
+	private String browser = null;
+	
+	@Option(required=false, name="-h", aliases="--home", usage="path to app home", metaVar="<home directory>")
+	private String home = null;
 
-				if(tokens.length >= 2){
-					if(tokens[1].compareToIgnoreCase("all") == 0){
-						AppCommons.ALL_FEATURES_ENABLED = true;
-					}
-					else {
-						String[] requestedFeatures = tokens[1].split(",");
-						
-						for(String featureName : requestedFeatures){
-							if(AppCommons.isValidFeature(featureName)) {
-								AppCommons.setFeatureEnabled(featureName, true);
-							}
+	@Option(required=false, name="-v", aliases="--version", usage="show version")
+	private boolean version = false;
+
+	@Argument
+	private List<String> arguments = null;
+	
+	private String[] commandLineArguments = null;
+	
+	public App(String[] commandLineArguments){
+		this.commandLineArguments = commandLineArguments;
+	}
+	
+	public void init(){
+		CmdLineParser parser = new CmdLineParser(this);
+
+		// Validate arguments
+		try {
+			parser.parseArgument(commandLineArguments);
+		} catch(CmdLineException e) {
+			System.out.println("Version: " + VERSION);
+			
+			System.err.println(e.getMessage());
+			System.err.println("java " + this.getClass().getSimpleName() + " [options...] arguments ...");
+			parser.printUsage(System.err);
+			System.err.println();
+			
+			System.exit(-1);
+		}
+
+		// display version
+		if(version == true) {
+			System.out.println("Version: " + VERSION);
+			System.exit(0);
+		}
+		
+		// set home directory
+		if(home != null){
+			File f = new File(home);
+			if(f.exists() == true){
+				AppCommons.PATH_TO_APP_HOME = f.getAbsolutePath();
+			}
+		}
+		
+		// set browser
+		if(browser == null) {
+			browser = "embedded";
+		}
+		
+		// Validate browser option
+		if(browser.compareToIgnoreCase("embedded") == 0 || browser.compareToIgnoreCase("system") == 0) {
+			AppCommons.BROWSER = browser;
+		}
+		else {
+			System.err.println("Browser option must be either 'embedded' or 'system'");
+			System.exit(-1);
+		}
+
+		// Default features
+		if(features == null){
+			features = "Connectivity,DataAccess,MetadataDiscovery";
+		}
+		
+		// Validate features
+		if(features != null) {
+			String[] requestedFeatures = features.split(",");
+
+			if(requestedFeatures != null && requestedFeatures.length > 0) {
+				if(requestedFeatures.length == 1 && requestedFeatures[0].compareToIgnoreCase("alpha") == 0) {
+					AppCommons.ALL_FEATURES_ENABLED = true;
+				}
+				else {
+					int invalidCount = 0;
+					
+					for(String feature : requestedFeatures){
+						if(AppCommons.isValidFeature(feature)) {
+							AppCommons.setFeatureEnabled(feature, true);
 						}
+						else {
+							invalidCount++;
+						}
+					}
+					
+					if(invalidCount > 0){
+						System.err.println("Features must set of values from [Connectivity,DataAccess,MetadataDiscovery]");
+						System.exit(-1);
 					}
 				}
 			}
 		}
+		
+		// Process other arguments
+		if(arguments != null && arguments.size() > 0){
+			// TODO: For future use
+		}
+	}
+	
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		App app = new App(args);
+		app.init();
 		
 		// Must be invoked
 		AppCommons.init();

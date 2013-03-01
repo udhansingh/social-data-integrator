@@ -65,6 +65,7 @@ public class AppCommons {
 	public static OAuthenticator 						AUTHENTICATOR						= null;
 	public static Object 								RESPONSE_OBJECT						= null;
 	public static String								PATH_TO_APP_HOME					= null;
+	public static String								BROWSER								= null;
 	public static String 								PATH_TO_WORK						= null;
 	public static String								PATH_TO_APP_CONFIG					= null;
 	public static String								PATH_TO_CORE						= null;
@@ -86,9 +87,6 @@ public class AppCommons {
 	private static Map<String, Boolean> 				enabledFeaturesMap					= new HashMap<String, Boolean>();
 	
 	public static void init() {
-		// Free features
-		enabledFeaturesMap.put(FEATURE_CONNECTIVITY, true);
-		
 		try {
 			InetAddress addr = InetAddress.getLocalHost();
 			OAUTH_CALLBACK_SERVER_NAME = addr.getCanonicalHostName();
@@ -97,9 +95,11 @@ public class AppCommons {
 		}
 		
 		final String APP_HOME = "SDI_HOME";
-		PATH_TO_APP_HOME = System.getenv(APP_HOME);
-		
 		if(PATH_TO_APP_HOME == null){
+			PATH_TO_APP_HOME = System.getenv(APP_HOME);
+		}
+		
+		if(PATH_TO_APP_HOME == null || ((PATH_TO_APP_HOME != null) && PATH_TO_APP_HOME.isEmpty() == true)) {
 			String os = System.getProperty("os.name");
 			os = os.trim();
 			
@@ -226,16 +226,18 @@ public class AppCommons {
 		}
 
 		// Initialize which browser to use
-		OAuthenticator.setWebBrowser(new SystemWebBrowser());
-		
-/*		
-		OAuthenticator.setWebBrowser(new EmbeddedWebBrowser("Authorize Application", new LocationChangeHandler() {
-			@Override
-			public boolean execute(String url) {
+		if(BROWSER.compareToIgnoreCase("system") == 0) {
+			OAuthenticator.setWebBrowser(new SystemWebBrowser());
+		}
+		else if(BROWSER.compareToIgnoreCase("embedded") == 0){
+			OAuthenticator.setWebBrowser(new EmbeddedWebBrowser("Authorize Application", new LocationChangeHandler() {
+				@Override
+				public boolean execute(String url) {
 					return AUTHENTICATOR.getAccessKeys(url);
-			}
-		}));
-*/		
+				}
+			}));
+		}
+
 		// Setup Configuration
 		setup();
 		
