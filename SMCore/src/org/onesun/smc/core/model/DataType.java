@@ -3,6 +3,7 @@ package org.onesun.smc.core.model;
 public class DataType implements Cloneable {
 	private String name;
 	private Class<?> clazz;
+	private double size;
 	
 	public String getName() {
 		return name;
@@ -28,5 +29,11 @@ public class DataType implements Cloneable {
 		} catch(CloneNotSupportedException e) {
 			return this;
 		}
+	}
+	public double getSize() {
+		return size;
+	}
+	public void setSize(double size) {
+		this.size = size;
 	}
 }

@@ -204,7 +204,7 @@ public class Metadata implements Cloneable {
 			grandChild.appendChild(element);
 
 			element = document.createElement("size");
-			element.setTextContent(Integer.toString(mo.getSize()));
+			element.setTextContent(Double.toString(mo.getSize()));
 			grandChild.appendChild(element);
 
 			Boolean flag = mo.isIgnore();

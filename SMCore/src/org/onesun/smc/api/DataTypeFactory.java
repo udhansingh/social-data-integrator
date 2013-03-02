@@ -38,36 +38,49 @@ public class DataTypeFactory {
 		clazz = java.lang.String.class;
 		dataType.setName(clazz.getSimpleName());
 		dataType.setClazz(clazz);
+		dataType.setSize(4096);
 		dataTypeList.add(dataType);
 		
 		dataType = new DataType();
 		clazz = java.lang.Integer.class;
 		dataType.setName(clazz.getSimpleName());
 		dataType.setClazz(clazz);
+		dataType.setSize(16);
 		dataTypeList.add(dataType);
 
 		dataType = new DataType();
 		clazz = java.lang.Double.class;
 		dataType.setName(clazz.getSimpleName());
 		dataType.setClazz(clazz);
+		dataType.setSize(64);
 		dataTypeList.add(dataType);
 		
 		dataType = new DataType();
 		clazz = java.lang.Long.class;
 		dataType.setName(clazz.getSimpleName());
 		dataType.setClazz(clazz);
+		dataType.setSize(32);
 		dataTypeList.add(dataType);
 		
 		dataType = new DataType();
 		clazz = java.lang.Boolean.class;
 		dataType.setName(clazz.getSimpleName());
 		dataType.setClazz(clazz);
+		dataType.setSize(8);
 		dataTypeList.add(dataType);
 
 		dataType = new DataType();
 		clazz = java.util.Date.class;
 		dataType.setName(clazz.getSimpleName());
 		dataType.setClazz(clazz);
+		dataType.setSize(32);
+		dataTypeList.add(dataType);
+		
+		dataType = new DataType();
+		clazz = java.net.URL.class;
+		dataType.setName(clazz.getSimpleName());
+		dataType.setClazz(clazz);
+		dataType.setSize(2048);
 		dataTypeList.add(dataType);
 		
 		for(DataType dtItem : dataTypeList){
@@ -164,6 +177,14 @@ public class DataTypeFactory {
 							String className = XMLUtils.getValue(element, "class");
 							Class<?> clazz = Class.forName(className);
 							item.setClazz(clazz);
+							
+							String sizeValue = XMLUtils.getValue(element, "size");
+							int size = -1;
+							try {
+								size = Integer.parseInt(sizeValue);
+							} catch(NumberFormatException e){
+							}
+							item.setSize(size);
 
 							logger.info("Instantiating Service Provider ... " + item.getClazz());
 
@@ -214,6 +235,17 @@ public class DataTypeFactory {
 					attribute = document.createElement("class");
 					attribute.setTextContent(dataType.getClazz().getCanonicalName());
 					itemElement.appendChild(attribute);
+					
+					attribute = document.createElement("size");
+					String size = "-1";
+					
+					try {
+						size = Double.toString(dataType.getSize());
+					} catch(NumberFormatException e){
+					}
+					
+					attribute.setTextContent(size);
+					itemElement.appendChild(attribute);
 
 					root.appendChild(itemElement);
 				}
@@ -250,5 +282,9 @@ public class DataTypeFactory {
 	
 	public static Class<?> getDataTypeClass(String name) {
 		return dataTypes.get(name).getClazz();
+	}
+
+	public static double getDataTypeSize(String name) {
+		return dataTypes.get(name).getSize();
 	}
 }

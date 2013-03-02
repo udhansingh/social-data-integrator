@@ -23,7 +23,7 @@ public class MetaObject implements Cloneable {
 	private String path = "";
 	private DataType type = DataTypeFactory.getDataType("String");
 	private Boolean ignore = false;
-	private Integer size = 0;
+	private double size = 0;
 	
 	public String getName() {
 		return name;
@@ -43,10 +43,10 @@ public class MetaObject implements Cloneable {
 	public void setType(DataType type) {
 		this.type = type;
 	}
-	public Integer getSize() {
+	public double getSize() {
 		return size;
 	}
-	public void setSize(Integer size) {
+	public void setSize(double size) {
 		this.size = size;
 	}
 	public Boolean isIgnore() {
